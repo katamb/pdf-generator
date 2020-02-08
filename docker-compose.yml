@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:10.7-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: user
+      POSTGRES_DB: postgres
+    ports:
+      - 7702:5432
+
+  spring-app:
+    build: ./
+    ports:
+      - 7701:7701

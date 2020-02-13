@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="generate.pdf.openpdf.mapper.TextBlockMapper">
+
+    <select id="getTextsByGroupAndLanguage" resultType="generate.pdf.openpdf.dto.TextBlockWithStyle">
+        SELECT tb.text_block_id,
+               tb.text_block_value,
+               tttt.template_to_text_translation_id,
+               tttt.text_block_name,
+               tttt.text_size,
+               tttt.horizontal_alignment,
+               tttt.vertical_alignment
+        FROM pdf_generator.template_to_text_translation tttt
+             INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tttt.text_block_id
+        WHERE tttt.printout_type=#{printoutType}
+          AND tttt.language_code=#{languageCode};
+    </select>
+
+    <select id="findTextBlockById" resultType="generate.pdf.openpdf.dto.TextBlockWithStyle">
+        SELECT tb.text_block_id,
+               tb.text_block_value,
+               tttt.template_to_text_translation_id,
+               tttt.text_block_name,
+               tttt.text_size,
+               tttt.horizontal_alignment,
+               tttt.vertical_alignment
+        FROM pdf_generator.template_to_text_translation tttt
+             INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tttt.text_block_id
+        WHERE tttt.template_to_text_translation_id=#{id};
+    </select>
+
+</mapper>

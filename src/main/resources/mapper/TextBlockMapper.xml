@@ -30,4 +30,55 @@
         WHERE tttt.template_to_text_translation_id=#{id};
     </select>
 
+    <select id="findTextBlockValueById" resultType="java.lang.String">
+        SELECT tb.text_block_value
+        FROM pdf_generator.text_block tb
+        WHERE tb.text_block_id = #{id};
+    </select>
+
+    <select id="findTextBlockIdByValue" resultType="java.lang.Long">
+        SELECT tb.text_block_id
+        FROM pdf_generator.text_block tb
+        WHERE tb.text_block_value = #{textBlockValue};
+    </select>
+
+    <select id="findAmountOfTextBlockUsages" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM pdf_generator.template_to_text_translation
+        WHERE text_block_id = #{id};
+    </select>
+
+    <select id="findAllTemplates" resultType="java.lang.String">
+        SELECT DISTINCT printout_type
+        FROM pdf_generator.template_to_text_translation;
+    </select>
+
+    <select id="findAllLanguagesForTemplate" resultType="java.lang.String">
+        SELECT DISTINCT language_code
+        FROM pdf_generator.template_to_text_translation
+        WHERE printout_type = #{template};
+    </select>
+
+    <update id="updateTemplateToTextTranslation">
+        UPDATE pdf_generator.template_to_text_translation tttt
+        SET text_block_id = #{textBlockWithStyle.textBlockId},
+            text_size = #{textBlockWithStyle.textSize},
+            horizontal_alignment = #{textBlockWithStyle.horizontalAlignment},
+            vertical_alignment = #{textBlockWithStyle.verticalAlignment}
+        WHERE tttt.template_to_text_translation_id=#{textBlockWithStyle.templateToTextTranslationId};
+    </update>
+
+    <update id="updateTextBlock">
+        UPDATE pdf_generator.text_block tb
+        SET text_block_value = #{textBlockValue}
+        WHERE tb.text_block_id = #{textBlockId};
+    </update>
+
+    <insert id="insertTextBlock" parameterType="generate.pdf.openpdf.dto.TextBlockWithStyle">
+        INSERT INTO
+            pdf_generator.text_block (text_block_value)
+        VALUES
+            (#{textBlockWithStyle.textBlockValue});
+    </insert>
+
 </mapper>

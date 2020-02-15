@@ -7,6 +7,7 @@ CREATE SEQUENCE IF NOT EXISTS text_block_id_seq INCREMENT 1 START 10001;
 CREATE TABLE IF NOT EXISTS text_block (
     text_block_id                       BIGINT DEFAULT nextval('text_block_id_seq') NOT NULL,
     text_block_value                    text NOT NULL,
+    CONSTRAINT ak_text_block_value_unique UNIQUE (text_block_value),
     CONSTRAINT pk_text_block_id PRIMARY KEY (text_block_id)
 ) WITH (fillfactor=90);
 

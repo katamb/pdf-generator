@@ -34,10 +34,16 @@ VALUES
     ('Laenusaaja vastutab Lepingust tulenevate kohustuste täitmise eest kogu oma varaga.'),
     ('**Vaidluste lahendamise kord**'),
     ('Lepingust tulenevad ja sellega seotud vaidlused püüavad Pooled lahendada läbirääkimiste teel. Kui vaidlust ei õnnestu lahendada Poolte läbirääkimiste teel, on Pooltel õigus pöörduda vaidluse lahendamiseks maakohtusse vastavalt Eesti Vabariigis kehtivatele õigusaktidele.'),
-    ('**Lepingu jõustumine'),
+    ('**Lepingu jõustumine**'),
     ('Leping jõustub alates Lepingu allkirjastamise hetkest.'),
     ('**Lõppsätted**'),
-    ('Leping on koostatud ja alla kirjutatud eesti keeles kahes (2) võrdset juriidilist jõudu omavas identses eksemplaris, millest üks jääb Laenuandjale ja teine Laenusaajale.')
+    ('Leping on koostatud ja alla kirjutatud eesti keeles kahes (2) võrdset juriidilist jõudu omavas identses eksemplaris, millest üks jääb Laenuandjale ja teine Laenusaajale.'),
+    ('${borrower.name}'),
+    ('${borrower.address}'),
+    ('${borrower.phone}'),
+    ('${lender.name}'),
+    ('${lender.address}'),
+    ('${lender.phone}')
 ;
 
 INSERT INTO
@@ -77,5 +83,11 @@ VALUES
     ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'CONTRACT_ENACTMENT_HEADING', 10032),
     ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'CONTRACT_ENACTMENT_1', 10033),
     ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'CONTRACT_INFO_HEADING', 10034),
-    ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'CONTRACT_INFO_1', 10035)
+    ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'CONTRACT_INFO_1', 10035),
+    ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'BORROWER_NAME', 10036),
+    ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'BORROWER_ADDRESS', 10037),
+    ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'BORROWER_PHONE', 10038),
+    ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'LENDER_NAME', 10039),
+    ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'LENDER_ADDRESS', 10040),
+    ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'LENDER_PHONE', 10041)
 ;

@@ -10,8 +10,8 @@ import java.util.List;
 public class LoanContractInputDto {
 
     private String loanTypeCode;
-    private Borrower borrower = new Borrower();
-    private Lender lender = new Lender();
+    private Borrower borrower;
+    private Lender lender;
     private List<ScheduleLines> schedule;
     private ContractDetails loan;
 

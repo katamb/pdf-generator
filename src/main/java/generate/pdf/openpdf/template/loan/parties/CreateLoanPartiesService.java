@@ -1,9 +1,7 @@
 package generate.pdf.openpdf.template.loan.parties;
 
 import com.lowagie.text.Document;
-import com.lowagie.text.Element;
 import com.lowagie.text.Font;
-import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
@@ -23,25 +21,27 @@ public class CreateLoanPartiesService {
 
     public void createPartiesData(Document document,
                                   Map<String, TextBlockWithStyle> textBlocksWithStyle,
-                                  LoanContractInputDto loanContractInputDto) {
+                                  LoanContractInputDto loanContractInputDto,
+                                  Map<String, Object> map) {
         Font font = new Font(Font.HELVETICA);
 
         PdfPTable table = new PdfPTable(5);
         table.setTotalWidth(new float[]{ 90, 165, 20, 90, 165 });
         table.setLockedWidth(true);
 
-        createFirstRow(textBlocksWithStyle, table, font);
+        createFirstRow(textBlocksWithStyle, table, map, font);
 
-        createOtherRows(textBlocksWithStyle, table, font, loanContractInputDto);
+        createOtherRows(textBlocksWithStyle, table, font, map, loanContractInputDto);
 
         document.add(table);
     }
 
     private void createFirstRow(Map<String, TextBlockWithStyle> textBlocksWithStyle,
                                 PdfPTable table,
+                                Map<String, Object> map,
                                 Font font) {
         TextBlockWithStyle textBlockWithStyle = textBlocksWithStyle.get("LENDER");
-        PdfPCell cell = createCellService.createCellWithStyles(font, textBlockWithStyle);
+        PdfPCell cell = createCellService.createCellWithStyles(font, textBlockWithStyle, map);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setColspan(2);
         table.addCell(cell);
@@ -49,7 +49,7 @@ public class CreateLoanPartiesService {
         table.addCell(createCellService.createEmptyCellWithNoStyles());
 
         textBlockWithStyle = textBlocksWithStyle.get("BORROWER");
-        cell = createCellService.createCellWithStyles(font, textBlockWithStyle);
+        cell = createCellService.createCellWithStyles(font, textBlockWithStyle, map);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setColspan(2);
         table.addCell(cell);
@@ -59,17 +59,18 @@ public class CreateLoanPartiesService {
             Map<String, TextBlockWithStyle> textBlocksWithStyle,
             PdfPTable table,
             Font font,
+            Map<String, Object> map,
             LoanContractInputDto loanContractInputDto
     ) {
-        createFiveCellRow(table, font,
+        createFiveCellRow(table, font, map,
                 textBlocksWithStyle.get("NAME"), textBlocksWithStyle.get("LENDER_NAME"),
                 textBlocksWithStyle.get("NAME"), textBlocksWithStyle.get("BORROWER_NAME"));
 
-        createFiveCellRow(table, font,
+        createFiveCellRow(table, font, map,
                 textBlocksWithStyle.get("PHONE"), textBlocksWithStyle.get("LENDER_PHONE"),
                 textBlocksWithStyle.get("PHONE"), textBlocksWithStyle.get("BORROWER_PHONE"));
 
-        createFiveCellRow(table, font,
+        createFiveCellRow(table, font, map,
                 textBlocksWithStyle.get("ADDRESS"), textBlocksWithStyle.get("LENDER_ADDRESS"),
                 textBlocksWithStyle.get("ADDRESS"), textBlocksWithStyle.get("BORROWER_ADDRESS"));
     }
@@ -77,26 +78,27 @@ public class CreateLoanPartiesService {
     private void createFiveCellRow(
             PdfPTable table,
             Font font,
+            Map<String, Object> map,
             TextBlockWithStyle firstCellStaticText,
             TextBlockWithStyle secondCellStaticText,
             TextBlockWithStyle thirdCellStaticText,
             TextBlockWithStyle fourthCellStaticText
     ) {
-        PdfPCell cell = createCellService.createCellWithStyles(font, firstCellStaticText);
+        PdfPCell cell = createCellService.createCellWithStyles(font, firstCellStaticText, map);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
 
-        cell = createCellService.createCellWithStyles(font, secondCellStaticText);
+        cell = createCellService.createCellWithStyles(font, secondCellStaticText, map);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
 
         table.addCell(createCellService.createEmptyCellWithNoStyles());
 
-        cell = createCellService.createCellWithStyles(font, thirdCellStaticText);
+        cell = createCellService.createCellWithStyles(font, thirdCellStaticText, map);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
 
-        cell = createCellService.createCellWithStyles(font, fourthCellStaticText);
+        cell = createCellService.createCellWithStyles(font, fourthCellStaticText, map);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
     }

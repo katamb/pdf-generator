@@ -19,11 +19,11 @@ public class PdfGeneratorController {
     private final PrintoutGeneratorProvider printoutGeneratorProvider;
 
     @PostMapping("generate/pdf/{printoutType}/{languageCode}")
-    public void pdfGenerator(@PathVariable PrintoutType printoutType,
+    public String pdfGenerator(@PathVariable PrintoutType printoutType,
                              @PathVariable LanguageCode languageCode,
                              @RequestBody String inputData) {
         PdfGenerator pdfGenerator = printoutGeneratorProvider.getPrintoutGeneratorForGivenPrintoutType(printoutType);
-        pdfGenerator.generatePrintoutAndReturnFileName(printoutType, languageCode, inputData);
+        return pdfGenerator.generatePrintoutAndReturnFileName(printoutType, languageCode, inputData);
     }
 
     @CrossOrigin

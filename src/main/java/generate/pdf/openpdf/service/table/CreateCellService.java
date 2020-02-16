@@ -9,6 +9,8 @@ import generate.pdf.openpdf.service.DynamicDataInjectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class CreateCellService {
@@ -17,15 +19,25 @@ public class CreateCellService {
 
     public PdfPCell createCellWithStyles(
             Font font,
-            TextBlockWithStyle textBlockWithStyle
+            TextBlockWithStyle textBlockWithStyle,
+            Map<String, Object> map
     ) {
         font.setSize(textBlockWithStyle.getTextSize());
-        Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, textBlockWithStyle.getTextBlockValue());
+        String injectedText = getText(textBlockWithStyle, map);
+        Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, injectedText);
         PdfPCell cell = new PdfPCell(phrase);
         cell.setVerticalAlignment(textBlockWithStyle.getVerticalAlignment());
         cell.setHorizontalAlignment(textBlockWithStyle.getHorizontalAlignment());
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
+    }
+
+    private String getText(TextBlockWithStyle textBlockWithStyle, Map<String, Object> map) {
+        if (map == null) {
+            return textBlockWithStyle.getTextBlockValue();
+        } else {
+            return dynamicDataInjectionService.injectValues(textBlockWithStyle.getTextBlockValue(), map);
+        }
     }
 
     public PdfPCell createEmptyCellWithNoStyles() {

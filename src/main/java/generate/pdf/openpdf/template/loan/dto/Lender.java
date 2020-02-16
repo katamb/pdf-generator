@@ -9,10 +9,6 @@ public class Lender {
     private String name;
     private String address;
     private String phone;
+    private String iban;
 
-    public Lender() {
-        this.name = "a";
-        this.address = "a";
-        this.phone = "a";
-    }
 }

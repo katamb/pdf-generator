@@ -3,6 +3,7 @@ package generate.pdf.openpdf.service;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
 import com.lowagie.text.Phrase;
+import generate.pdf.openpdf.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -14,17 +15,9 @@ import java.util.regex.Pattern;
 @Service
 public class DynamicDataInjectionService {
 
-    //    private String injector(String staticText, Map dynamicData) {
-//        Pattern pattern = Pattern.compile("\\$\\{.+}");
-//        Matcher matcher = pattern.matcher(staticText);
-//        if (matcher.find()) {
-//            System.out.println(matcher.group(1));
-//        }
-//    }
-
-    private String injector(String staticText, Map dynamicData) {
-        // Match pattern ${x}, where x is any english alphanumeric character, underscore, dot or minus
-        Pattern pattern = Pattern.compile("\\$\\{[^;]*}");
+    public String injectValues(String staticText, Map dynamicData) {
+        // Match pattern ${x}, where x is any character except whitespace
+        Pattern pattern = Pattern.compile("\\$\\{[^\\s]*}");
         Matcher matcher = pattern.matcher(staticText);
         // Text can't be directly changed in loop
         String staticTextCopy = staticText;
@@ -32,20 +25,24 @@ public class DynamicDataInjectionService {
             String replaceableText = staticText.substring(matcher.start(), matcher.end());
             String[] mapPathToValue = replaceableText.substring(2, replaceableText.length() - 1).split("\\.");
             LinkedList<String> ads = new LinkedList<>(Arrays.asList(mapPathToValue));
-            staticTextCopy = staticTextCopy.replace(replaceableText, findMapValue(ads, dynamicData));
+            staticTextCopy = staticTextCopy.replace(replaceableText, findMapValue(ads, dynamicData, replaceableText));
         }
         return staticTextCopy;
     }
 
-    private String findMapValue(LinkedList<String> valueLocationInMap, Map dynamicDataMap) {
-        if (valueLocationInMap.size() == 1) {
-            return dynamicDataMap.get(valueLocationInMap.get(0)).toString();
+    private String findMapValue(LinkedList<String> valueLocationInMap, Map dynamicDataMap, String replaceableText) {
+        try {
+            if (valueLocationInMap.size() == 1) {
+                return dynamicDataMap.get(valueLocationInMap.get(0)).toString();
+            }
+            String temp = valueLocationInMap.get(0);
+            valueLocationInMap.removeFirst();
+            return findMapValue(valueLocationInMap, (Map) dynamicDataMap.get(temp), replaceableText);
+        } catch (NullPointerException e) {
+            String message = String.format("Missing value in input: %s.", replaceableText);
+            throw new BadRequestException(message);
         }
-        String temp = valueLocationInMap.get(0);
-        valueLocationInMap.removeFirst();
-        return findMapValue(valueLocationInMap, (Map) dynamicDataMap.get(temp));
     }
-
 
     public Phrase getBoldStrings(Font font, String text) {
         Pattern pattern = Pattern.compile("\\*\\*[^;]*\\*\\*");
@@ -72,4 +69,5 @@ public class DynamicDataInjectionService {
 
         return phrase;
     }
+
 }

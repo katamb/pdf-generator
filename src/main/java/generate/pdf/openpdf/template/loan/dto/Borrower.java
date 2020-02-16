@@ -9,11 +9,6 @@ public class Borrower {
     private String name;
     private String address;
     private String phone;
+    private String iban;
 
-
-    public Borrower() {
-        this.name = "b";
-        this.address = "b";
-        this.phone = "b";
-    }
 }

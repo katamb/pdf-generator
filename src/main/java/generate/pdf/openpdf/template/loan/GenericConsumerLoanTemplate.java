@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +34,7 @@ public class GenericConsumerLoanTemplate implements PdfGenerator {
     private final CreateLoanPartiesService createLoanPartiesService;
     private final CreateLoanConditionsService createLoanConditionsService;
     private final TextBlockService textBlockService;
+    private final ObjectMapper objectMapper;
 
     @Override
     public String generatePrintoutAndReturnFileName(PrintoutType printoutType,
@@ -40,32 +42,33 @@ public class GenericConsumerLoanTemplate implements PdfGenerator {
                                                     String inputData) {
         // Get json input as Java object
         LoanContractInputDto loanContractInputDto = mapStringToObject(inputData);
+        Map<String, Object> map = objectMapper.convertValue(loanContractInputDto, Map.class);
         // Get static text with design advice from db
         Map<String, TextBlockWithStyle> textBlocksWithStyle =
                 textBlockService.getTextsByGroupAndLanguage(printoutType, languageCode);
+        String fileName = "Loan-contract-v1.pdf";  // todo real filename
 
         // 1: creation of a document-object
         try (Document document = new Document()) {
             // 2: we create a writer that listens to the document
-            PdfWriter.getInstance(document, new FileOutputStream("Loan-contract-v1.pdf"));
+            PdfWriter.getInstance(document, new FileOutputStream(fileName));
             // 3: add header and footer todo
 
             // 4: we open the document
             document.open();
             // 5: first paragraph
-            createLoanPartiesService.createPartiesData(document, textBlocksWithStyle, loanContractInputDto);
+            createLoanPartiesService.createPartiesData(document, textBlocksWithStyle, loanContractInputDto, map);
             // 6: main conditions
-            createLoanConditionsService.createMainConditions(document, textBlocksWithStyle, loanContractInputDto);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            createLoanConditionsService.createMainConditions(document, textBlocksWithStyle, loanContractInputDto, map);
+        } catch (FileNotFoundException e) {
+            throw new BadRequestException(e.getMessage());
         }
-        return ""; // todo filename goes here
+        return fileName;
     }
-
 
     @Override
     public byte[] generatePrintoutAndReturnFileName(PrintoutType printoutType,
-                                                                  LanguageCode languageCode) {
+                                                    LanguageCode languageCode) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         // Get static text with design advice from db
         Map<String, TextBlockWithStyle> textBlocksWithStyle =
@@ -81,18 +84,17 @@ public class GenericConsumerLoanTemplate implements PdfGenerator {
             // 4: we open the document
             document.open();
             // 5: first paragraph
-            createLoanPartiesService.createPartiesData(document, textBlocksWithStyle, loanContractInputDto);
+            createLoanPartiesService.createPartiesData(document, textBlocksWithStyle, loanContractInputDto, null);
             // 6: main conditions
-            createLoanConditionsService.createMainConditions(document, textBlocksWithStyle, loanContractInputDto);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            createLoanConditionsService.createMainConditions(document, textBlocksWithStyle, loanContractInputDto, null);
+        } catch (NullPointerException e) {
+            throw new BadRequestException(e.getMessage());
         }
         return outputStream.toByteArray();
     }
 
     private LoanContractInputDto mapStringToObject(String inputData) {
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
             return objectMapper.readValue(inputData, LoanContractInputDto.class);
         } catch (Exception e) {
             throw new BadRequestException("Failed to map input data to corresponding Java class!");

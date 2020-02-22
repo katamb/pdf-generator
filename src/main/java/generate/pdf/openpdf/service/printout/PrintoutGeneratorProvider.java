@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.service.printout;
 
-import generate.pdf.openpdf.enums.PrintoutType;
+import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,9 +14,9 @@ public class PrintoutGeneratorProvider {
 
     private final List<PdfGenerator> pdfGenerators;
 
-    public PdfGenerator getPrintoutGeneratorForGivenPrintoutType(PrintoutType printoutType) {
+    public PdfGenerator getPrintoutGeneratorForGivenPrintoutType(TemplateCode templateCode) {
         List<PdfGenerator> matchingPdfGenerators = pdfGenerators.stream()
-                .filter(generator -> generator.getSupportedPrintouts().contains(printoutType))
+                .filter(generator -> generator.getSupportedPrintouts().contains(templateCode))
                 .collect(Collectors.toList());
 
         if (matchingPdfGenerators.size() != 1) {

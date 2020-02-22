@@ -1,7 +1,7 @@
 package generate.pdf.openpdf.controller;
 
 import generate.pdf.openpdf.enums.LanguageCode;
-import generate.pdf.openpdf.enums.PrintoutType;
+import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.service.printout.PdfGenerator;
 import generate.pdf.openpdf.service.printout.PrintoutGeneratorProvider;
 import lombok.RequiredArgsConstructor;
@@ -18,20 +18,20 @@ public class PdfGeneratorController {
 
     private final PrintoutGeneratorProvider printoutGeneratorProvider;
 
-    @PostMapping("generate/pdf/{printoutType}/{languageCode}")
-    public String pdfGenerator(@PathVariable PrintoutType printoutType,
+    @PostMapping("generate/pdf/{templateCode}/{languageCode}")
+    public String pdfGenerator(@PathVariable TemplateCode templateCode,
                              @PathVariable LanguageCode languageCode,
                              @RequestBody String inputData) {
-        PdfGenerator pdfGenerator = printoutGeneratorProvider.getPrintoutGeneratorForGivenPrintoutType(printoutType);
-        return pdfGenerator.generatePrintoutAndReturnFileName(printoutType, languageCode, inputData);
+        PdfGenerator pdfGenerator = printoutGeneratorProvider.getPrintoutGeneratorForGivenPrintoutType(templateCode);
+        return pdfGenerator.generatePrintoutAndReturnFileName(templateCode, languageCode, inputData);
     }
 
     @CrossOrigin
-    @GetMapping(value = "edit/pdf/{printoutType}/{languageCode}", produces = MediaType.APPLICATION_PDF_VALUE)
-    public ResponseEntity<byte[]> pdfEditor(@PathVariable PrintoutType printoutType,
+    @GetMapping(value = "edit/pdf/{templateCode}/{languageCode}", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> pdfEditor(@PathVariable TemplateCode templateCode,
                                             @PathVariable LanguageCode languageCode) {
-        PdfGenerator pdfGenerator = printoutGeneratorProvider.getPrintoutGeneratorForGivenPrintoutType(printoutType);
-        byte[] pdfFile = pdfGenerator.generatePrintoutAndReturnFileName(printoutType, languageCode);
+        PdfGenerator pdfGenerator = printoutGeneratorProvider.getPrintoutGeneratorForGivenPrintoutType(templateCode);
+        byte[] pdfFile = pdfGenerator.generatePrintoutAndReturnFileName(templateCode, languageCode);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
 

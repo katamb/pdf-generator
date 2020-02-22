@@ -1,20 +1,20 @@
 package generate.pdf.openpdf.util;
 
-import generate.pdf.openpdf.enums.PrintoutType;
+import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.exception.BadRequestException;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PrintoutTypeToEnumConverter implements Converter<String, PrintoutType> {
+public class PrintoutTypeToEnumConverter implements Converter<String, TemplateCode> {
 
     /**
      * Allow lowercase values to be mapped to uppercase enums for printout types.
      */
     @Override
-    public PrintoutType convert(String source) {
+    public TemplateCode convert(String source) {
         try {
-            return PrintoutType.valueOf(source.toUpperCase());
+            return TemplateCode.valueOf(source.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("This printout type does not exist!");
         }

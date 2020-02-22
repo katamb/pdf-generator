@@ -5,6 +5,7 @@ build/
 !**/src/main/**
 !**/src/test/**
 client/node_modules
+files/
 
 ### STS ###
 .apt_generated

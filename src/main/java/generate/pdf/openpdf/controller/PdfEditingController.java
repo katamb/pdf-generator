@@ -2,7 +2,7 @@ package generate.pdf.openpdf.controller;
 
 import generate.pdf.openpdf.dto.ResponseWithReason;
 import generate.pdf.openpdf.dto.TextBlockWithStyle;
-import generate.pdf.openpdf.enums.PrintoutType;
+import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.enums.UpdateType;
 import generate.pdf.openpdf.mapper.TextBlockMapper;
 import generate.pdf.openpdf.service.TextUpdatingService;
@@ -38,9 +38,9 @@ public class PdfEditingController {
     }
 
     @CrossOrigin
-    @GetMapping("template-languages/{printoutType}")
-    public List<String> pdfEditor(@PathVariable PrintoutType printoutType) {
-        return textBlockMapper.findAllLanguagesForTemplate(printoutType.name());
+    @GetMapping("template-languages/{templateCode}")
+    public List<String> pdfEditor(@PathVariable TemplateCode templateCode) {
+        return textBlockMapper.findAllLanguagesForTemplate(templateCode.name());
     }
 
     @CrossOrigin

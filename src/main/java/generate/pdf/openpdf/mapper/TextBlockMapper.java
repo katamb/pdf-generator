@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 public interface TextBlockMapper {
 
-    List<TextBlockWithStyle> getTextsByGroupAndLanguage(@Param("printoutType") String printoutType,
+    List<TextBlockWithStyle> getTextsByGroupAndLanguage(@Param("templateCode") String templateCode,
                                                         @Param("languageCode") String languageCode);
 
     TextBlockWithStyle findTextBlockById(@Param("id") Long id);

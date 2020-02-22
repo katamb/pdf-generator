@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.enums;
 
-public enum PrintoutType {
+public enum TemplateCode {
 
     CONSUMER_CAR_LOAN_EE,
     CONSUMER_SMALL_LOAN_EE,

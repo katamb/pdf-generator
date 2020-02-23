@@ -79,10 +79,10 @@ public class CreateLoanConditionsService {
             TextBlockWithStyle textWithStyle,
             Map<String, Object> map
     ) {
-        PdfPCell cell = createCellService.createCellWithStyles(font, createNewBlockFromExistingWithSameStyles(textWithStyle, number), map);
+        PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, createNewBlockFromExistingWithSameStyles(textWithStyle, number), map);
         table.addCell(cell);
 
-        cell = createCellService.createCellWithStyles(font, textWithStyle, map);
+        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textWithStyle, map);
         table.addCell(cell);
     }
 

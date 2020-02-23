@@ -41,7 +41,7 @@ public class CreateLoanPartiesService {
                                 Map<String, Object> map,
                                 Font font) {
         TextBlockWithStyle textBlockWithStyle = textBlocksWithStyle.get("LENDER");
-        PdfPCell cell = createCellService.createCellWithStyles(font, textBlockWithStyle, map);
+        PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textBlockWithStyle, map);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setColspan(2);
         table.addCell(cell);
@@ -49,7 +49,7 @@ public class CreateLoanPartiesService {
         table.addCell(createCellService.createEmptyCellWithNoStyles());
 
         textBlockWithStyle = textBlocksWithStyle.get("BORROWER");
-        cell = createCellService.createCellWithStyles(font, textBlockWithStyle, map);
+        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textBlockWithStyle, map);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setColspan(2);
         table.addCell(cell);
@@ -84,21 +84,21 @@ public class CreateLoanPartiesService {
             TextBlockWithStyle thirdCellStaticText,
             TextBlockWithStyle fourthCellStaticText
     ) {
-        PdfPCell cell = createCellService.createCellWithStyles(font, firstCellStaticText, map);
+        PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, firstCellStaticText, map);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
 
-        cell = createCellService.createCellWithStyles(font, secondCellStaticText, map);
+        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, secondCellStaticText, map);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
 
         table.addCell(createCellService.createEmptyCellWithNoStyles());
 
-        cell = createCellService.createCellWithStyles(font, thirdCellStaticText, map);
+        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, thirdCellStaticText, map);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
 
-        cell = createCellService.createCellWithStyles(font, fourthCellStaticText, map);
+        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, fourthCellStaticText, map);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
     }

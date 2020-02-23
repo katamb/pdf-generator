@@ -15,6 +15,19 @@ import java.util.regex.Pattern;
 @Service
 public class DynamicDataInjectionService {
 
+    public String injectValue(String currentText, String newString) {
+        // Match pattern ${x}, where x is any character except whitespace
+        Pattern pattern = Pattern.compile("\\$\\{[^\\s]*}");
+        Matcher matcher = pattern.matcher(currentText);
+        // Text can't be directly changed in loop
+        String currentTextCopy = currentText;
+        while (matcher.find()) {
+            String replaceableText = currentText.substring(matcher.start(), matcher.end());
+            currentTextCopy = currentTextCopy.replace(replaceableText, newString);
+        }
+        return currentTextCopy;
+    }
+
     public String injectValues(String staticText, Map dynamicData) {
         // Match pattern ${x}, where x is any character except whitespace
         Pattern pattern = Pattern.compile("\\$\\{[^\\s]*}");

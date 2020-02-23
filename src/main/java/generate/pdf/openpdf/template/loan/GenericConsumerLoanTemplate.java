@@ -13,6 +13,7 @@ import generate.pdf.openpdf.template.loan.dto.LoanContractInputDto;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.template.loan.parties.CreateLoanPartiesService;
+import generate.pdf.openpdf.template.loan.schedule.CreateLoanScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +32,11 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
             PRIVATE_SMALL_LOAN_CONTRACT_EE
     );
 
+    private final ObjectMapper objectMapper;
     private final TextBlockService textBlockService;
     private final CreateLoanPartiesService createLoanPartiesService;
     private final CreateLoanConditionsService createLoanConditionsService;
-    private final ObjectMapper objectMapper;
+    private final CreateLoanScheduleService createLoanScheduleService;
 
     @Override
     public void generatePdf(TemplateCode templateCode, LanguageCode languageCode, String inputData, OutputStream outputStream) {
@@ -59,7 +61,12 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
             createLoanPartiesService.createPartiesData(document, textBlocksWithStyle, loanContractInputDto, inputValueMap);
             // 6: main conditions
             createLoanConditionsService.createMainConditions(document, textBlocksWithStyle, loanContractInputDto, inputValueMap);
+            // New page
+            document.newPage();
+            // 6: schedule
+            createLoanScheduleService.createSchedule(document, textBlocksWithStyle, loanContractInputDto, inputValueMap);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BadRequestException(e.getMessage());
         }
     }

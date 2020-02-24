@@ -6,10 +6,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <include file="db_setup/2020-01-25-initial-setup.xml" relativeToChangelogFile="true"/>
-
-    <include file="loan_contract/2020-01-25-loan-contract-setup.xml" relativeToChangelogFile="true"/>
-
-    <include file="loan_contract/2020-02-22-loan-schedule-setup.xml" relativeToChangelogFile="true"/>
+    <changeSet id="create-loan-schedule-entries" author="setup">
+        <sqlFile path="loan-schedule-setup.sql" relativeToChangelogFile="true" endDelimiter="\nGO"/>
+    </changeSet>
 
 </databaseChangeLog>

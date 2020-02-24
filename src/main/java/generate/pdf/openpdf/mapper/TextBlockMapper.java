@@ -10,10 +10,16 @@ import java.util.List;
 @Mapper
 public interface TextBlockMapper {
 
-    List<TextBlockWithStyle> getTextsByGroupAndLanguage(@Param("templateCode") String templateCode,
-                                                        @Param("languageCode") String languageCode);
+    List<TextBlockWithStyle> getTextsByGroupAndLanguage(
+            @Param("templateCode") String templateCode,
+            @Param("languageCode") String languageCode
+    );
 
-    TextBlockWithStyle findTextBlockById(@Param("id") Long id);
+    TextBlockWithStyle findTextBlockById(
+            @Param("templateCode") String templateCode,
+            @Param("languageCode") String languageCode,
+            @Param("id") Long id
+    );
 
     String findTextBlockValueById(@Param("id") Long id);
 

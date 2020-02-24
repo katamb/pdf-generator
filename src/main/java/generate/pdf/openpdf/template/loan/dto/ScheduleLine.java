@@ -8,10 +8,12 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-public class ScheduleLines {
+public class ScheduleLine {
 
+    private String paymentDate;
     private BigDecimal principal;
     private BigDecimal interest;
-    private LocalDate paymentDate;
+    private BigDecimal administrationFee;
+    private BigDecimal payment;
 
 }

@@ -13,7 +13,8 @@ public class LoanContractInputDto extends InputData {
     private String loanTypeCode;
     private Borrower borrower;
     private Lender lender;
-    private List<ScheduleLines> schedule;
+    private List<ScheduleYear> scheduleYears;
+    private ScheduleLine scheduleSummary;
     private ContractDetails loan;
 
 }

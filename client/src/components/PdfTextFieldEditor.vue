@@ -7,28 +7,30 @@
         <h5>Would you like to make that change in all templates where this text is shown or only in this template?</h5>
       </div>
       <div class="text-center">
-      <b-button class="m-3"
-                variant="success"
-                @click="updateText(updateOnlyCurrent)">Only in this template</b-button>
-      <b-button class="m-3"
-                variant="warning"
-                @click="updateText(updateAll)">In all templates</b-button>
+        <b-button class="m-3"
+                  variant="success"
+                  @click="updateText(updateOnlyCurrent)">Only in this template
+        </b-button>
+        <b-button class="m-3"
+                  variant="warning"
+                  @click="updateText(updateAll)">In all templates
+        </b-button>
       </div>
     </b-modal>
 
-    <b-row class="justify-content-center">
-      <b-col xs="12" sm="10" md="8" lg="6" xl="5">
-        <b-input-group class="mt-1 mb-2 mx-auto"
-                       prepend="Text block ID">
-          <b-form-input type="number"
-                        v-model="id">
-          </b-form-input>
-          <b-input-group-append>
-            <b-button size="sm" @click="getText" variant="dark">Find</b-button>
-          </b-input-group-append>
-        </b-input-group>
-      </b-col>
-    </b-row>
+<!--    <b-row class="justify-content-center">-->
+<!--      <b-col xs="12" sm="10" md="8" lg="6" xl="5">-->
+<!--        <b-input-group class="mt-1 mb-2 mx-auto"-->
+<!--                       prepend="Text block ID">-->
+<!--          <b-form-input type="number"-->
+<!--                        v-model="id">-->
+<!--          </b-form-input>-->
+<!--          <b-input-group-append>-->
+<!--            <b-button size="sm" @click="getText" variant="dark">Find</b-button>-->
+<!--          </b-input-group-append>-->
+<!--        </b-input-group>-->
+<!--      </b-col>-->
+<!--    </b-row>-->
 
     <div v-if="this.json !== null && this.json !== undefined" class="mt-3">
 
@@ -93,11 +95,10 @@
 
 
 <script lang="ts">
-    import {Component, Prop, Vue} from "vue-property-decorator";
+    import {Component, Prop, Vue, Watch} from "vue-property-decorator";
     import {getRequest, putRequest} from "@/requests";
     import {
-        CONFIRM_UPDATE,
-        HORIZONTAL_ALIGN_CENTER, HORIZONTAL_ALIGN_DEFAULT, HORIZONTAL_ALIGN_JUSTIFIED,
+        CONFIRM_UPDATE, HORIZONTAL_ALIGN_CENTER, HORIZONTAL_ALIGN_DEFAULT, HORIZONTAL_ALIGN_JUSTIFIED,
         HORIZONTAL_ALIGN_LEFT, HORIZONTAL_ALIGN_RIGHT, UPDATE_ALL, UPDATE_ONLY_CURRENT, VERTICAL_ALIGN_BOTTOM,
         VERTICAL_ALIGN_CENTER, VERTICAL_ALIGN_TOP
     } from "@/constants";
@@ -117,13 +118,22 @@
         private updateAll = UPDATE_ALL;
         private updateOnlyCurrent = UPDATE_ONLY_CURRENT;
         private confirmUpdate = CONFIRM_UPDATE;
-        private id = 0;
+        // private id = 0;
         private json: any = null;
         private showModal = false;
         private errorMessage = '';
 
+        private mounted(): void {
+            this.getText();
+        }
+
+        @Watch('$route')
+        onPropertyChanged(value: string, oldValue: string) {
+            this.getText();
+        }
+
         private getText(): void {
-            getRequest(`/api/v1/text-by-id/${this.id}`)
+            getRequest(`/api/v1/text-by-id/${this.$route.params.template}/${this.$route.params.language}/${this.$route.params.id}`)
                 .then(response => response.json())
                 .then(jsons => this.json = jsons)
             ;

@@ -6,6 +6,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import generate.pdf.openpdf.dto.TextBlockWithStyle;
 import generate.pdf.openpdf.service.DynamicDataInjectionService;
+import generate.pdf.openpdf.template.loan.schedule.LinkInCell;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +18,13 @@ public class CreateCellService {
 
     private final DynamicDataInjectionService dynamicDataInjectionService;
 
-    public PdfPCell createCellWithStyles(
+    public PdfPCell createCellWithStylesWhenDynamicDataGiven(
             Font font,
             TextBlockWithStyle textBlockWithStyle,
-            Map<String, Object> map
+            String replacement
     ) {
         font.setSize(textBlockWithStyle.getTextSize());
-        String injectedText = getText(textBlockWithStyle, map);
+        String injectedText = getText(textBlockWithStyle, replacement);
         Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, injectedText);
         PdfPCell cell = new PdfPCell(phrase);
         cell.setVerticalAlignment(textBlockWithStyle.getVerticalAlignment());
@@ -32,11 +33,51 @@ public class CreateCellService {
         return cell;
     }
 
-    private String getText(TextBlockWithStyle textBlockWithStyle, Map<String, Object> map) {
-        if (map == null) {
+    public PdfPCell createCellWithStylesDynamicDataFromMapIfPossible(
+            Font font,
+            TextBlockWithStyle textBlockWithStyle,
+            Map<String, Object> inputData,
+            String url
+    ) {
+        font.setSize(textBlockWithStyle.getTextSize());
+        String injectedText = getText(textBlockWithStyle, inputData);
+        Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, injectedText);
+        PdfPCell cell = new PdfPCell(phrase);
+        cell.setVerticalAlignment(textBlockWithStyle.getVerticalAlignment());
+        cell.setHorizontalAlignment(textBlockWithStyle.getHorizontalAlignment());
+        cell.setBorder(Rectangle.NO_BORDER);
+        if (url != null) {
+            cell.setCellEvent(new LinkInCell(url + textBlockWithStyle.getTemplateToTextTranslationId()));
+        }
+        return cell;
+    }
+
+    public PdfPCell createCellWithStylesNoSubstitutions(Font font, TextBlockWithStyle textBlockWithStyle, String url) {
+        font.setSize(textBlockWithStyle.getTextSize());
+        Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, textBlockWithStyle.getTextBlockValue());
+        PdfPCell cell = new PdfPCell(phrase);
+        cell.setVerticalAlignment(textBlockWithStyle.getVerticalAlignment());
+        cell.setHorizontalAlignment(textBlockWithStyle.getHorizontalAlignment());
+        cell.setBorder(Rectangle.NO_BORDER);
+        if (url != null) {
+            cell.setCellEvent(new LinkInCell(url + textBlockWithStyle.getTemplateToTextTranslationId()));
+        }
+        return cell;
+    }
+
+    private String getText(TextBlockWithStyle textBlockWithStyle, Map<String, Object> inputData) {
+        if (inputData == null) {
             return textBlockWithStyle.getTextBlockValue();
         } else {
-            return dynamicDataInjectionService.injectValues(textBlockWithStyle.getTextBlockValue(), map);
+            return dynamicDataInjectionService.injectValues(textBlockWithStyle.getTextBlockValue(), inputData);
+        }
+    }
+
+    private String getText(TextBlockWithStyle textBlockWithStyle, String inputData) {
+        if (inputData == null) {
+            return textBlockWithStyle.getTextBlockValue();
+        } else {
+            return dynamicDataInjectionService.injectValue(textBlockWithStyle.getTextBlockValue(), inputData);
         }
     }
 

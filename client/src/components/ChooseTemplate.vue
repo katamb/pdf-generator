@@ -54,7 +54,7 @@
         }
 
         private navigateToEditPage(): void {
-            router.push({path: `edit-pdf/${this.selectedTemplate}/${this.selectedLanguage}`});
+            router.push({path: `edit-pdf/${this.selectedTemplate}/${this.selectedLanguage}/-`});
         }
 
     }

@@ -12,7 +12,7 @@ const routes = [
     component: Home
   },
   {
-    path: "/edit-pdf/:template/:language",
+    path: "/edit-pdf/:template/:language/:id",
     name: "EditPdf",
     component: EditPdf
   }

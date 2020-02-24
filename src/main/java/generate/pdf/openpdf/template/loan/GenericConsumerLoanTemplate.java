@@ -15,6 +15,7 @@ import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.template.loan.parties.CreateLoanPartiesService;
 import generate.pdf.openpdf.template.loan.schedule.CreateLoanScheduleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
@@ -32,6 +33,8 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
             PRIVATE_SMALL_LOAN_CONTRACT_EE
     );
 
+    @Value( "${frontend.address}" )
+    private String frontendAddress;
     private final ObjectMapper objectMapper;
     private final TextBlockService textBlockService;
     private final CreateLoanPartiesService createLoanPartiesService;
@@ -49,6 +52,9 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
         // Get static text with design advice from db
         Map<String, TextBlockWithStyle> textBlocksWithStyle =
                 textBlockService.getTextsByGroupAndLanguage(templateCode, languageCode);
+        String url = inputData == null
+                ? frontendAddress + templateCode.name() + "/" + languageCode.toString() + "/"
+                : null;
 
         try (Document document = new Document()) {
             // 2: we create a writer that listens to the document
@@ -58,13 +64,13 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
             // 4: we open the document
             document.open();
             // 5: first paragraph
-            createLoanPartiesService.createPartiesData(document, textBlocksWithStyle, loanContractInputDto, inputValueMap);
+            createLoanPartiesService.createPartiesData(document, textBlocksWithStyle, loanContractInputDto, inputValueMap, url);
             // 6: main conditions
-            createLoanConditionsService.createMainConditions(document, textBlocksWithStyle, loanContractInputDto, inputValueMap);
+            createLoanConditionsService.createMainConditions(document, textBlocksWithStyle, loanContractInputDto, inputValueMap, url);
             // New page
             document.newPage();
             // 6: schedule
-            createLoanScheduleService.createSchedule(document, textBlocksWithStyle, loanContractInputDto, inputValueMap);
+            createLoanScheduleService.createSchedule(document, textBlocksWithStyle, loanContractInputDto, inputValueMap, url);
         } catch (Exception e) {
             e.printStackTrace();
             throw new BadRequestException(e.getMessage());

@@ -6,6 +6,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import generate.pdf.openpdf.dto.TextBlockWithStyle;
 import generate.pdf.openpdf.service.DynamicDataInjectionService;
+import generate.pdf.openpdf.template.loan.schedule.LinkInCell;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,8 @@ public class CreateCellService {
     public PdfPCell createCellWithStylesDynamicDataFromMapIfPossible(
             Font font,
             TextBlockWithStyle textBlockWithStyle,
-            Map<String, Object> inputData
+            Map<String, Object> inputData,
+            String url
     ) {
         font.setSize(textBlockWithStyle.getTextSize());
         String injectedText = getText(textBlockWithStyle, inputData);
@@ -44,16 +46,22 @@ public class CreateCellService {
         cell.setVerticalAlignment(textBlockWithStyle.getVerticalAlignment());
         cell.setHorizontalAlignment(textBlockWithStyle.getHorizontalAlignment());
         cell.setBorder(Rectangle.NO_BORDER);
+        if (url != null) {
+            cell.setCellEvent(new LinkInCell(url + textBlockWithStyle.getTemplateToTextTranslationId()));
+        }
         return cell;
     }
 
-    public PdfPCell createCellWithStylesNoSubstitutions(Font font, TextBlockWithStyle textBlockWithStyle) {
+    public PdfPCell createCellWithStylesNoSubstitutions(Font font, TextBlockWithStyle textBlockWithStyle, String url) {
         font.setSize(textBlockWithStyle.getTextSize());
         Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, textBlockWithStyle.getTextBlockValue());
         PdfPCell cell = new PdfPCell(phrase);
         cell.setVerticalAlignment(textBlockWithStyle.getVerticalAlignment());
         cell.setHorizontalAlignment(textBlockWithStyle.getHorizontalAlignment());
         cell.setBorder(Rectangle.NO_BORDER);
+        if (url != null) {
+            cell.setCellEvent(new LinkInCell(url + textBlockWithStyle.getTemplateToTextTranslationId()));
+        }
         return cell;
     }
 

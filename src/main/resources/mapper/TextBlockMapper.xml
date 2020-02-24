@@ -27,7 +27,9 @@
                tttt.vertical_alignment
         FROM pdf_generator.template_to_text_translation tttt
              INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tttt.text_block_id
-        WHERE tttt.template_to_text_translation_id=#{id};
+        WHERE tttt.template_code=#{templateCode}
+            AND tttt.language_code=#{languageCode}
+            AND tttt.template_to_text_translation_id=#{id};
     </select>
 
     <select id="findTextBlockValueById" resultType="java.lang.String">

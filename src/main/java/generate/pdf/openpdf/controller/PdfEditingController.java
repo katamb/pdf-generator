@@ -2,6 +2,7 @@ package generate.pdf.openpdf.controller;
 
 import generate.pdf.openpdf.dto.ResponseWithReason;
 import generate.pdf.openpdf.dto.TextBlockWithStyle;
+import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.enums.UpdateType;
 import generate.pdf.openpdf.mapper.TextBlockMapper;
@@ -26,9 +27,13 @@ public class PdfEditingController {
     private final TextUpdatingService textUpdatingService;
 
     @CrossOrigin
-    @GetMapping("text-by-id/{id}")
-    public TextBlockWithStyle pdfEditor(@PathVariable Long id) {
-        return textBlockMapper.findTextBlockById(id);
+    @GetMapping("text-by-id/{templateCode}/{languageCode}/{id}")
+    public TextBlockWithStyle pdfEditor(
+            @PathVariable TemplateCode templateCode,
+            @PathVariable LanguageCode languageCode,
+            @PathVariable Long id
+    ) {
+        return textBlockMapper.findTextBlockById(templateCode.name(), languageCode.toString(), id);
     }
 
     @CrossOrigin

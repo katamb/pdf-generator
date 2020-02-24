@@ -19,29 +19,35 @@ public class CreateLoanPartiesService {
 
     private final CreateCellService createCellService;
 
-    public void createPartiesData(Document document,
-                                  Map<String, TextBlockWithStyle> textBlocksWithStyle,
-                                  LoanContractInputDto loanContractInputDto,
-                                  Map<String, Object> map) {
+    public void createPartiesData(
+            Document document,
+            Map<String, TextBlockWithStyle> textBlocksWithStyle,
+            LoanContractInputDto loanContractInputDto,
+            Map<String, Object> map,
+            String url
+    ) {
         Font font = new Font(Font.HELVETICA);
 
         PdfPTable table = new PdfPTable(5);
         table.setTotalWidth(new float[]{ 90, 165, 20, 90, 165 });
         table.setLockedWidth(true);
 
-        createFirstRow(textBlocksWithStyle, table, map, font);
+        createFirstRow(textBlocksWithStyle, table, map, font, url);
 
-        createOtherRows(textBlocksWithStyle, table, font, map, loanContractInputDto);
+        createOtherRows(textBlocksWithStyle, table, font, map, loanContractInputDto, url);
 
         document.add(table);
     }
 
-    private void createFirstRow(Map<String, TextBlockWithStyle> textBlocksWithStyle,
-                                PdfPTable table,
-                                Map<String, Object> map,
-                                Font font) {
+    private void createFirstRow(
+            Map<String, TextBlockWithStyle> textBlocksWithStyle,
+            PdfPTable table,
+            Map<String, Object> map,
+            Font font,
+            String url
+    ) {
         TextBlockWithStyle textBlockWithStyle = textBlocksWithStyle.get("LENDER");
-        PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textBlockWithStyle, map);
+        PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textBlockWithStyle, map, url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setColspan(2);
         table.addCell(cell);
@@ -49,7 +55,7 @@ public class CreateLoanPartiesService {
         table.addCell(createCellService.createEmptyCellWithNoStyles());
 
         textBlockWithStyle = textBlocksWithStyle.get("BORROWER");
-        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textBlockWithStyle, map);
+        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textBlockWithStyle, map, url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setColspan(2);
         table.addCell(cell);
@@ -60,17 +66,18 @@ public class CreateLoanPartiesService {
             PdfPTable table,
             Font font,
             Map<String, Object> map,
-            LoanContractInputDto loanContractInputDto
+            LoanContractInputDto loanContractInputDto,
+            String url
     ) {
-        createFiveCellRow(table, font, map,
+        createFiveCellRow(table, font, map, url,
                 textBlocksWithStyle.get("NAME"), textBlocksWithStyle.get("LENDER_NAME"),
                 textBlocksWithStyle.get("NAME"), textBlocksWithStyle.get("BORROWER_NAME"));
 
-        createFiveCellRow(table, font, map,
+        createFiveCellRow(table, font, map, url,
                 textBlocksWithStyle.get("PHONE"), textBlocksWithStyle.get("LENDER_PHONE"),
                 textBlocksWithStyle.get("PHONE"), textBlocksWithStyle.get("BORROWER_PHONE"));
 
-        createFiveCellRow(table, font, map,
+        createFiveCellRow(table, font, map, url,
                 textBlocksWithStyle.get("ADDRESS"), textBlocksWithStyle.get("LENDER_ADDRESS"),
                 textBlocksWithStyle.get("ADDRESS"), textBlocksWithStyle.get("BORROWER_ADDRESS"));
     }
@@ -79,26 +86,27 @@ public class CreateLoanPartiesService {
             PdfPTable table,
             Font font,
             Map<String, Object> map,
+            String url,
             TextBlockWithStyle firstCellStaticText,
             TextBlockWithStyle secondCellStaticText,
             TextBlockWithStyle thirdCellStaticText,
             TextBlockWithStyle fourthCellStaticText
     ) {
-        PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, firstCellStaticText, map);
+        PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, firstCellStaticText, map, url);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
 
-        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, secondCellStaticText, map);
+        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, secondCellStaticText, map, url);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
 
         table.addCell(createCellService.createEmptyCellWithNoStyles());
 
-        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, thirdCellStaticText, map);
+        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, thirdCellStaticText, map, url);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
 
-        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, fourthCellStaticText, map);
+        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, fourthCellStaticText, map, url);
         cell.setBorder(Rectangle.BOTTOM);
         table.addCell(cell);
     }

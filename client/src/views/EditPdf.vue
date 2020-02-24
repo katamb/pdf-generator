@@ -2,17 +2,17 @@
   <div class="about">
     <router-link to="/">Home</router-link>
 
-    <h1>Example page for editing PDF's</h1>
+    <h1>Page for editing PDF's</h1>
 
     <b-container fluid>
       <b-row>
 
         <b-col>
-          <PdfTextFieldEditor/>
+          <PdfTextFieldEditor />
         </b-col>
 
         <b-col>
-          <PdfViewer/>
+          <PdfViewer />
         </b-col>
 
       </b-row>
@@ -33,11 +33,7 @@
             PdfTextFieldEditor
         }
     })
-    export default class EditPdf extends Vue {
-
-    }
+    export default class EditPdf extends Vue {}
 </script>
 
-
-<style scoped>
-</style>
+<style scoped></style>

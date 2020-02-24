@@ -23,11 +23,11 @@
     export default class PdfViewer extends Vue {
         private pdf: any = null;
 
-        public created(): void {
+        created(): void {
             eventBus.$on('rerender-pdf', () => this.getPdf());
         }
 
-        private mounted(): void {
+        mounted(): void {
             this.getPdf();
         }
 

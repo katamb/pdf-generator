@@ -18,19 +18,7 @@
       </div>
     </b-modal>
 
-<!--    <b-row class="justify-content-center">-->
-<!--      <b-col xs="12" sm="10" md="8" lg="6" xl="5">-->
-<!--        <b-input-group class="mt-1 mb-2 mx-auto"-->
-<!--                       prepend="Text block ID">-->
-<!--          <b-form-input type="number"-->
-<!--                        v-model="id">-->
-<!--          </b-form-input>-->
-<!--          <b-input-group-append>-->
-<!--            <b-button size="sm" @click="getText" variant="dark">Find</b-button>-->
-<!--          </b-input-group-append>-->
-<!--        </b-input-group>-->
-<!--      </b-col>-->
-<!--    </b-row>-->
+    <Explanations/>
 
     <div v-if="this.json !== null && this.json !== undefined" class="mt-3">
 
@@ -93,9 +81,8 @@
   </div>
 </template>
 
-
 <script lang="ts">
-    import {Component, Prop, Vue, Watch} from "vue-property-decorator";
+    import {Component, Vue, Watch} from "vue-property-decorator";
     import {getRequest, putRequest} from "@/requests";
     import {
         CONFIRM_UPDATE, HORIZONTAL_ALIGN_CENTER, HORIZONTAL_ALIGN_DEFAULT, HORIZONTAL_ALIGN_JUSTIFIED,
@@ -103,27 +90,30 @@
         VERTICAL_ALIGN_CENTER, VERTICAL_ALIGN_TOP
     } from "@/constants";
     import eventBus from "@/eventBus";
+    import Explanations from "@/components/Explanations.vue";
 
-    @Component
+    @Component({
+        components: {
+            Explanations
+        }
+    })
     export default class PdfTextFieldEditor extends Vue {
-        // @Prop() private msg!: string;
-        private verticalAlignTop = VERTICAL_ALIGN_TOP;
-        private verticalAlignCenter = VERTICAL_ALIGN_CENTER;
-        private verticalAlignBottom = VERTICAL_ALIGN_BOTTOM;
-        private horizontalAlignLeft = HORIZONTAL_ALIGN_LEFT;
-        private horizontalAlignDefault = HORIZONTAL_ALIGN_DEFAULT;
-        private horizontalAlignCenter = HORIZONTAL_ALIGN_CENTER;
-        private horizontalAlignRight = HORIZONTAL_ALIGN_RIGHT;
-        private horizontalAlignJustified = HORIZONTAL_ALIGN_JUSTIFIED;
-        private updateAll = UPDATE_ALL;
-        private updateOnlyCurrent = UPDATE_ONLY_CURRENT;
-        private confirmUpdate = CONFIRM_UPDATE;
-        // private id = 0;
+        verticalAlignTop = VERTICAL_ALIGN_TOP;
+        verticalAlignCenter = VERTICAL_ALIGN_CENTER;
+        verticalAlignBottom = VERTICAL_ALIGN_BOTTOM;
+        horizontalAlignLeft = HORIZONTAL_ALIGN_LEFT;
+        horizontalAlignDefault = HORIZONTAL_ALIGN_DEFAULT;
+        horizontalAlignCenter = HORIZONTAL_ALIGN_CENTER;
+        horizontalAlignRight = HORIZONTAL_ALIGN_RIGHT;
+        horizontalAlignJustified = HORIZONTAL_ALIGN_JUSTIFIED;
+        updateAll = UPDATE_ALL;
+        updateOnlyCurrent = UPDATE_ONLY_CURRENT;
+        confirmUpdate = CONFIRM_UPDATE;
         private json: any = null;
         private showModal = false;
         private errorMessage = '';
 
-        private mounted(): void {
+        mounted(): void {
             this.getText();
         }
 
@@ -133,18 +123,28 @@
         }
 
         private getText(): void {
+            if (this.$route.params.id === "-") {
+                this.json = null;
+                return;
+            }
             getRequest(`/api/v1/text-by-id/${this.$route.params.template}/${this.$route.params.language}/${this.$route.params.id}`)
                 .then(response => response.json())
-                .then(jsons => this.json = jsons)
+                .then(response => {
+                    if (response.status !== null && response.status !== undefined && response.status !== 200) {
+                        this.json = null;
+                    } else {
+                        this.json = response;
+                    }
+                })
             ;
         }
 
-        private updateText(updateType: string): void {
+        updateText(updateType: string): void {
             putRequest(`/api/v1/update-text/${updateType}`, this.json)
                 .then((response) => response.json())
-                .then(jsons => {
-                    if (jsons.status === 300) {
-                        this.errorMessage = jsons.message;
+                .then(jsonResponse => {
+                    if (jsonResponse.status === 300) {
+                        this.errorMessage = jsonResponse.message;
                         this.showModal = true;
                     } else {
                         this.showModal = false;
@@ -153,18 +153,18 @@
                 });
         }
 
-        private isActive(data: number): boolean {
+        isActive(data: number): boolean {
             return data == this.json.horizontalAlignment || data == this.json.verticalAlignment;
         }
 
-        private updateHorizontalAlignment(newAlignment: number): void {
+        updateHorizontalAlignment(newAlignment: number): void {
             if ([this.horizontalAlignLeft, this.horizontalAlignDefault, this.horizontalAlignCenter,
                 this.horizontalAlignRight, this.horizontalAlignJustified].includes(newAlignment)) {
                 this.json.horizontalAlignment = newAlignment;
             }
         }
 
-        private updateVerticalAlignment(newAlignment: number): void {
+        updateVerticalAlignment(newAlignment: number): void {
             if ([this.verticalAlignTop, this.verticalAlignCenter, this.verticalAlignBottom].includes(newAlignment)) {
                 this.json.verticalAlignment = newAlignment;
             }
@@ -172,7 +172,6 @@
 
     }
 </script>
-
 
 <style scoped>
   .icon-center {

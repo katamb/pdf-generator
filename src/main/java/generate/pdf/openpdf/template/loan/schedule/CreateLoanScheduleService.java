@@ -28,9 +28,14 @@ public class CreateLoanScheduleService {
     private static final int MONTHS_IN_YEAR = 12;
     private static final int DEFAULT_MIN_HEIGHT = 14;
     private final CreateCellService createCellService;
-    private Font font;
+
     private Color backgroundColor;
     private int paymentMonthCounter;
+    private LoanContractInputDto loanContractInputDto;
+    private Map<String, TextBlockWithStyle> textBlocksWithStyle;
+    private Map<String, Object> inputDataAsMap;
+    private String url;
+    private Font font;
 
     public void createSchedule(
             Document document,
@@ -39,9 +44,14 @@ public class CreateLoanScheduleService {
             Map<String, Object> inputData,
             String url
     ) {
-        font = new Font(Font.HELVETICA);
-        backgroundColor = new Color(175, 198, 221);
-        paymentMonthCounter = 1;
+
+        this.loanContractInputDto = loanContractInputDto;
+        this.textBlocksWithStyle = textBlocksWithStyle;
+        this.inputDataAsMap = inputDataAsMap;
+        this.font = new Font(Font.HELVETICA);
+        this.url = url;
+        this.backgroundColor = new Color(175, 198, 221);
+        this.paymentMonthCounter = 1;
 
         PdfPTable scheduleYearTable = new PdfPTable(3);
         scheduleYearTable.setTotalWidth(new float[]{250,20,250});
@@ -56,20 +66,15 @@ public class CreateLoanScheduleService {
 
         int yearCounter = 1;
         for (ScheduleYear scheduleYear : loanContractInputDto.getScheduleYears()) {
-            PdfPCell scheduleYearCell = createScheduleYear(textBlocksWithStyle, inputData, scheduleYear, url);
+            PdfPCell scheduleYearCell = createScheduleYear(scheduleYear);
             scheduleYearTable.addCell(scheduleYearCell);
-            createMissingCells(loanContractInputDto, scheduleYearTable, yearCounter);
+            createMissingCells(scheduleYearTable, yearCounter);
             yearCounter++;
         }
         document.add(scheduleYearTable);
     }
 
-    private PdfPCell createScheduleYear(
-            Map<String, TextBlockWithStyle> textBlocksWithStyle,
-            Map<String, Object> inputData,
-            ScheduleYear scheduleYear,
-            String url
-    ) {
+    private PdfPCell createScheduleYear(ScheduleYear scheduleYear) {
         PdfPTable innerTable = new PdfPTable(6);
         TextBlockWithStyle textBlock = textBlocksWithStyle.get("SCHEDULE_YEARS");
         PdfPCell cell = createCellService.createCellWithStylesWhenDynamicDataGiven(font, textBlock, scheduleYear.getYear());
@@ -77,7 +82,7 @@ public class CreateLoanScheduleService {
         cell.setColspan(6);
         innerTable.addCell(cell);
 
-        createHeaders(innerTable, textBlocksWithStyle, url);
+        createHeaders(innerTable);
         List<Integer> sortedScheduleLines = scheduleYear.getScheduleLines()
                 .stream()
                 .map(sl -> Integer.parseInt(sl.getPaymentDate().split("\\.")[1]))
@@ -97,9 +102,9 @@ public class CreateLoanScheduleService {
         return tableCell;
     }
 
-    private void createHeaders(PdfPTable table, Map<String, TextBlockWithStyle> textBlocksWithStyle, String url) {
+    private void createHeaders(PdfPTable table) {
         List<String> oneRow = Arrays.asList("PAYMENT_NR", "DATE", "CREDIT_SUM", "INTEREST", "ADM_FEE", "PAYMENT_SUM");
-        createRowNotReplacingValues(textBlocksWithStyle, oneRow, table, false, url);
+        createRowNotReplacingValues(oneRow, table, false);
     }
 
     private void createScheduleLine(
@@ -155,11 +160,9 @@ public class CreateLoanScheduleService {
     }
 
     private void createRowNotReplacingValues(
-            Map<String, TextBlockWithStyle> textBlocksWithStyle,
             List<String> input,
             PdfPTable table,
-            boolean withBackground,
-            String url
+            boolean withBackground
     ) {
         for (String textBlock : input) {
             TextBlockWithStyle block = textBlocksWithStyle.get(textBlock);
@@ -173,7 +176,7 @@ public class CreateLoanScheduleService {
         }
     }
 
-    private void createMissingCells(LoanContractInputDto loanContractInputDto, PdfPTable scheduleYearTable, int yearCounter) {
+    private void createMissingCells(PdfPTable scheduleYearTable, int yearCounter) {
         if (yearCounter % 2 != 0) {
             scheduleYearTable.addCell(createCellService.createEmptyCellWithNoStyles());
             if (loanContractInputDto.getScheduleYears().size() == yearCounter) {
@@ -201,16 +204,16 @@ public class CreateLoanScheduleService {
         cell.setColspan(6);
         innerTable.addCell(cell);
 
-        createHeaders(innerTable, textBlocksWithStyle, url);
-        createMockRow(innerTable, textBlocksWithStyle, url);
-        PdfPCell celll = new PdfPCell(innerTable);
-        celll.setBorder(Rectangle.NO_BORDER);
-        table.addCell(celll);
+        createHeaders(innerTable);
+        createMockRow(innerTable);
+        PdfPCell tableCell = new PdfPCell(innerTable);
+        tableCell.setBorder(Rectangle.NO_BORDER);
+        table.addCell(tableCell);
         table.addCell(createCellService.createEmptyCellWithNoStyles());
         table.addCell(createCellService.createEmptyCellWithNoStyles());
     }
 
-    private void createMockRow(PdfPTable table, Map<String, TextBlockWithStyle> textBlocksWithStyle, String url) {
+    private void createMockRow(PdfPTable table) {
         List<String> oneRow = Arrays.asList(
                 "SCHEDULE_PAYMENT_NR",
                 "SCHEDULE_PAYMENT_DATE",
@@ -219,7 +222,7 @@ public class CreateLoanScheduleService {
                 "SCHEDULE_ADMINISTRATION_FEE",
                 "SCHEDULE_PAYMENT_SUM"
         );
-        createRowNotReplacingValues(textBlocksWithStyle, oneRow, table, false, url);
+        createRowNotReplacingValues(oneRow, table, false);
     }
 
 }

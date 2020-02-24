@@ -57,6 +57,11 @@ public class DynamicDataInjectionService {
         }
     }
 
+    /**
+     * @param font Font for given text.
+     * @param text Text for manipulating.
+     * @return Phrase with text between ** signs turned to bold
+     */
     public Phrase getBoldStrings(Font font, String text) {
         Pattern pattern = Pattern.compile("\\*\\*[^;]*\\*\\*");
         Matcher matcher = pattern.matcher(text);

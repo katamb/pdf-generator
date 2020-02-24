@@ -1,6 +1,5 @@
 package generate.pdf.openpdf.template.loan.dto;
 
-import generate.pdf.openpdf.dto.InputData;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,7 +7,7 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-public class LoanContractInputDto extends InputData {
+public class LoanContractInputDto {
 
     private String loanTypeCode;
     private Borrower borrower;

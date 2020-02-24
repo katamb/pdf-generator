@@ -1,6 +1,7 @@
 package generate.pdf.openpdf.template.loan.conditions;
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import generate.pdf.openpdf.dto.TextBlockWithStyle;
@@ -19,74 +20,71 @@ public class CreateLoanConditionsService {
 
     private final CreateCellService createCellService;
 
+    private LoanContractInputDto loanContractInputDto;
+    private Map<String, TextBlockWithStyle> textBlocksWithStyle;
+    private Map<String, Object> inputDataAsMap;
+    private String url;
+    private Font font;
+
     public void createMainConditions(
             Document document,
             Map<String, TextBlockWithStyle> textBlocksWithStyle,
             LoanContractInputDto loanContractInputDto,
-            Map<String, Object> map,
+            Map<String, Object> inputDataAsMap,
             String url
     ) {
-        Font font = new Font(Font.HELVETICA);
+        this.loanContractInputDto = loanContractInputDto;
+        this.textBlocksWithStyle = textBlocksWithStyle;
+        this.inputDataAsMap = inputDataAsMap;
+        this.font = new Font(Font.HELVETICA);
+        this.url = url;
 
         PdfPTable table = new PdfPTable(2);
         table.setTotalWidth(new float[]{ 40, 450 });
         table.setLockedWidth(true);
 
-        createConditionRows(textBlocksWithStyle, table, font, loanContractInputDto, map, url);
+        createConditionRows(table);
 
         document.add(table);
     }
 
-    private void createConditionRows(
-            Map<String, TextBlockWithStyle> textBlocksWithStyle,
-            PdfPTable table,
-            Font font,
-            LoanContractInputDto loanContractInputDto,
-            Map<String, Object> map,
-            String url
-    ) {
-        createTwoCellRow(table, font, "", textBlocksWithStyle.get("LOAN_TRANSFER_PARAGRAPH_HEADING"), map, url);
-        createTwoCellRow(table, font, "1.", textBlocksWithStyle.get("LOAN_TRANSFER_PARAGRAPH_1"), map, url);
-        createTwoCellRow(table, font, "2.", textBlocksWithStyle.get("LOAN_TRANSFER_PARAGRAPH_2"), map, url);
-        createTwoCellRow(table, font, "", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_HEADING"), map, url);
-        createTwoCellRow(table, font, "3.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_1"), map, url);
-        createTwoCellRow(table, font, "4.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_2"), map, url);
-        createTwoCellRow(table, font, "5.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_3"), map, url);
-        createTwoCellRow(table, font, "6.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_4"), map, url);
-        createTwoCellRow(table, font, "6.1.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_4_1"), map, url);
-        createTwoCellRow(table, font, "6.2.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_4_2"), map, url);
-        createTwoCellRow(table, font, "6.3.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_4_3"), map, url);
-        createTwoCellRow(table, font, "6.4.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_4_4"), map, url);
-        createTwoCellRow(table, font, "7.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_5"), map, url);
-        createTwoCellRow(table, font, "", textBlocksWithStyle.get("PENALTY_PARAGRAPH_HEADING"), map, url);
-        createTwoCellRow(table, font, "8.", textBlocksWithStyle.get("PENALTY_PARAGRAPH_1"), map, url);
-        createTwoCellRow(table, font, "", textBlocksWithStyle.get("LENDER_RIGHTS_HEADING"), map, url);
-        createTwoCellRow(table, font, "9.", textBlocksWithStyle.get("LENDER_RIGHTS_PARAGRAPH_1"), map, url);
-        createTwoCellRow(table, font, "10.", textBlocksWithStyle.get("LENDER_RIGHTS_PARAGRAPH_1_1"), map, url);
-        createTwoCellRow(table, font, "11.", textBlocksWithStyle.get("LENDER_RIGHTS_PARAGRAPH_1_2"), map, url);
-        createTwoCellRow(table, font, "", textBlocksWithStyle.get("COLLATERAL_PARAGRAPH_HEADING"), map, url);
-        createTwoCellRow(table, font, "12.", textBlocksWithStyle.get("COLLATERAL_PARAGRAPH_1"), map, url);
-        createTwoCellRow(table, font, "", textBlocksWithStyle.get("ARGUMENT_PARAGRAPH_HEADING"), map, url);
-        createTwoCellRow(table, font, "12.", textBlocksWithStyle.get("ARGUMENT_PARAGRAPH_1"), map, url);
-        createTwoCellRow(table, font, "", textBlocksWithStyle.get("CONTRACT_ENACTMENT_HEADING"), map, url);
-        createTwoCellRow(table, font, "13.", textBlocksWithStyle.get("CONTRACT_ENACTMENT_1"), map, url);
-        createTwoCellRow(table, font, "", textBlocksWithStyle.get("CONTRACT_INFO_HEADING"), map, url);
-        createTwoCellRow(table, font, "14.", textBlocksWithStyle.get("CONTRACT_INFO_1"), map, url);
+    private void createConditionRows(PdfPTable table) {
+        createTwoCellRow(table, "", textBlocksWithStyle.get("LOAN_TRANSFER_PARAGRAPH_HEADING"));
+        createTwoCellRow(table, "1.", textBlocksWithStyle.get("LOAN_TRANSFER_PARAGRAPH_1"));
+        createTwoCellRow(table, "2.", textBlocksWithStyle.get("LOAN_TRANSFER_PARAGRAPH_2"));
+        createTwoCellRow(table, "", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_HEADING"));
+        createTwoCellRow(table, "3.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_1"));
+        createTwoCellRow(table, "4.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_2"));
+        createTwoCellRow(table, "5.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_3"));
+        createTwoCellRow(table, "6.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_4"));
+        createTwoCellRow(table, "6.1.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_4_1"));
+        createTwoCellRow(table, "6.2.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_4_2"));
+        createTwoCellRow(table, "6.3.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_4_3"));
+        createTwoCellRow(table, "6.4.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_4_4"));
+        createTwoCellRow(table, "7.", textBlocksWithStyle.get("INTEREST_AND_LOAN_PARAGRAPH_5"));
+        createTwoCellRow(table, "", textBlocksWithStyle.get("PENALTY_PARAGRAPH_HEADING"));
+        createTwoCellRow(table, "8.", textBlocksWithStyle.get("PENALTY_PARAGRAPH_1"));
+        createTwoCellRow(table, "", textBlocksWithStyle.get("LENDER_RIGHTS_HEADING"));
+        createTwoCellRow(table, "9.", textBlocksWithStyle.get("LENDER_RIGHTS_PARAGRAPH_1"));
+        createTwoCellRow(table, "10.", textBlocksWithStyle.get("LENDER_RIGHTS_PARAGRAPH_1_1"));
+        createTwoCellRow(table, "11.", textBlocksWithStyle.get("LENDER_RIGHTS_PARAGRAPH_1_2"));
+        createTwoCellRow(table, "", textBlocksWithStyle.get("COLLATERAL_PARAGRAPH_HEADING"));
+        createTwoCellRow(table, "12.", textBlocksWithStyle.get("COLLATERAL_PARAGRAPH_1"));
+        createTwoCellRow(table, "", textBlocksWithStyle.get("ARGUMENT_PARAGRAPH_HEADING"));
+        createTwoCellRow(table, "12.", textBlocksWithStyle.get("ARGUMENT_PARAGRAPH_1"));
+        createTwoCellRow(table, "", textBlocksWithStyle.get("CONTRACT_ENACTMENT_HEADING"));
+        createTwoCellRow(table, "13.", textBlocksWithStyle.get("CONTRACT_ENACTMENT_1"));
+        createTwoCellRow(table, "", textBlocksWithStyle.get("CONTRACT_INFO_HEADING"));
+        createTwoCellRow(table, "14.", textBlocksWithStyle.get("CONTRACT_INFO_1"));
     }
 
-    private void createTwoCellRow(
-            PdfPTable table,
-            Font font,
-            String number,
-            TextBlockWithStyle textWithStyle,
-            Map<String, Object> map,
-            String url
-    ) {
+    private void createTwoCellRow(PdfPTable table, String number, TextBlockWithStyle textWithStyle) {
         PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font,
-                createNewBlockFromExistingWithSameStyles(textWithStyle, number), map, null);
+                createNewBlockFromExistingWithSameStyles(textWithStyle, number), inputDataAsMap, null);
+        cell.setHorizontalAlignment(0);
         table.addCell(cell);
 
-        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textWithStyle, map, url);
+        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textWithStyle, inputDataAsMap, url);
         table.addCell(cell);
     }
 

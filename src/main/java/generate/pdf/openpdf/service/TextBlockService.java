@@ -17,6 +17,12 @@ public class TextBlockService {
 
     private final TemplateTextMapper templateTextMapper;
 
+    /**
+     * Return static text for template in the form of a map for fast and easy access.
+     * @param templateCode
+     * @param languageCode
+     * @return
+     */
     public Map<String, TextBlockWithStyle> getTextsByGroupAndLanguage(
             TemplateCode templateCode,
             LanguageCode languageCode

@@ -3,7 +3,6 @@ package generate.pdf.openpdf.template.loan;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.Document;
 import com.lowagie.text.pdf.PdfWriter;
-import generate.pdf.openpdf.dto.InputData;
 import generate.pdf.openpdf.dto.TextBlockWithStyle;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.service.TextBlockService;
@@ -22,13 +21,16 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import static generate.pdf.openpdf.enums.TemplateCode.*;
+import static generate.pdf.openpdf.enums.TemplateCode.PRIVATE_SMALL_LOAN_CONTRACT_EE;
 
 @Service
 @RequiredArgsConstructor
 public class GenericConsumerLoanTemplate extends BasePdfGenerator {
 
+    private static final Logger logger = Logger.getLogger(String.valueOf(GenericConsumerLoanTemplate.class));
     private static final List<TemplateCode> SUPPORTED_PRINTOUTS = Arrays.asList(
             PRIVATE_SMALL_LOAN_CONTRACT_EE
     );
@@ -72,7 +74,7 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
             // 6: schedule
             createLoanScheduleService.createSchedule(document, textBlocksWithStyle, loanContractInputDto, inputValueMap, url);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
             throw new BadRequestException(e.getMessage());
         }
     }
@@ -81,15 +83,19 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
         try {
             return objectMapper.readValue(inputData, LoanContractInputDto.class);
         } catch (Exception e) {
-            throw new BadRequestException("Failed to map input data to corresponding Java class!");
+            String message = "Failed to map input data to corresponding Java class!";
+            logger.log(Level.WARNING, message, e);
+            throw new BadRequestException(message);
         }
     }
 
-    private Map<String, Object> mapObjectToMap(InputData loanContractInputDto) {
+    private Map<String, Object> mapObjectToMap(LoanContractInputDto loanContractInputDto) {
         try {
             return objectMapper.convertValue(loanContractInputDto, Map.class);
         } catch (Exception e) {
-            throw new BadRequestException("Failed to map Java class to Map!");
+            String message = "Failed to map Java class to Map!";
+            logger.log(Level.WARNING, message, e);
+            throw new BadRequestException(message);
         }
     }
 

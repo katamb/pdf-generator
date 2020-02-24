@@ -1,8 +1,10 @@
 package generate.pdf.openpdf.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class TextBlockWithStyle {
 
     private Long textBlockId;

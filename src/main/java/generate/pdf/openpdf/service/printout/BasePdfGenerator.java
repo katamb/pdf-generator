@@ -10,6 +10,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * All PDF templates need to extend this abstract class.
@@ -17,6 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public abstract class BasePdfGenerator implements PdfGenerator {
 
+    private static final Logger logger = Logger.getLogger(String.valueOf(BasePdfGenerator.class));
     private static final String PDF_EXTENSION = ".pdf";
     @Value( "${storage.pdf.folder}" )
     private String fileLocation;
@@ -35,6 +38,7 @@ public abstract class BasePdfGenerator implements PdfGenerator {
             FileOutputStream outputStream = new FileOutputStream(fileName);
             generatePdf(templateCode, languageCode, inputData, outputStream);
         } catch (FileNotFoundException e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
             throw new InternalServerException(e.getMessage());
         }
 

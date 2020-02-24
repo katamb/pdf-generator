@@ -18,8 +18,8 @@ COMMENT ON COLUMN text_block.text_block_id
 COMMENT ON COLUMN text_block.text_block_value
     IS 'Text block values with placeholders for dynamic data and some inline styling information.';
 
-CREATE TABLE IF NOT EXISTS template_to_text_translation (
-    template_to_text_translation_id     BIGSERIAL NOT NULL,
+CREATE TABLE IF NOT EXISTS template_text (
+    template_text_id                    BIGSERIAL NOT NULL,
     template_code                       VARCHAR(150) NOT NULL,
     language_code                       CHAR(2) NOT NULL,
     text_block_name                     VARCHAR(255) NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS template_to_text_translation (
     text_size                           NUMERIC(3, 1) NOT NULL DEFAULT 12.0,
     horizontal_alignment                SMALLINT NOT NULL DEFAULT 0,
     vertical_alignment                  SMALLINT NOT NULL DEFAULT 4,
-    CONSTRAINT pk_template_to_text_translation_id PRIMARY KEY (template_to_text_translation_id),
+    CONSTRAINT pk_template_text_id PRIMARY KEY (template_text_id),
     CONSTRAINT ak_text_block_unique_in_language_and_template UNIQUE (template_code,language_code,text_block_name),
     CONSTRAINT chk_language_code_two_lowercase_letters CHECK (language_code~'^[a-z]{2}$'),
     CONSTRAINT chk_size_positive_value CHECK (text_size>0),
@@ -37,25 +37,25 @@ CREATE TABLE IF NOT EXISTS template_to_text_translation (
         REFERENCES text_block (text_block_id) ON DELETE No Action ON UPDATE No Action
 ) WITH (fillfactor=95);
 
-COMMENT ON TABLE template_to_text_translation
+COMMENT ON TABLE template_text
 IS 'Links templates to text blocks and holds their styling info';
-COMMENT ON COLUMN template_to_text_translation.template_to_text_translation_id
+COMMENT ON COLUMN template_text.template_text_id
 IS 'Unique identifier.';
-COMMENT ON COLUMN template_to_text_translation.template_code
+COMMENT ON COLUMN template_text.template_code
 IS 'The name of the template this text block is used in.';
-COMMENT ON COLUMN template_to_text_translation.language_code
+COMMENT ON COLUMN template_text.language_code
 IS 'Lowercase language code according to ISO 639-1 standard.';
-COMMENT ON COLUMN template_to_text_translation.text_block_name
+COMMENT ON COLUMN template_text.text_block_name
 IS 'Unique identifier for the text block in this template and language domain.';
-COMMENT ON COLUMN template_to_text_translation.text_block_id
+COMMENT ON COLUMN template_text.text_block_id
 IS 'References text on text_block table.';
-COMMENT ON COLUMN template_to_text_translation.text_size
+COMMENT ON COLUMN template_text.text_size
 IS 'Text size for the text block (DEFAULT=12.0).';
-COMMENT ON COLUMN template_to_text_translation.horizontal_alignment
+COMMENT ON COLUMN template_text.horizontal_alignment
 IS 'According to values defined in OpenPdf library Element interface.
 -1 and 0 (DEFAULT) are for left alignment. 1 is for center alignment. 2 is for right alignment.
 3 is for justified alignment.';
-COMMENT ON COLUMN template_to_text_translation.vertical_alignment
+COMMENT ON COLUMN template_text.vertical_alignment
 IS 'According to values defined in OpenPdf library Element interface.
 4 (DEFAULT) is for top alignment. 5 is for center alignment. 6 is for bottom alignment.
 7 is for baseline alignment. 8 is for justified alignment.';

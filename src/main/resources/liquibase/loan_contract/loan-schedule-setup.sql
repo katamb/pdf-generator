@@ -19,7 +19,7 @@ VALUES
 ;
 
 INSERT INTO
-    template_to_text_translation (template_code, language_code, text_block_name, text_size, horizontal_alignment, text_block_id)
+    template_text (template_code, language_code, text_block_name, text_size, horizontal_alignment, text_block_id)
 VALUES
     ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'PAYMENT_NR', 8.0, 0,
         (SELECT text_block_id from text_block where text_block_value='Makse nr.')

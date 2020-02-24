@@ -5,7 +5,7 @@ import generate.pdf.openpdf.dto.TextBlockWithStyle;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.enums.UpdateType;
-import generate.pdf.openpdf.mapper.TextBlockMapper;
+import generate.pdf.openpdf.mapper.TemplateTextMapper;
 import generate.pdf.openpdf.service.TextUpdatingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequestMapping("api/v1")
 public class PdfEditingController {
 
-    private final TextBlockMapper textBlockMapper;
+    private final TemplateTextMapper templateTextMapper;
     private final TextUpdatingService textUpdatingService;
 
     @CrossOrigin
@@ -33,25 +33,27 @@ public class PdfEditingController {
             @PathVariable LanguageCode languageCode,
             @PathVariable Long id
     ) {
-        return textBlockMapper.findTextBlockById(templateCode.name(), languageCode.toString(), id);
+        return templateTextMapper.findTextBlockById(templateCode.toString(), languageCode.toString(), id);
     }
 
     @CrossOrigin
     @GetMapping("all-templates")
     public List<String> pdfEditor() {
-        return textBlockMapper.findAllTemplates();
+        return templateTextMapper.findAllTemplates();
     }
 
     @CrossOrigin
     @GetMapping("template-languages/{templateCode}")
     public List<String> pdfEditor(@PathVariable TemplateCode templateCode) {
-        return textBlockMapper.findAllLanguagesForTemplate(templateCode.name());
+        return templateTextMapper.findAllLanguagesForTemplate(templateCode.toString());
     }
 
     @CrossOrigin
     @PutMapping("update-text/{updateType}")
-    public ResponseWithReason updateTextBlock(@PathVariable UpdateType updateType,
-                                              @RequestBody TextBlockWithStyle updatedTextBlock) {
+    public ResponseWithReason updateTextBlock(
+            @PathVariable UpdateType updateType,
+            @RequestBody TextBlockWithStyle updatedTextBlock
+    ) {
         return textUpdatingService.update(updatedTextBlock, updateType);
     }
 }

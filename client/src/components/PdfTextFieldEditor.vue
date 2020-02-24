@@ -143,12 +143,14 @@
             putRequest(`/api/v1/update-text/${updateType}`, this.json)
                 .then((response) => response.json())
                 .then(jsonResponse => {
-                    if (jsonResponse.status === 300) {
+                    if (jsonResponse.statusCode === 300) {
                         this.errorMessage = jsonResponse.message;
                         this.showModal = true;
-                    } else {
+                    } else if (jsonResponse.statusCode === 200) {
                         this.showModal = false;
                         eventBus.$emit('rerender-pdf');
+                    } else {
+                        console.log(jsonResponse);
                     }
                 });
         }

@@ -47,7 +47,7 @@ public class CreateCellService {
         cell.setHorizontalAlignment(textBlockWithStyle.getHorizontalAlignment());
         cell.setBorder(Rectangle.NO_BORDER);
         if (url != null) {
-            cell.setCellEvent(new LinkInCell(url + textBlockWithStyle.getTemplateToTextTranslationId()));
+            cell.setCellEvent(new LinkInCell(url + textBlockWithStyle.getTemplateTextId()));
         }
         return cell;
     }
@@ -60,7 +60,7 @@ public class CreateCellService {
         cell.setHorizontalAlignment(textBlockWithStyle.getHorizontalAlignment());
         cell.setBorder(Rectangle.NO_BORDER);
         if (url != null) {
-            cell.setCellEvent(new LinkInCell(url + textBlockWithStyle.getTemplateToTextTranslationId()));
+            cell.setCellEvent(new LinkInCell(url + textBlockWithStyle.getTemplateTextId()));
         }
         return cell;
     }

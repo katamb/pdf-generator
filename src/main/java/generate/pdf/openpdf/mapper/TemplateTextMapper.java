@@ -3,12 +3,11 @@ package generate.pdf.openpdf.mapper;
 import generate.pdf.openpdf.dto.TextBlockWithStyle;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectKey;
 
 import java.util.List;
 
 @Mapper
-public interface TextBlockMapper {
+public interface TemplateTextMapper {
 
     List<TextBlockWithStyle> getTextsByGroupAndLanguage(
             @Param("templateCode") String templateCode,
@@ -33,9 +32,11 @@ public interface TextBlockMapper {
 
     Long updateTemplateToTextTranslation(@Param("textBlockWithStyle") TextBlockWithStyle textBlockWithStyle);
 
-    Long updateTextBlock(@Param("textBlockValue") String textBlockWithStyle,
-                         @Param("textBlockId") Long textBlockId);
+    Long updateTextBlock(
+            @Param("textBlockValue") String textBlockWithStyle,
+            @Param("textBlockId") Long textBlockId
+    );
 
-    void insertTextBlock(@Param("textBlockWithStyle") TextBlockWithStyle textBlockWithStyle);
+    void insertTextBlock(TextBlockWithStyle textBlockWithStyle);
 
 }

@@ -6,11 +6,11 @@
     </settings>
 
     <typeAliases>
-        <typeAlias alias="FileGenerationRequestForOpenpdfDto" type="generate.pdf.openpdf.dto.PdfGenerationRequestDto"/>
+        <typeAlias alias="TextBlockWithStyle" type="generate.pdf.openpdf.dto.TextBlockWithStyle"/>
     </typeAliases>
 
     <mappers>
-        <mapper resource="mapper/TextBlockMapper.xml"/>
+        <mapper resource="mapper/TemplateTextMapper.xml"/>
     </mappers>
 
 </configuration>

@@ -3,7 +3,7 @@ package generate.pdf.openpdf.service;
 import generate.pdf.openpdf.dto.TextBlockWithStyle;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
-import generate.pdf.openpdf.mapper.TextBlockMapper;
+import generate.pdf.openpdf.mapper.TemplateTextMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +15,13 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TextBlockService {
 
-    private final TextBlockMapper textBlockMapper;
+    private final TemplateTextMapper templateTextMapper;
 
     public Map<String, TextBlockWithStyle> getTextsByGroupAndLanguage(
             TemplateCode templateCode,
             LanguageCode languageCode
     ) {
-        List<TextBlockWithStyle> textBlocksWithStyle = textBlockMapper
+        List<TextBlockWithStyle> textBlocksWithStyle = templateTextMapper
                 .getTextsByGroupAndLanguage(templateCode.toString(), languageCode.toString());
         Map<String, TextBlockWithStyle> map = new HashMap<>();
         for (TextBlockWithStyle textBlockWithStyle : textBlocksWithStyle) {

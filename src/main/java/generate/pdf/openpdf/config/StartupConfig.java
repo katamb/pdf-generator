@@ -12,6 +12,9 @@ public class StartupConfig {
     @Value( "${storage.pdf.folder}" )
     private String fileLocation;
 
+    /**
+     * Create directory for storing files.
+     */
     @PostConstruct
     public void createDirectories() {
         new File(fileLocation).mkdirs();

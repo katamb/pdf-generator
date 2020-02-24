@@ -47,7 +47,7 @@ VALUES
 ;
 
 INSERT INTO
-    template_to_text_translation (template_code, language_code, text_block_name, text_block_id)
+    template_text (template_code, language_code, text_block_name, text_block_id)
 VALUES
     ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'LOAN_CONTRACT', 10001),
     ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'LENDER', 10002),

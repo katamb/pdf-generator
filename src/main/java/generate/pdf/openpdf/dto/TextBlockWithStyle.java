@@ -5,13 +5,9 @@ import lombok.Data;
 @Data
 public class TextBlockWithStyle {
 
-    public void setTextBlockId(Long textBlockId) {
-        this.textBlockId = textBlockId;
-    }
-
     private Long textBlockId;
     private String textBlockValue;
-    private Long templateToTextTranslationId;
+    private Long templateTextId;
     private String textBlockName;
     private float textSize;
     private int horizontalAlignment;

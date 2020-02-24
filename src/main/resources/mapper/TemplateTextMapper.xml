@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="generate.pdf.openpdf.mapper.TextBlockMapper">
+<mapper namespace="generate.pdf.openpdf.mapper.TemplateTextMapper">
 
     <select id="getTextsByGroupAndLanguage" resultType="generate.pdf.openpdf.dto.TextBlockWithStyle">
         SELECT tb.text_block_id,
                tb.text_block_value,
-               tttt.template_to_text_translation_id,
-               tttt.text_block_name,
-               tttt.text_size,
-               tttt.horizontal_alignment,
-               tttt.vertical_alignment
-        FROM pdf_generator.template_to_text_translation tttt
-             INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tttt.text_block_id
-        WHERE tttt.template_code=#{templateCode}
-          AND tttt.language_code=#{languageCode};
+               tt.template_text_id,
+               tt.text_block_name,
+               tt.text_size,
+               tt.horizontal_alignment,
+               tt.vertical_alignment
+        FROM pdf_generator.template_text tt
+             INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tt.text_block_id
+        WHERE tt.template_code = #{templateCode}
+          AND tt.language_code = #{languageCode};
     </select>
 
     <select id="findTextBlockById" resultType="generate.pdf.openpdf.dto.TextBlockWithStyle">
         SELECT tb.text_block_id,
                tb.text_block_value,
-               tttt.template_to_text_translation_id,
-               tttt.text_block_name,
-               tttt.text_size,
-               tttt.horizontal_alignment,
-               tttt.vertical_alignment
-        FROM pdf_generator.template_to_text_translation tttt
-             INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tttt.text_block_id
-        WHERE tttt.template_code=#{templateCode}
-            AND tttt.language_code=#{languageCode}
-            AND tttt.template_to_text_translation_id=#{id};
+               tt.template_text_id,
+               tt.text_block_name,
+               tt.text_size,
+               tt.horizontal_alignment,
+               tt.vertical_alignment
+        FROM pdf_generator.template_text tt
+             INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tt.text_block_id
+        WHERE tt.template_code = #{templateCode}
+            AND tt.language_code = #{languageCode}
+            AND tt.template_text_id = #{id};
     </select>
 
     <select id="findTextBlockValueById" resultType="java.lang.String">
@@ -46,28 +46,28 @@
 
     <select id="findAmountOfTextBlockUsages" resultType="java.lang.Long">
         SELECT COUNT(*)
-        FROM pdf_generator.template_to_text_translation
+        FROM pdf_generator.template_text
         WHERE text_block_id = #{id};
     </select>
 
     <select id="findAllTemplates" resultType="java.lang.String">
         SELECT DISTINCT template_code
-        FROM pdf_generator.template_to_text_translation;
+        FROM pdf_generator.template_text;
     </select>
 
     <select id="findAllLanguagesForTemplate" resultType="java.lang.String">
         SELECT DISTINCT language_code
-        FROM pdf_generator.template_to_text_translation
+        FROM pdf_generator.template_text
         WHERE template_code = #{template};
     </select>
 
     <update id="updateTemplateToTextTranslation">
-        UPDATE pdf_generator.template_to_text_translation tttt
+        UPDATE pdf_generator.template_text tt
         SET text_block_id = #{textBlockWithStyle.textBlockId},
             text_size = #{textBlockWithStyle.textSize},
             horizontal_alignment = #{textBlockWithStyle.horizontalAlignment},
             vertical_alignment = #{textBlockWithStyle.verticalAlignment}
-        WHERE tttt.template_to_text_translation_id=#{textBlockWithStyle.templateToTextTranslationId};
+        WHERE tt.template_text_id = #{textBlockWithStyle.templateTextId};
     </update>
 
     <update id="updateTextBlock">
@@ -76,11 +76,12 @@
         WHERE tb.text_block_id = #{textBlockId};
     </update>
 
-    <insert id="insertTextBlock" parameterType="generate.pdf.openpdf.dto.TextBlockWithStyle">
+    <insert id="insertTextBlock"
+            useGeneratedKeys="true" keyProperty="textBlockId">
         INSERT INTO
             pdf_generator.text_block (text_block_value)
         VALUES
-            (#{textBlockWithStyle.textBlockValue});
+            (#{textBlockValue});
     </insert>
 
 </mapper>

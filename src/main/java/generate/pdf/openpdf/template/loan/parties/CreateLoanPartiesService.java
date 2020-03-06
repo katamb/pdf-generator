@@ -5,12 +5,12 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import generate.pdf.openpdf.dto.TextBlockWithStyle;
-import generate.pdf.openpdf.template.loan.dto.LoanContractInputDto;
+import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.service.table.CreateCellService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.awt.Color;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -19,26 +19,26 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CreateLoanPartiesService {
 
+    private static final int PADDING_BOTTOM = 4;
+
     private final CreateCellService createCellService;
 
-    private LoanContractInputDto loanContractInputDto;
-    private Map<String, TextBlockWithStyle> textBlocksWithStyle;
+    private Map<String, TemplateTextBlock> textBlocksWithStyle;
     private Map<String, Object> inputDataAsMap;
     private String url;
     private Font font;
 
     public void createPartiesData(
             Document document,
-            Map<String, TextBlockWithStyle> textBlocksWithStyle,
-            LoanContractInputDto loanContractInputDto,
+            Map<String, TemplateTextBlock> textBlocksWithStyle,
             Map<String, Object> inputDataAsMap,
-            String url
+            String url,
+            Font font
     ) {
-        this.loanContractInputDto = loanContractInputDto;
         this.textBlocksWithStyle = textBlocksWithStyle;
         this.inputDataAsMap = inputDataAsMap;
-        this.font = new Font(Font.HELVETICA);
         this.url = url;
+        this.font = font;
 
         PdfPTable table = new PdfPTable(5);
         table.setTotalWidth(new float[]{ 90, 165, 20, 90, 165 });
@@ -52,17 +52,23 @@ public class CreateLoanPartiesService {
     }
 
     private void createFirstRow(PdfPTable table) {
-        TextBlockWithStyle textBlockWithStyle = textBlocksWithStyle.get("LENDER");
-        PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textBlockWithStyle, inputDataAsMap, url);
+        TemplateTextBlock templateTextBlock = textBlocksWithStyle.get("LENDER");
+        PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, templateTextBlock, inputDataAsMap, url);
         cell.setBorder(Rectangle.BOTTOM);
+        cell.setBorderColor(Color.GRAY);
+        cell.setPaddingBottom(PADDING_BOTTOM);
+        cell.setPaddingTop(8);
         cell.setColspan(2);
         table.addCell(cell);
 
         table.addCell(createCellService.createEmptyCellWithNoStyles());
 
-        textBlockWithStyle = textBlocksWithStyle.get("BORROWER");
-        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textBlockWithStyle, inputDataAsMap, url);
+        templateTextBlock = textBlocksWithStyle.get("BORROWER");
+        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, templateTextBlock, inputDataAsMap, url);
         cell.setBorder(Rectangle.BOTTOM);
+        cell.setBorderColor(Color.GRAY);
+        cell.setPaddingBottom(PADDING_BOTTOM);
+        cell.setPaddingTop(8);
         cell.setColspan(2);
         table.addCell(cell);
     }
@@ -82,9 +88,11 @@ public class CreateLoanPartiesService {
                 table.addCell(createCellService.createEmptyCellWithNoStyles());
                 continue;
             }
-            TextBlockWithStyle textBlockWithStyle = textBlocksWithStyle.get(cellName);
-            PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textBlockWithStyle, inputDataAsMap, url);
+            TemplateTextBlock templateTextBlock = textBlocksWithStyle.get(cellName);
+            PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, templateTextBlock, inputDataAsMap, url);
             cell.setBorder(Rectangle.BOTTOM);
+            cell.setBorderColor(Color.GRAY);
+            cell.setPaddingBottom(PADDING_BOTTOM);
             table.addCell(cell);
         }
     }

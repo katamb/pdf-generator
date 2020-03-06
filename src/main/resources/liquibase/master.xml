@@ -12,4 +12,6 @@
 
     <include file="loan_contract/2020-02-22-loan-schedule-setup.xml" relativeToChangelogFile="true"/>
 
+    <include file="loan_contract/2020-03-06-loan-header-footer-setup.xml" relativeToChangelogFile="true"/>
+
 </databaseChangeLog>

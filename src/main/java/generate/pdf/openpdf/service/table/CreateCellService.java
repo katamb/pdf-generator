@@ -4,9 +4,8 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
-import generate.pdf.openpdf.dto.TextBlockWithStyle;
+import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.service.DynamicDataInjectionService;
-import generate.pdf.openpdf.template.loan.schedule.LinkInCell;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,64 +19,68 @@ public class CreateCellService {
 
     public PdfPCell createCellWithStylesWhenDynamicDataGiven(
             Font font,
-            TextBlockWithStyle textBlockWithStyle,
-            String replacement
+            TemplateTextBlock templateTextBlock,
+            String replacement,
+            String url
     ) {
-        font.setSize(textBlockWithStyle.getTextSize());
-        String injectedText = getText(textBlockWithStyle, replacement);
+        font.setSize(templateTextBlock.getTextSize());
+        String injectedText = getText(templateTextBlock, replacement);
         Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, injectedText);
         PdfPCell cell = new PdfPCell(phrase);
-        cell.setVerticalAlignment(textBlockWithStyle.getVerticalAlignment());
-        cell.setHorizontalAlignment(textBlockWithStyle.getHorizontalAlignment());
+        cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
+        cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
         cell.setBorder(Rectangle.NO_BORDER);
+        if (url != null) {
+            cell.setCellEvent(new LinkInCell(url + templateTextBlock.getTemplateTextId()));
+        }
         return cell;
     }
 
     public PdfPCell createCellWithStylesDynamicDataFromMapIfPossible(
             Font font,
-            TextBlockWithStyle textBlockWithStyle,
+            TemplateTextBlock templateTextBlock,
             Map<String, Object> inputData,
             String url
     ) {
-        font.setSize(textBlockWithStyle.getTextSize());
-        String injectedText = getText(textBlockWithStyle, inputData);
+        font.setSize(templateTextBlock.getTextSize());
+        String injectedText = getText(templateTextBlock, inputData);
         Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, injectedText);
         PdfPCell cell = new PdfPCell(phrase);
-        cell.setVerticalAlignment(textBlockWithStyle.getVerticalAlignment());
-        cell.setHorizontalAlignment(textBlockWithStyle.getHorizontalAlignment());
+        cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
+        cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
         cell.setBorder(Rectangle.NO_BORDER);
         if (url != null) {
-            cell.setCellEvent(new LinkInCell(url + textBlockWithStyle.getTemplateTextId()));
+            cell.setCellEvent(new LinkInCell(url + templateTextBlock.getTemplateTextId()));
         }
         return cell;
     }
 
-    public PdfPCell createCellWithStylesNoSubstitutions(Font font, TextBlockWithStyle textBlockWithStyle, String url) {
-        font.setSize(textBlockWithStyle.getTextSize());
-        Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, textBlockWithStyle.getTextBlockValue());
+    public PdfPCell createCellWithStylesNoSubstitutions(Font font, TemplateTextBlock templateTextBlock, String url) {
+        font.setSize(templateTextBlock.getTextSize());
+        Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, templateTextBlock.getTextBlockValue());
         PdfPCell cell = new PdfPCell(phrase);
-        cell.setVerticalAlignment(textBlockWithStyle.getVerticalAlignment());
-        cell.setHorizontalAlignment(textBlockWithStyle.getHorizontalAlignment());
+        cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
+        cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
         cell.setBorder(Rectangle.NO_BORDER);
         if (url != null) {
-            cell.setCellEvent(new LinkInCell(url + textBlockWithStyle.getTemplateTextId()));
+            cell.setCellEvent(new LinkInCell(url + templateTextBlock.getTemplateTextId()));
         }
         return cell;
     }
 
-    private String getText(TextBlockWithStyle textBlockWithStyle, Map<String, Object> inputData) {
+    private String getText(TemplateTextBlock templateTextBlock, Map<String, Object> inputData) {
         if (inputData == null) {
-            return textBlockWithStyle.getTextBlockValue();
+            return templateTextBlock.getTextBlockValue();
         } else {
-            return dynamicDataInjectionService.injectValues(textBlockWithStyle.getTextBlockValue(), inputData);
+            return dynamicDataInjectionService.injectValues(templateTextBlock.getTextBlockValue(), inputData);
         }
     }
 
-    private String getText(TextBlockWithStyle textBlockWithStyle, String inputData) {
+    private String getText(TemplateTextBlock templateTextBlock, String inputData) {
         if (inputData == null) {
-            return textBlockWithStyle.getTextBlockValue();
+            return templateTextBlock.getTextBlockValue();
         } else {
-            return dynamicDataInjectionService.injectValue(textBlockWithStyle.getTextBlockValue(), inputData);
+            return dynamicDataInjectionService.injectValue(templateTextBlock.getTextBlockValue(), inputData);
         }
     }
 

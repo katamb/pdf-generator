@@ -22,6 +22,10 @@ CREATE TABLE IF NOT EXISTS template_text (
     template_text_id                    BIGSERIAL NOT NULL,
     template_code                       VARCHAR(150) NOT NULL,
     language_code                       CHAR(2) NOT NULL,
+    text_group_code                     VARCHAR(255) NOT NULL,
+    ordering                            INT,
+    numbering                           BOOLEAN,
+    numbering_level                     SMALLINT,
     text_block_name                     VARCHAR(255) NOT NULL,
     text_block_id                       BIGINT NOT NULL,
     text_size                           NUMERIC(3, 1) NOT NULL DEFAULT 12.0,
@@ -30,6 +34,8 @@ CREATE TABLE IF NOT EXISTS template_text (
     CONSTRAINT pk_template_text_id PRIMARY KEY (template_text_id),
     CONSTRAINT ak_text_block_unique_in_language_and_template UNIQUE (template_code,language_code,text_block_name),
     CONSTRAINT chk_language_code_two_lowercase_letters CHECK (language_code~'^[a-z]{2}$'),
+    CONSTRAINT chk_ordering_positive_value CHECK (ordering>=0),
+    CONSTRAINT chk_numbering_level_positive_value CHECK (numbering_level>0),
     CONSTRAINT chk_size_positive_value CHECK (text_size>0),
     CONSTRAINT chk_horizontal_alignment_allowed_value CHECK (horizontal_alignment IN (-1, 0, 1, 2, 3)),
     CONSTRAINT chk_vertical_alignment_allowed_value CHECK (vertical_alignment IN (4, 5, 6, 7, 8)),
@@ -45,6 +51,14 @@ COMMENT ON COLUMN template_text.template_code
 IS 'The name of the template this text block is used in.';
 COMMENT ON COLUMN template_text.language_code
 IS 'Lowercase language code according to ISO 639-1 standard.';
+COMMENT ON COLUMN template_text.text_group_code
+IS 'Identifies the group for the text.';
+COMMENT ON COLUMN template_text.ordering
+IS 'Assigns the order of the elements in the group.';
+COMMENT ON COLUMN template_text.numbering
+IS 'Shows if this text block is numbered.';
+COMMENT ON COLUMN template_text.numbering_level
+IS 'Context advice for automatic numbering.';
 COMMENT ON COLUMN template_text.text_block_name
 IS 'Unique identifier for the text block in this template and language domain.';
 COMMENT ON COLUMN template_text.text_block_id

@@ -21,5 +21,6 @@ public class ContractDetails {
     private String transferDate;
     private String lastInstallment;
     private String currency;
+    private String contractNumber;
 
 }

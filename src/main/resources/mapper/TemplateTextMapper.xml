@@ -3,28 +3,32 @@
 
 <mapper namespace="generate.pdf.openpdf.mapper.TemplateTextMapper">
 
-    <select id="getTextsByGroupAndLanguage" resultType="generate.pdf.openpdf.dto.TextBlockWithStyle">
-        SELECT tb.text_block_id,
-               tb.text_block_value,
-               tt.template_text_id,
-               tt.text_block_name,
-               tt.text_size,
-               tt.horizontal_alignment,
-               tt.vertical_alignment
+    <sql id="selectAll">
+        tb.text_block_id,
+        tb.text_block_value,
+        tt.template_text_id,
+        tt.template_code,
+        tt.language_code,
+        tt.text_group_code,
+        tt.ordering,
+        tt.numbering,
+        tt.numbering_level,
+        tt.text_block_name,
+        tt.text_size,
+        tt.horizontal_alignment,
+        tt.vertical_alignment
+    </sql>
+
+    <select id="getTextsByGroupAndLanguage" resultType="generate.pdf.openpdf.dto.TemplateTextBlock">
+        SELECT <include refid="selectAll"/>
         FROM pdf_generator.template_text tt
              INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tt.text_block_id
         WHERE tt.template_code = #{templateCode}
           AND tt.language_code = #{languageCode};
     </select>
 
-    <select id="findTextBlockById" resultType="generate.pdf.openpdf.dto.TextBlockWithStyle">
-        SELECT tb.text_block_id,
-               tb.text_block_value,
-               tt.template_text_id,
-               tt.text_block_name,
-               tt.text_size,
-               tt.horizontal_alignment,
-               tt.vertical_alignment
+    <select id="findTextBlockById" resultType="generate.pdf.openpdf.dto.TemplateTextBlock">
+        SELECT <include refid="selectAll"/>
         FROM pdf_generator.template_text tt
              INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tt.text_block_id
         WHERE tt.template_code = #{templateCode}
@@ -63,11 +67,11 @@
 
     <update id="updateTemplateToTextTranslation">
         UPDATE pdf_generator.template_text tt
-        SET text_block_id = #{textBlockWithStyle.textBlockId},
-            text_size = #{textBlockWithStyle.textSize},
-            horizontal_alignment = #{textBlockWithStyle.horizontalAlignment},
-            vertical_alignment = #{textBlockWithStyle.verticalAlignment}
-        WHERE tt.template_text_id = #{textBlockWithStyle.templateTextId};
+        SET text_block_id = #{templateTextBlock.textBlockId},
+            text_size = #{templateTextBlock.textSize},
+            horizontal_alignment = #{templateTextBlock.horizontalAlignment},
+            vertical_alignment = #{templateTextBlock.verticalAlignment}
+        WHERE tt.template_text_id = #{templateTextBlock.templateTextId};
     </update>
 
     <update id="updateTextBlock">

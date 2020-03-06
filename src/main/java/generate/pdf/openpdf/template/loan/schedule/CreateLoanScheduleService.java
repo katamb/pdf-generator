@@ -5,8 +5,7 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import generate.pdf.openpdf.dto.TextBlockWithStyle;
-import generate.pdf.openpdf.service.DynamicDataInjectionService;
+import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.service.table.CreateCellService;
 import generate.pdf.openpdf.template.loan.dto.LoanContractInputDto;
 import generate.pdf.openpdf.template.loan.dto.ScheduleLine;
@@ -32,23 +31,21 @@ public class CreateLoanScheduleService {
     private Color backgroundColor;
     private int paymentMonthCounter;
     private LoanContractInputDto loanContractInputDto;
-    private Map<String, TextBlockWithStyle> textBlocksWithStyle;
-    private Map<String, Object> inputDataAsMap;
+    private Map<String, TemplateTextBlock> textBlocksWithStyle;
     private String url;
     private Font font;
 
     public void createSchedule(
             Document document,
-            Map<String, TextBlockWithStyle> textBlocksWithStyle,
+            Map<String, TemplateTextBlock> textBlocksWithStyle,
             LoanContractInputDto loanContractInputDto,
-            Map<String, Object> inputData,
-            String url
+            String url,
+            Font font
     ) {
 
         this.loanContractInputDto = loanContractInputDto;
         this.textBlocksWithStyle = textBlocksWithStyle;
-        this.inputDataAsMap = inputDataAsMap;
-        this.font = new Font(Font.HELVETICA);
+        this.font = font;
         this.url = url;
         this.backgroundColor = new Color(175, 198, 221);
         this.paymentMonthCounter = 1;
@@ -76,8 +73,8 @@ public class CreateLoanScheduleService {
 
     private PdfPCell createScheduleYear(ScheduleYear scheduleYear) {
         PdfPTable innerTable = new PdfPTable(6);
-        TextBlockWithStyle textBlock = textBlocksWithStyle.get("SCHEDULE_YEARS");
-        PdfPCell cell = createCellService.createCellWithStylesWhenDynamicDataGiven(font, textBlock, scheduleYear.getYear());
+        TemplateTextBlock textBlock = textBlocksWithStyle.get("SCHEDULE_YEARS");
+        PdfPCell cell = createCellService.createCellWithStylesWhenDynamicDataGiven(font, textBlock, scheduleYear.getYear(), url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setColspan(6);
         innerTable.addCell(cell);
@@ -110,7 +107,7 @@ public class CreateLoanScheduleService {
     private void createScheduleLine(
             int paymentMonthCounter,
             PdfPTable table,
-            Map<String, TextBlockWithStyle> textBlocksWithStyle,
+            Map<String, TemplateTextBlock> textBlocksWithStyle,
             ScheduleLine scheduleLine,
             boolean withBackground
     ) {
@@ -127,7 +124,7 @@ public class CreateLoanScheduleService {
 
     private void createEmptyScheduleLine(
             PdfPTable table,
-            Map<String, TextBlockWithStyle> textBlocksWithStyle,
+            Map<String, TemplateTextBlock> textBlocksWithStyle,
             boolean withBackground
     ) {
         List<Pair<String, String>> oneRow = Arrays.asList(
@@ -142,14 +139,14 @@ public class CreateLoanScheduleService {
     }
 
     private void createRowReplacingValues(
-            Map<String, TextBlockWithStyle> textBlocksWithStyle,
+            Map<String, TemplateTextBlock> textBlocksWithStyle,
             List<Pair<String, String>> input,
             PdfPTable table,
             boolean withBackground
     ) {
         for (Pair<String, String> textBlock : input) {
-            TextBlockWithStyle block = textBlocksWithStyle.get(textBlock.getFirst());
-            PdfPCell cell = createCellService.createCellWithStylesWhenDynamicDataGiven(font, block, textBlock.getSecond());
+            TemplateTextBlock block = textBlocksWithStyle.get(textBlock.getFirst());
+            PdfPCell cell = createCellService.createCellWithStylesWhenDynamicDataGiven(font, block, textBlock.getSecond(), url);
             cell.setBorder(Rectangle.BOTTOM);
             cell.setMinimumHeight(DEFAULT_MIN_HEIGHT);
             if (withBackground) {
@@ -165,7 +162,7 @@ public class CreateLoanScheduleService {
             boolean withBackground
     ) {
         for (String textBlock : input) {
-            TextBlockWithStyle block = textBlocksWithStyle.get(textBlock);
+            TemplateTextBlock block = textBlocksWithStyle.get(textBlock);
             PdfPCell cell = createCellService.createCellWithStylesNoSubstitutions(font, block, url);
             cell.setBorder(Rectangle.BOTTOM);
             cell.setMinimumHeight(DEFAULT_MIN_HEIGHT);
@@ -194,11 +191,11 @@ public class CreateLoanScheduleService {
 
     private void createMockVersionForOnlineEditing(
             PdfPTable table,
-            Map<String, TextBlockWithStyle> textBlocksWithStyle,
+            Map<String, TemplateTextBlock> textBlocksWithStyle,
             String url
     ) {
         PdfPTable innerTable = new PdfPTable(6);
-        TextBlockWithStyle textBlock = textBlocksWithStyle.get("SCHEDULE_YEARS");
+        TemplateTextBlock textBlock = textBlocksWithStyle.get("SCHEDULE_YEARS");
         PdfPCell cell = createCellService.createCellWithStylesNoSubstitutions(font, textBlock, url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setColspan(6);

@@ -1,4 +1,4 @@
-package generate.pdf.openpdf.template.loan.schedule;
+package generate.pdf.openpdf.service.table;
 
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.*;

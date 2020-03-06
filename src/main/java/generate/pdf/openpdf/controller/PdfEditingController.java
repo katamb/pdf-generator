@@ -1,7 +1,7 @@
 package generate.pdf.openpdf.controller;
 
 import generate.pdf.openpdf.dto.ResponseWithReason;
-import generate.pdf.openpdf.dto.TextBlockWithStyle;
+import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.enums.UpdateType;
@@ -28,7 +28,7 @@ public class PdfEditingController {
 
     @CrossOrigin
     @GetMapping("text-by-id/{templateCode}/{languageCode}/{id}")
-    public TextBlockWithStyle pdfEditor(
+    public TemplateTextBlock pdfEditor(
             @PathVariable TemplateCode templateCode,
             @PathVariable LanguageCode languageCode,
             @PathVariable Long id
@@ -52,7 +52,7 @@ public class PdfEditingController {
     @PutMapping("update-text/{updateType}")
     public ResponseWithReason updateTextBlock(
             @PathVariable UpdateType updateType,
-            @RequestBody TextBlockWithStyle updatedTextBlock
+            @RequestBody TemplateTextBlock updatedTextBlock
     ) {
         return textUpdatingService.update(updatedTextBlock, updateType);
     }

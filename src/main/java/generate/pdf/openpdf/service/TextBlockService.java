@@ -1,15 +1,17 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.dto.TextBlockWithStyle;
+import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,20 +21,28 @@ public class TextBlockService {
 
     /**
      * Return static text for template in the form of a map for fast and easy access.
-     * @param templateCode
-     * @param languageCode
-     * @return
      */
-    public Map<String, TextBlockWithStyle> getTextsByGroupAndLanguage(
+    public Map<String, TemplateTextBlock> getTextsByTemplateAndLanguage(
             TemplateCode templateCode,
             LanguageCode languageCode
     ) {
-        List<TextBlockWithStyle> textBlocksWithStyle = templateTextMapper
+        List<TemplateTextBlock> textBlocksWithStyle = templateTextMapper
                 .getTextsByGroupAndLanguage(templateCode.toString(), languageCode.toString());
-        Map<String, TextBlockWithStyle> map = new HashMap<>();
-        for (TextBlockWithStyle textBlockWithStyle : textBlocksWithStyle) {
-            map.put(textBlockWithStyle.getTextBlockName(), textBlockWithStyle);
+        Map<String, TemplateTextBlock> map = new HashMap<>();
+        for (TemplateTextBlock templateTextBlock : textBlocksWithStyle) {
+            map.put(templateTextBlock.getTextBlockName(), templateTextBlock);
         }
         return map;
+    }
+
+    /**
+     * Return static text for template in the form of a map for fast and easy access.
+     */
+    public List<TemplateTextBlock> getTextsByGroup(Map<String, TemplateTextBlock> textBlockMap, String groupName) {
+        return textBlockMap.values()
+                .stream()
+                .filter(tb -> tb.getTextGroupCode().equals(groupName))
+                .sorted(Comparator.comparing(TemplateTextBlock::getOrdering))
+                .collect(Collectors.toList());
     }
 }

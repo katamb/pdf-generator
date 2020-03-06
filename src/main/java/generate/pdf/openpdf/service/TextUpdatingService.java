@@ -1,7 +1,7 @@
 package generate.pdf.openpdf.service;
 
 import generate.pdf.openpdf.dto.ResponseWithReason;
-import generate.pdf.openpdf.dto.TextBlockWithStyle;
+import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.UpdateType;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class TextUpdatingService {
      * @param updateType - Holds state (update only this or all, if text block is used in many places)
      * @return response
      */
-    public ResponseWithReason update(TextBlockWithStyle updatedTextBlock, UpdateType updateType) {
+    public ResponseWithReason update(TemplateTextBlock updatedTextBlock, UpdateType updateType) {
         Long textBlockUsagesAmount = templateTextMapper.findAmountOfTextBlockUsages(updatedTextBlock.getTextBlockId());
         boolean isTextBlockValueUpdated = !templateTextMapper.findTextBlockValueById(updatedTextBlock.getTextBlockId())
                 .equals(updatedTextBlock.getTextBlockValue());
@@ -47,7 +47,7 @@ public class TextUpdatingService {
      * If text block with the exact value already exists, use that, else insert new text block and use that.
      * @param updatedTextBlock - Text block updated by user.
      */
-    private void updateTextBlockIfNeededElseUseExisting(TextBlockWithStyle updatedTextBlock) {
+    private void updateTextBlockIfNeededElseUseExisting(TemplateTextBlock updatedTextBlock) {
         Long existingTextBlockWithNeededValue = templateTextMapper
                 .findTextBlockIdByValue(updatedTextBlock.getTextBlockValue());
         if (existingTextBlockWithNeededValue != null) {
@@ -62,7 +62,7 @@ public class TextUpdatingService {
      * If text block with the exact value already exists, use that, else insert new text block and use that.
      * @param updatedTextBlock - Text block updated by user.
      */
-    private void insertNewTextBlockIfNecessaryElseUseExisting(TextBlockWithStyle updatedTextBlock) {
+    private void insertNewTextBlockIfNecessaryElseUseExisting(TemplateTextBlock updatedTextBlock) {
         Long existingTextBlockWithNeededValue = templateTextMapper
                 .findTextBlockIdByValue(updatedTextBlock.getTextBlockValue());
         if (existingTextBlockWithNeededValue != null) {

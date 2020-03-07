@@ -20,6 +20,10 @@
 
     <Explanations/>
 
+    <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
+      Select text before adding the formatting!
+    </b-alert>
+
     <div v-if="this.json !== null && this.json !== undefined" class="mt-3">
 
       <b-button-group class="m-1" size="sm">
@@ -55,18 +59,35 @@
         </b-button>
       </b-button-group>
 
-      <b-row class="justify-content-center">
-        <b-col xs="10" sm="8" md="6" lg="5" xl="4">
-          <b-input-group class="mt-1 mb-2 mx-auto"
+      <b-row class="">
+
+        <b-col>
+          <b-input-group class="mt-1 mb-2 ml-auto limited-width"
                          prepend="Text size">
             <b-form-input type="number"
                           v-model="json.textSize">
             </b-form-input>
           </b-input-group>
         </b-col>
+
+        <b-col class="text-left">
+          <b-button-group class="my-1" size="sm">
+            <b-button @click="applyFormat('BOLD')">
+              <i class="material-icons icon-center">format_bold</i>
+            </b-button>
+            <b-button @click="applyFormat('ITALIC')">
+              <i class="material-icons icon-center">format_italic</i>
+            </b-button>
+            <b-button @click="applyFormat('UNDERLINE')">
+              <i class="material-icons icon-center">format_underline</i>
+            </b-button>
+          </b-button-group>
+        </b-col>
+
       </b-row>
 
-      <b-form-textarea v-model="json.textBlockValue"
+      <b-form-textarea @select.native="saveCurrentSelection"
+                       v-model="json.textBlockValue"
                        debounce="500"
                        rows="4"
                        max-rows="25"
@@ -109,9 +130,12 @@
         updateAll = UPDATE_ALL;
         updateOnlyCurrent = UPDATE_ONLY_CURRENT;
         confirmUpdate = CONFIRM_UPDATE;
+        showDismissibleAlert = false;
         private json: any = null;
         private showModal = false;
         private errorMessage = '';
+        private selectionStart: any = null;
+        private selectionEnd: any = null;
 
         mounted(): void {
             this.getText();
@@ -172,6 +196,51 @@
             }
         }
 
+        nullCurrentSelection(): void {
+            this.selectionStart = null;
+            this.selectionEnd = null;
+        }
+
+        saveCurrentSelection(event: any): void {
+            this.selectionStart = event.currentTarget.selectionStart;
+            this.selectionEnd = event.currentTarget.selectionEnd;
+        }
+
+        applyFormat(format: string): void {
+            if (!this.isUndefinedOrNull(this.selectionStart) && !this.isUndefinedOrNull(this.selectionEnd)) {
+                const stringBeforeSelection = this.json.textBlockValue.substring(0, this.selectionStart);
+                const selection = this.json.textBlockValue.substring(this.selectionStart, this.selectionEnd);
+                const stringAfterSelection = this.json.textBlockValue.substring(this.selectionEnd, this.json.textBlockValue.length);
+                this.json.textBlockValue = stringBeforeSelection
+                    + this.getTag("START", format) + selection + this.getTag("END", format) + stringAfterSelection;
+                this.nullCurrentSelection();
+            } else {
+                this.showDismissibleAlert = true;
+            }
+        }
+
+        private isUndefinedOrNull(element: any): boolean {
+            return element === undefined || element === null;
+        }
+
+        private getTag(position: string, format: string): string {
+            let result = "<";
+            if (position === "END") {
+                result += "/";
+            }
+            if (format === "BOLD") {
+                result += "b";
+            }
+            if (format === "ITALIC") {
+                result += "i";
+            }
+            if (format === "UNDERLINE") {
+                result += "u";
+            }
+            result += ">";
+            return result;
+        }
+
     }
 </script>
 
@@ -182,5 +251,9 @@
 
   .active {
     background-color: black;
+  }
+
+  .limited-width {
+    max-width: 175px;
   }
 </style>

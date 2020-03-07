@@ -1,8 +1,10 @@
 <template>
   <div class="about">
-    <router-link to="/">Home</router-link>
+    <router-link class="home-button" to="/">
+      <i class="material-icons md-48 icon-center">home</i> Home
+    </router-link>
 
-    <h1>Page for editing PDF's</h1>
+    <h1>Edit PDF templates</h1>
 
     <b-container fluid>
       <b-row>
@@ -36,4 +38,16 @@
     export default class EditPdf extends Vue {}
 </script>
 
-<style scoped></style>
+<style scoped>
+  .home-button {
+    font-size: 26px;
+  }
+
+  .home-button:hover {
+    text-decoration: none;
+  }
+
+  .icon-center {
+    vertical-align: middle;
+  }
+</style>

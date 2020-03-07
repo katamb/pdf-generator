@@ -95,12 +95,12 @@ public class CreateLoanConditionsService {
     }
 
     private void createTwoCellRow(PdfPTable table, String number, TemplateTextBlock textWithStyle) {
-        PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font,
+        PdfPCell cell = createCellService.createCellAndInsertDynamicDataIfPossible(font,
                 createNewBlockFromExistingWithSameStyles(textWithStyle, number), inputDataAsMap, null);
         cell.setHorizontalAlignment(0);
         table.addCell(cell);
 
-        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textWithStyle, inputDataAsMap, url);
+        cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, textWithStyle, inputDataAsMap, url);
         table.addCell(cell);
     }
 

@@ -6,6 +6,7 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.service.DynamicDataInjectionService;
+import generate.pdf.openpdf.service.FontStylesCreationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,9 @@ import java.util.Map;
 public class CreateCellService {
 
     private final DynamicDataInjectionService dynamicDataInjectionService;
+    private final FontStylesCreationService fontStylesCreationService;
 
-    public PdfPCell createCellWithStylesWhenDynamicDataGiven(
+    public PdfPCell createCellAndInsertGivenString(
             Font font,
             TemplateTextBlock templateTextBlock,
             String replacement,
@@ -25,7 +27,7 @@ public class CreateCellService {
     ) {
         font.setSize(templateTextBlock.getTextSize());
         String injectedText = getText(templateTextBlock, replacement);
-        Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, injectedText);
+        Phrase phrase = fontStylesCreationService.phraseWithBoldItalicUnderlineStyles(font, injectedText);
         PdfPCell cell = new PdfPCell(phrase);
         cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
         cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
@@ -36,7 +38,7 @@ public class CreateCellService {
         return cell;
     }
 
-    public PdfPCell createCellWithStylesDynamicDataFromMapIfPossible(
+    public PdfPCell createCellAndInsertDynamicDataIfPossible(
             Font font,
             TemplateTextBlock templateTextBlock,
             Map<String, Object> inputData,
@@ -44,7 +46,7 @@ public class CreateCellService {
     ) {
         font.setSize(templateTextBlock.getTextSize());
         String injectedText = getText(templateTextBlock, inputData);
-        Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, injectedText);
+        Phrase phrase = fontStylesCreationService.phraseWithBoldItalicUnderlineStyles(font, injectedText);
         PdfPCell cell = new PdfPCell(phrase);
         cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
         cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
@@ -55,9 +57,9 @@ public class CreateCellService {
         return cell;
     }
 
-    public PdfPCell createCellWithStylesNoSubstitutions(Font font, TemplateTextBlock templateTextBlock, String url) {
+    public PdfPCell createCellMakeNoSubstitutions(Font font, TemplateTextBlock templateTextBlock, String url) {
         font.setSize(templateTextBlock.getTextSize());
-        Phrase phrase = dynamicDataInjectionService.getBoldStrings(font, templateTextBlock.getTextBlockValue());
+        Phrase phrase = fontStylesCreationService.phraseWithBoldItalicUnderlineStyles(font, templateTextBlock.getTextBlockValue());
         PdfPCell cell = new PdfPCell(phrase);
         cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
         cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());

@@ -1,8 +1,5 @@
 package generate.pdf.openpdf.service;
 
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Font;
-import com.lowagie.text.Phrase;
 import generate.pdf.openpdf.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
@@ -55,37 +52,6 @@ public class DynamicDataInjectionService {
             String message = String.format("Missing value in input: %s.", replaceableText);
             throw new BadRequestException(message);
         }
-    }
-
-    /**
-     * @param font Font for given text.
-     * @param text Text for manipulating.
-     * @return Phrase with text between ** signs turned to bold
-     */
-    public Phrase getBoldStrings(Font font, String text) {
-        Pattern pattern = Pattern.compile("\\*\\*[^;]*\\*\\*");
-        Matcher matcher = pattern.matcher(text);
-        // Text can't be directly changed in loop
-        Phrase phrase = new Phrase();
-        Font boldFont = new Font(font);
-        boldFont.setStyle(Font.BOLD);
-        phrase.setFont(font);
-
-        int index = 0;
-        while (matcher.find()) {
-            String textPart = text.substring(index, matcher.start());
-            Chunk chunk = new Chunk(textPart, font);
-            phrase.add(chunk);
-            textPart = text.substring(matcher.start() + 2, matcher.end() - 2);
-            chunk = new Chunk(textPart, boldFont);
-            phrase.add(chunk);
-            index = matcher.end();
-        }
-        String lastTextPart = text.substring(index, text.length());
-        Chunk chunk = new Chunk(lastTextPart, font);
-        phrase.add(chunk);
-
-        return phrase;
     }
 
 }

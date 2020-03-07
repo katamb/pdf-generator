@@ -9,7 +9,7 @@ VALUES
     ('Intress'),
     ('Lepingu haldustasu'),
     ('Makse kokku'),
-    ('**${scheduleYears.year}**'),
+    ('<b>${scheduleYears.year}<b>'),
     ('${scheduleYears.scheduleLines.paymentDate}'),
     ('${scheduleYears.scheduleLines.principal}'),
     ('${scheduleYears.scheduleLines.interest}'),
@@ -40,7 +40,7 @@ VALUES
         (SELECT text_block_id from text_block where text_block_value='Makse kokku')
     ),
     ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'SCHEDULE_YEARS', 14.0, 1, 'SCHEDULE',
-        (SELECT text_block_id from text_block where text_block_value='**${scheduleYears.year}**')
+        (SELECT text_block_id from text_block where text_block_value='<b>${scheduleYears.year}<b>')
     ),
     ('PRIVATE_SMALL_LOAN_CONTRACT_EE', 'et', 'SCHEDULE_PAYMENT_DATE', 8.0, 0, 'SCHEDULE',
         (SELECT text_block_id from text_block where text_block_value='${scheduleYears.scheduleLines.paymentDate}')

@@ -53,7 +53,7 @@ public class CreateLoanPartiesService {
 
     private void createFirstRow(PdfPTable table) {
         TemplateTextBlock templateTextBlock = textBlocksWithStyle.get("LENDER");
-        PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, templateTextBlock, inputDataAsMap, url);
+        PdfPCell cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, templateTextBlock, inputDataAsMap, url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setBorderColor(Color.GRAY);
         cell.setPaddingBottom(PADDING_BOTTOM);
@@ -64,7 +64,7 @@ public class CreateLoanPartiesService {
         table.addCell(createCellService.createEmptyCellWithNoStyles());
 
         templateTextBlock = textBlocksWithStyle.get("BORROWER");
-        cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, templateTextBlock, inputDataAsMap, url);
+        cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, templateTextBlock, inputDataAsMap, url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setBorderColor(Color.GRAY);
         cell.setPaddingBottom(PADDING_BOTTOM);
@@ -89,7 +89,7 @@ public class CreateLoanPartiesService {
                 continue;
             }
             TemplateTextBlock templateTextBlock = textBlocksWithStyle.get(cellName);
-            PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, templateTextBlock, inputDataAsMap, url);
+            PdfPCell cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, templateTextBlock, inputDataAsMap, url);
             cell.setBorder(Rectangle.BOTTOM);
             cell.setBorderColor(Color.GRAY);
             cell.setPaddingBottom(PADDING_BOTTOM);

@@ -25,22 +25,22 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
     private static final int HEADER_FOOTER_WIDTH = 530;
 
     private CreateCellService createCellService;
-    private Map<String, TemplateTextBlock> textBlocksWithStyle;
+    private Map<String, TemplateTextBlock> templateTextBlockMap;
     private Map<String, Object> inputDataAsMap;
     private String url;
     private Font font;
     private PdfTemplate template;
-    private Image total;
+    private Image pageCountPlaceholder;
 
     public HeaderFooterPageEvent(
             CreateCellService createCellService,
-            Map<String, TemplateTextBlock> textBlocksWithStyle,
+            Map<String, TemplateTextBlock> templateTextBlockMap,
             Map<String, Object> inputDataAsMap,
             String url,
             Font font
     ) {
         this.createCellService = createCellService;
-        this.textBlocksWithStyle = textBlocksWithStyle;
+        this.templateTextBlockMap = templateTextBlockMap;
         this.inputDataAsMap = inputDataAsMap;
         this.url = url;
         this.font = font;
@@ -50,7 +50,7 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
     public void onOpenDocument(PdfWriter writer, Document document) {
         template = writer.getDirectContent().createTemplate(16, 16);
         try {
-            total = Image.getInstance(template);
+            pageCountPlaceholder = Image.getInstance(template);
         } catch (DocumentException e) {
             logger.log(Level.WARNING, e.getMessage(), e);
             throw new PdfGenerationException(e.getMessage(), e);
@@ -68,9 +68,9 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
         int totalLength = String.valueOf(writer.getPageNumber()).length();
         int totalWidth = totalLength * 5;
         String totalPageNumbers = String.valueOf(writer.getPageNumber() - 1);
-        font.setSize(textBlocksWithStyle.get("PAGE_NR").getTextSize());
+        font.setSize(templateTextBlockMap.get("PAGE_NR").getTextSize());
         Phrase phrase = new Phrase(totalPageNumbers, font);
-        ColumnText.showTextAligned(template, Element.ALIGN_RIGHT, phrase, totalWidth, 6, 0);
+        ColumnText.showTextAligned(template, Element.ALIGN_RIGHT, phrase, totalWidth, 4, 0);
     }
 
     private void addHeader(PdfWriter writer) {
@@ -89,10 +89,11 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
             header.addCell(logo);
 
             // add text
-            PdfPCell text = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, textBlocksWithStyle.get("HEADER_TEXT_1"), inputDataAsMap, url);
-            text.setBorder(Rectangle.BOTTOM);
-            text.setBorderColor(Color.GRAY);
-            header.addCell(text);
+            TemplateTextBlock textBlock = templateTextBlockMap.get("HEADER_TEXT_1");
+            PdfPCell textCell = createCellService.createCellAndInsertDynamicDataIfPossible(font, textBlock, inputDataAsMap, url);
+            textCell.setBorder(Rectangle.BOTTOM);
+            textCell.setBorderColor(Color.GRAY);
+            header.addCell(textCell);
 
             // write content
             header.writeSelectedRows(0, -1, 35, 800, writer.getDirectContent());
@@ -110,24 +111,24 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
             footer.setLockedWidth(true);
 
             // add text
-            TemplateTextBlock text = textBlocksWithStyle.get("FOOTER_TEXT_1");
-            PdfPCell cell = createCellService.createCellWithStylesDynamicDataFromMapIfPossible(font, text, inputDataAsMap, url);
+            TemplateTextBlock text = templateTextBlockMap.get("FOOTER_TEXT_1");
+            PdfPCell cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, text, inputDataAsMap, url);
             cell.setFixedHeight(HEADER_FOOTER_HEIGHT);
             cell.setBorder(Rectangle.TOP);
             cell.setBorderColor(Color.GRAY);
             footer.addCell(cell);
 
             // add current page count
-            text = textBlocksWithStyle.get("PAGE_NR");
+            text = templateTextBlockMap.get("PAGE_NR");
             String currentPageNumber = Integer.toString(writer.getPageNumber());
-            cell = createCellService.createCellWithStylesWhenDynamicDataGiven(font, text, currentPageNumber, url);
+            cell = createCellService.createCellAndInsertGivenString(font, text, currentPageNumber, url);
             cell.setFixedHeight(HEADER_FOOTER_HEIGHT);
             cell.setBorder(Rectangle.TOP);
             cell.setBorderColor(Color.GRAY);
             footer.addCell(cell);
 
             // add placeholder for total page count
-            PdfPCell totalPageCount = new PdfPCell(total);
+            PdfPCell totalPageCount = new PdfPCell(pageCountPlaceholder);
             cell.setFixedHeight(HEADER_FOOTER_HEIGHT);
             totalPageCount.setBorder(Rectangle.TOP);
             totalPageCount.setBorderColor(Color.GRAY);

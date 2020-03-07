@@ -43,7 +43,7 @@ public class CreateSimpleTextService {
 
     private void createCell(PdfPTable table) {
         PdfPCell cell = createCellService
-                .createCellWithStylesDynamicDataFromMapIfPossible(font, templateTextBlock, inputDataAsMap, url);
+                .createCellAndInsertDynamicDataIfPossible(font, templateTextBlock, inputDataAsMap, url);
         cell.setPaddingTop(6);
         cell.setPaddingBottom(6);
         table.addCell(cell);

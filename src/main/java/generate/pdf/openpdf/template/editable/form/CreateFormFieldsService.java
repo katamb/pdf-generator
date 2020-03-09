@@ -60,6 +60,8 @@ public class CreateFormFieldsService {
         createFormGroups(table, blocks);
 
         document.add(table);
+
+        // For radio button, this @addAnnotation method needs to be called after @document.add
         for (PdfFormField formField : pdfFormFields) {
             writer.addAnnotation(formField);
         }
@@ -133,12 +135,11 @@ public class CreateFormFieldsService {
     }
 
     private PdfPCell createTextFieldCell(TemplateTextBlock textByGroup) {
-        PdfPCell cell;
-        cell = new PdfPCell();
+        PdfPCell cell = new PdfPCell();
         cell.setColspan(2);
         cell.setBorder(Rectangle.BOTTOM);
         String fieldName = textByGroup.getTextBlockValue().toLowerCase().replace(":", "");
-        cell.setCellEvent(new TextInputCellField(fieldName, false));
+        cell.setCellEvent(new TextInputCellField(fieldName, textByGroup.getTextSize(), false));
         return cell;
     }
 

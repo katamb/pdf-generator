@@ -44,7 +44,7 @@ public class EditableFormTemplate extends BasePdfGenerator {
     private Font font;
 
     /**
-     * Created with help from:  https://itextpdf.com/en/resources/examples/itext-5-legacy/create-fields-table
+     * Created with help from: https://itextpdf.com/en/resources/examples/itext-5-legacy/create-fields-table
      */
     @Override
     public void generatePdf(TemplateCode templateCode, LanguageCode languageCode, String inputData, OutputStream outputStream) {

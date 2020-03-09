@@ -1,8 +1,8 @@
-import {URL} from "@/constants";
+import {BASE_URL} from "@/constants";
 
 export async function getRequest(url: string) {
     // const jwt = localStorage.getItem("JWT");
-    return await fetch(URL + url, {
+    return await fetch(BASE_URL + url, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -14,7 +14,7 @@ export async function getRequest(url: string) {
 
 export async function putRequest(url: string, body: any) {
     //const jwt = localStorage.getItem("JWT");
-    return await fetch(URL + url, {
+    return await fetch(BASE_URL + url, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -26,7 +26,7 @@ export async function putRequest(url: string, body: any) {
 }
 
 export async function postRequest(url: string, body: any) {
-    return await fetch(URL + url, {
+    return await fetch(BASE_URL + url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

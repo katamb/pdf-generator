@@ -1,6 +1,12 @@
 SET search_path=pdf_generator;
 
 INSERT INTO
+    template_code (template_code)
+VALUES
+    ('PRIVATE_CAR_LOAN_CONTRACT_EE')
+;
+
+INSERT INTO
     text_block (text_block_value)
 VALUES
     ('<b>Eritingimused</b>'),

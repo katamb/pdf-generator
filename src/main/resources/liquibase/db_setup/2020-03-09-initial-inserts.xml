@@ -6,8 +6,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="create-db" author="setup">
-        <sqlFile path="database-setup.sql" relativeToChangelogFile="true" endDelimiter="\nGO"/>
+    <changeSet id="initial-inserts" author="setup">
+        <sqlFile path="initial-inserts.sql" relativeToChangelogFile="true" endDelimiter="\nGO"/>
     </changeSet>
 
 </databaseChangeLog>

@@ -19,7 +19,7 @@
         tt.vertical_alignment
     </sql>
 
-    <select id="getTextsByGroupAndLanguage" resultType="generate.pdf.openpdf.dto.TemplateTextBlock">
+    <select id="getTextsByTemplateAndLanguage" resultType="generate.pdf.openpdf.dto.TemplateTextBlock">
         SELECT <include refid="selectAll"/>
         FROM pdf_generator.template_text tt
              INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tt.text_block_id
@@ -54,15 +54,21 @@
         WHERE text_block_id = #{id};
     </select>
 
-    <select id="findAllTemplates" resultType="java.lang.String">
+    <select id="findAllAvailableTemplates" resultType="java.lang.String">
         SELECT DISTINCT template_code
-        FROM pdf_generator.template_text;
+        FROM pdf_generator.template_code;
     </select>
 
-    <select id="findAllLanguagesForTemplate" resultType="java.lang.String">
-        SELECT DISTINCT language_code
-        FROM pdf_generator.template_text
-        WHERE template_code = #{template};
+    <select id="findAllLanguagesForTemplate" resultType="generate.pdf.openpdf.dto.ValueTextCombo">
+        SELECT DISTINCT lc.language_code, lc.language_name
+        FROM pdf_generator.template_text tt
+        INNER JOIN pdf_generator.language_code lc ON lc.language_code = tt.language_code
+        WHERE tt.template_code = #{template};
+    </select>
+
+    <select id="findAllAvailableLanguages" resultType="generate.pdf.openpdf.dto.ValueTextCombo">
+        SELECT lc.language_code, lc.language_name
+        FROM pdf_generator.language_code lc;
     </select>
 
     <update id="updateTemplateToTextTranslation">
@@ -86,6 +92,41 @@
             pdf_generator.text_block (text_block_value)
         VALUES
             (#{textBlockValue});
+    </insert>
+
+    <insert id="batchInsert">
+        INSERT INTO
+            pdf_generator.template_text
+            (
+                template_code,
+                language_code,
+                text_group_code,
+                ordering,
+                numbering,
+                numbering_level,
+                text_block_name,
+                text_block_id,
+                text_size,
+                horizontal_alignment,
+                vertical_alignment
+            )
+        VALUES
+        <foreach collection="templateTextBlocks" item="templateTextBlock" separator=",">
+            (
+                #{templateTextBlock.templateCode},
+                #{templateTextBlock.languageCode},
+                #{templateTextBlock.textGroupCode},
+                #{templateTextBlock.ordering},
+                #{templateTextBlock.numbering},
+                #{templateTextBlock.numberingLevel},
+                #{templateTextBlock.textBlockName},
+                (SELECT tb.text_block_id FROM pdf_generator.text_block tb WHERE tb.text_block_value = #{templateTextBlock.textBlockValue}),
+                #{templateTextBlock.textSize},
+                #{templateTextBlock.horizontalAlignment},
+                #{templateTextBlock.verticalAlignment}
+            )
+        </foreach>
+        ;
     </insert>
 
 </mapper>

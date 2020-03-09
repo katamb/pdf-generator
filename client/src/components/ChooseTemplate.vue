@@ -30,30 +30,33 @@
         private templateOptions: any = [];
         private languageOptions: any = [];
 
-        private mounted(): void {
+        mounted(): void {
             getRequest('/api/v1/all-templates')
                 .then(response => response.json())
                 .then(data => this.templateOptions = data)
             ;
         }
 
-        private getLanguages(): void {
+        getLanguages(): void {
             getRequest(`/api/v1/template-languages/${this.selectedTemplate}`)
                 .then(response => response.json())
                 .then(data => this.languageOptions = data)
             ;
         }
 
-        private languageSelectionAllowed(): boolean {
-            return this.selectedTemplate !== null && this.selectedTemplate !== undefined && this.selectedTemplate !== '';
+        languageSelectionAllowed(): boolean {
+            return this.elementSelectionAllowed(this.selectedTemplate);
         }
 
-        private navigationAllowed(): boolean {
-            return this.languageSelectionAllowed()
-                && this.selectedLanguage !== null && this.selectedLanguage !== undefined && this.selectedLanguage !== '';
+        navigationAllowed(): boolean {
+            return this.elementSelectionAllowed(this.selectedTemplate) && this.elementSelectionAllowed(this.selectedLanguage);
         }
 
-        private navigateToEditPage(): void {
+        private elementSelectionAllowed(element: any): boolean {
+            return element !== undefined && element !== null && element !== '';
+        }
+
+        navigateToEditPage(): void {
             router.push({path: `edit-pdf/${this.selectedTemplate}/${this.selectedLanguage}/-`});
         }
 

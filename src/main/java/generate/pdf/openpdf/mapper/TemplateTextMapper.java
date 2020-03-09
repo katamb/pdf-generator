@@ -1,5 +1,6 @@
 package generate.pdf.openpdf.mapper;
 
+import generate.pdf.openpdf.dto.ValueTextCombo;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -9,7 +10,7 @@ import java.util.List;
 @Mapper
 public interface TemplateTextMapper {
 
-    List<TemplateTextBlock> getTextsByGroupAndLanguage(
+    List<TemplateTextBlock> getTextsByTemplateAndLanguage(
             @Param("templateCode") String templateCode,
             @Param("languageCode") String languageCode
     );
@@ -26,9 +27,11 @@ public interface TemplateTextMapper {
 
     Long findAmountOfTextBlockUsages(@Param("id") Long id);
 
-    List<String> findAllTemplates();
+    List<String> findAllAvailableTemplates();
 
-    List<String> findAllLanguagesForTemplate(@Param("template") String template);
+    List<ValueTextCombo> findAllLanguagesForTemplate(@Param("template") String template);
+
+    List<ValueTextCombo> findAllAvailableLanguages();
 
     Long updateTemplateToTextTranslation(@Param("templateTextBlock") TemplateTextBlock templateTextBlock);
 
@@ -39,4 +42,5 @@ public interface TemplateTextMapper {
 
     void insertTextBlock(TemplateTextBlock templateTextBlock);
 
+    void batchInsert(@Param("templateTextBlocks") List<TemplateTextBlock> templateTextBlocks);
 }

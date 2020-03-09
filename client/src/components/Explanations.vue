@@ -1,8 +1,8 @@
 <template>
   <div class="m-3 text-left">
-    <b-button v-b-toggle="'collapse'" class="m-1">Show/Close instructions</b-button>
+    <b-button v-b-toggle="'collapse-new-language'" class="m-1">Show/Close instructions</b-button>
 
-    <b-collapse id="collapse">
+    <b-collapse id="collapse-new-language">
       <b-card title="Overall">
         To make changes, click the text in the PDF preview (on the right), which needs changing.
         This will display that text down below.

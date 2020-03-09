@@ -1,6 +1,12 @@
 SET search_path=pdf_generator;
 
 INSERT INTO
+    template_code (template_code)
+VALUES
+    ('EDITABLE_FORM_EE')
+;
+
+INSERT INTO
     text_block (text_block_value)
 VALUES
     ('<b>PDF vorm</b>'),

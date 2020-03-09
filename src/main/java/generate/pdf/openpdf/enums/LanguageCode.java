@@ -2,7 +2,15 @@ package generate.pdf.openpdf.enums;
 
 public enum LanguageCode {
 
-    ET;
+    ET,
+    FI,
+    SV,
+    RU,
+    LV,
+    LT,
+    DE,
+    ES,
+    PL;
 
     @Override
     public String toString() {

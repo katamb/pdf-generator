@@ -27,7 +27,7 @@ public class TextBlockService {
             LanguageCode languageCode
     ) {
         List<TemplateTextBlock> textBlocksWithStyle = templateTextMapper
-                .getTextsByGroupAndLanguage(templateCode.toString(), languageCode.toString());
+                .getTextsByTemplateAndLanguage(templateCode.toString(), languageCode.toString());
         Map<String, TemplateTextBlock> map = new HashMap<>();
         for (TemplateTextBlock templateTextBlock : textBlocksWithStyle) {
             map.put(templateTextBlock.getTextBlockName(), templateTextBlock);

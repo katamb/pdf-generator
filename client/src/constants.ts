@@ -1,4 +1,4 @@
-export const URL = "http://localhost:7701";
+export const BASE_URL = "http://localhost:7701";
 
 export const HORIZONTAL_ALIGN_LEFT = -1;
 export const HORIZONTAL_ALIGN_DEFAULT = 0;

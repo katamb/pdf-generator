@@ -1,5 +1,6 @@
 package generate.pdf.openpdf.controller;
 
+import generate.pdf.openpdf.dto.ValueTextCombo;
 import generate.pdf.openpdf.dto.ResponseWithReason;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,13 +40,19 @@ public class PdfEditingController {
 
     @CrossOrigin
     @GetMapping("all-templates")
-    public List<String> pdfEditor() {
-        return templateTextMapper.findAllTemplates();
+    public List<String> getAllTemplates() {
+        return templateTextMapper.findAllAvailableTemplates();
+    }
+
+    @CrossOrigin
+    @GetMapping("all-languages")
+    public List<ValueTextCombo> getAllLanguages() {
+        return templateTextMapper.findAllAvailableLanguages();
     }
 
     @CrossOrigin
     @GetMapping("template-languages/{templateCode}")
-    public List<String> pdfEditor(@PathVariable TemplateCode templateCode) {
+    public List<ValueTextCombo> getTemplateLanguages(@PathVariable TemplateCode templateCode) {
         return templateTextMapper.findAllLanguagesForTemplate(templateCode.toString());
     }
 
@@ -55,5 +63,20 @@ public class PdfEditingController {
             @RequestBody TemplateTextBlock updatedTextBlock
     ) {
         return textUpdatingService.update(updatedTextBlock, updateType);
+    }
+
+    @CrossOrigin
+    @PostMapping("add-language/{templateCode}/{oldLanguageCode}/{newLanguageCode}")
+    public void createNewLanguageForTemplate(
+            @PathVariable TemplateCode templateCode,
+            @PathVariable LanguageCode oldLanguageCode,
+            @PathVariable LanguageCode newLanguageCode
+    ) {
+        List<TemplateTextBlock> templateTextRows = templateTextMapper
+                .getTextsByTemplateAndLanguage(templateCode.toString(), oldLanguageCode.toString());
+        for (TemplateTextBlock textBlock : templateTextRows) {
+            textBlock.setLanguageCode(newLanguageCode.toString());
+        }
+        templateTextMapper.batchInsert(templateTextRows);
     }
 }

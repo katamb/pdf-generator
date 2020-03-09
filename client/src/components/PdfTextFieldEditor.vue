@@ -19,6 +19,7 @@
     </b-modal>
 
     <Explanations/>
+    <AddNewLanguage/>
 
     <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
       Select text before adding the formatting!
@@ -112,10 +113,12 @@
     } from "@/constants";
     import eventBus from "@/eventBus";
     import Explanations from "@/components/Explanations.vue";
+    import AddNewLanguage from "@/components/AddNewLanguage.vue";
 
     @Component({
         components: {
-            Explanations
+            Explanations,
+            AddNewLanguage
         }
     })
     export default class PdfTextFieldEditor extends Vue {

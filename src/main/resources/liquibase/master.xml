@@ -8,10 +8,14 @@
 
     <include file="db_setup/2020-01-25-initial-setup.xml" relativeToChangelogFile="true"/>
 
-    <include file="loan_contract/2020-01-25-loan-contract-setup.xml" relativeToChangelogFile="true"/>
+    <include file="consumer_loan_contract/2020-01-25-loan-contract-setup.xml" relativeToChangelogFile="true"/>
 
-    <include file="loan_contract/2020-02-22-loan-schedule-setup.xml" relativeToChangelogFile="true"/>
+    <include file="consumer_loan_contract/2020-02-22-loan-schedule-setup.xml" relativeToChangelogFile="true"/>
 
-    <include file="loan_contract/2020-03-06-loan-header-footer-setup.xml" relativeToChangelogFile="true"/>
+    <include file="consumer_loan_contract/2020-03-06-loan-header-footer-setup.xml" relativeToChangelogFile="true"/>
+
+    <include file="car_loan_contract/2020-03-09-car-loan-setup.xml" relativeToChangelogFile="true"/>
+
+    <include file="pdf_with_form/2020-03-09-pdf-with-form-setup.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

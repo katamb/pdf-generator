@@ -20,15 +20,19 @@ public class TextInputCellField implements PdfPCellEvent {
     private static final Logger logger = Logger.getLogger(String.valueOf(TextInputCellField.class));
 
     private String fieldName;
+    private boolean multiLine;
 
-    public TextInputCellField(String fieldName) {
+    public TextInputCellField(String fieldName, boolean multiLine) {
         this.fieldName = fieldName;
+        this.multiLine = multiLine;
     }
 
     public void cellLayout(PdfPCell cell, Rectangle rectangle, PdfContentByte[] canvases) {
         final PdfWriter writer = canvases[0].getPdfWriter();
         final TextField textField = new TextField(writer, rectangle, fieldName);
-        //textField.setOptions(TextField.MULTILINE);
+        if (multiLine) {
+            textField.setOptions(TextField.MULTILINE);
+        }
         try {
             final PdfFormField field = textField.getTextField();
             writer.addAnnotation(field);

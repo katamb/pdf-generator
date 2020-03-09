@@ -65,7 +65,7 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
             inputValueMap = mapObjectToMap(loanContractInputDto);
         }
         // Get static text with design advice from db
-        Map<String, TemplateTextBlock> textBlocksWithStyle =
+        Map<String, TemplateTextBlock> templateTextBlockMap =
                 textBlockService.getTextsByTemplateAndLanguage(templateCode, languageCode);
         // Url is only set if in editing mode (which means input-data is missing)
         String url = inputData == null
@@ -77,15 +77,15 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
             // 2: Create a writer that listens to the document
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
             // 3: Add header and footer
-            writer.setPageEvent(new HeaderFooterPageEvent(createCellService, textBlocksWithStyle, inputValueMap, url, font));
+            writer.setPageEvent(new HeaderFooterPageEvent(createCellService, templateTextBlockMap, inputValueMap, url, font));
             // 4: Open the document
             document.open();
             // 5: Create document content
-            createSimpleTextService.createSingleCell(document, textBlocksWithStyle.get("LOAN_CONTRACT"), inputValueMap, url, font);
-            createLoanPartiesService.createPartiesData(document, textBlocksWithStyle, inputValueMap, url, font);
-            createLoanConditionsService.createMainConditions(document, textBlocksWithStyle, loanContractInputDto, inputValueMap, url, font);
+            createSimpleTextService.createSingleCell(document, templateTextBlockMap.get("LOAN_CONTRACT"), inputValueMap, url, font);
+            createLoanPartiesService.createPartiesData(document, templateTextBlockMap, inputValueMap, url, font);
+            createLoanConditionsService.createMainConditions(document, templateTextBlockMap, loanContractInputDto, inputValueMap, url, font);
             document.newPage(); // New page
-            createLoanScheduleService.createSchedule(document, textBlocksWithStyle, loanContractInputDto, url, font);
+            createLoanScheduleService.createSchedule(document, templateTextBlockMap, loanContractInputDto, url, font);
         } catch (DocumentException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
             throw new PdfGenerationException(e.getMessage(), e);

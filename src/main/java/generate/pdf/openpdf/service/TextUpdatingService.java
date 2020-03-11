@@ -54,7 +54,7 @@ public class TextUpdatingService {
             updatedTextBlock.setTextBlockId(existingTextBlockWithNeededValue);
         } else {
             templateTextMapper.updateTextBlock(
-                    updatedTextBlock.getTextBlockValue(), updatedTextBlock.getTextBlockId());
+                    updatedTextBlock.getTextBlockValue(), updatedTextBlock.getPreviousTextBlockValue());
         }
     }
 
@@ -80,4 +80,5 @@ public class TextUpdatingService {
     private ResponseWithReason success(String reason) {
         return new ResponseWithReason(HttpStatus.OK.value(), reason);
     }
+
 }

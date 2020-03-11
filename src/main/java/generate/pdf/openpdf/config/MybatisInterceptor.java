@@ -1,113 +1,95 @@
 package generate.pdf.openpdf.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import generate.pdf.openpdf.exception.BadRequestException;
-import lombok.AllArgsConstructor;
+import generate.pdf.openpdf.exception.InternalServerException;
+import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
+import org.apache.ibatis.session.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
-import static org.postgresql.core.Utils.escapeLiteral;
-
 @Component
+@RequiredArgsConstructor
 @Intercepts({
         @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})
 })
 public class MybatisInterceptor implements Interceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(MybatisInterceptor.class);
-    private final ObjectMapper objectMapper;
-//    private final StartupConfig startupConfig;
+    private static final List<SqlCommandType> WRITE_TO_FILE_TYPES = Arrays.asList(
+            SqlCommandType.DELETE, SqlCommandType.UPDATE, SqlCommandType.INSERT
+    );
 
-//    public MybatisInterceptor() {
-//        this.objectMapper = new ObjectMapper();
-//    }
+    private final StartupConfig startupConfig;
 
-    public MybatisInterceptor(StartupConfig startupConfig) {
-        this.objectMapper = new ObjectMapper();
-//        this.startupConfig = startupConfig;
-    }
-
-    // https://www.programcreek.com/java-api-examples/?code=Caratacus/mybatis-plus-mini/mybatis-plus-mini-master/src/main/java/com/baomidou/mybatisplus/plugins/SqlExplainInterceptor.java
+    /**
+     * Created with help from
+     * https://www.programcreek.com/java-api-examples/?code=Caratacus/mybatis-plus-mini/mybatis-plus-mini-master/src/main/java/com/baomidou/mybatisplus/plugins/SqlExplainInterceptor.java
+     */
+    @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        MappedStatement ms = (MappedStatement) invocation.getArgs()[0];
-        if (ms.getSqlCommandType() == SqlCommandType.DELETE
-                || ms.getSqlCommandType() == SqlCommandType.UPDATE
-                || ms.getSqlCommandType() == SqlCommandType.INSERT) {
-            Object parameter = invocation.getArgs()[1];
-
-            Map<String, Object> map = objectMapper.convertValue(parameter, Map.class);
-            BoundSql boundSql = ms.getBoundSql(parameter);
-//            System.out.println(boundSql.getSql());
-            List<ParameterMapping> boundParams = boundSql.getParameterMappings();
-            Object paramString = null;
-            String fableSql = boundSql.getSql();
-            for (ParameterMapping param : boundParams) {
-                paramString = findMapValue(new LinkedList<>(Arrays.asList(param.getProperty().split("\\."))), map);
-                if (paramString instanceof Number) {
-                    fableSql = fableSql.replaceFirst("\\?", String.valueOf(paramString));
-                } else {
-                    // todo if one of the inserted strings contains '?'
-                    fableSql = fableSql.replaceFirst("\\?",
-                            "'" + escapeLiteral(null, (String) paramString, false).toString() + "'");
-                }
-            }
-            fableSql += "\n\n";
-            try {
-                Files.write(Paths.get("sql/running_changes.sql"), fableSql.getBytes(), StandardOpenOption.APPEND);
-            } catch (IOException e) {
-                //exception handling left as an exercise for the reader
-            }
-            System.out.println(fableSql);
-
+        MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
+        if (WRITE_TO_FILE_TYPES.contains(mappedStatement.getSqlCommandType())) {
+            sqlExplain(invocation, mappedStatement);
         }
         return invocation.proceed();
     }
 
-    private Object findMapValue(LinkedList<String> valueLocationInMap, Map dynamicDataMap) {
-        try {
-            if (valueLocationInMap.size() == 1) {
-                return dynamicDataMap.get(valueLocationInMap.get(0));
-            }
-            Object temp = valueLocationInMap.get(0);
-            valueLocationInMap.removeFirst();
-            return findMapValue(valueLocationInMap, (Map) dynamicDataMap.get(temp));
-        } catch (NullPointerException e) {
-            String message = String.format("Missing value in input: %s.");
-            throw new BadRequestException(message);
-        }
-    }
-
+    @Override
     public Object plugin(Object target) {
         return Plugin.wrap(target, this);
     }
 
+    @Override
     public void setProperties(Properties prop) {
     }
 
+    private void sqlExplain(Invocation invocation, MappedStatement mappedStatement) throws SQLException {
+        Executor executor = (Executor) invocation.getTarget();
+        Configuration configuration = mappedStatement.getConfiguration();
+        Object parameter = invocation.getArgs()[1];
+        BoundSql boundSql = mappedStatement.getBoundSql(parameter);
+        Connection connection = executor.getTransaction().getConnection();
+        String sqlStatement = boundSql.getSql();
+        StaticSqlSource sqlSource = new StaticSqlSource(configuration, sqlStatement, boundSql.getParameterMappings());
+
+        MappedStatement.Builder builder = new MappedStatement
+                .Builder(configuration, "sql_to_file", sqlSource, SqlCommandType.UNKNOWN);
+        MappedStatement queryStatement = builder.resultMaps(mappedStatement.getResultMaps())
+                .resultSetType(mappedStatement.getResultSetType())
+                .statementType(mappedStatement.getStatementType())
+                .build();
+
+        DefaultParameterHandler handler = new DefaultParameterHandler(queryStatement, parameter, boundSql);
+        try (PreparedStatement statement = connection.prepareStatement(sqlStatement)) {
+            handler.setParameters(statement);
+            StringBuilder fad = new StringBuilder();
+            String da = statement.toString();
+            fad.append(da.split("\\s+", 3)[2]);
+            fad.append(";\n\n");
+            Files.write(Paths.get(startupConfig.getSqlLocation()), fad.toString().getBytes(), StandardOpenOption.APPEND);
+        } catch (Exception e) {
+            throw new InternalServerException(e.getMessage());
+        }
+    }
 }

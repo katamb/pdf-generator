@@ -50,7 +50,7 @@ public class MybatisInterceptor implements Interceptor {
     public Object intercept(Invocation invocation) throws Throwable {
         MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
         if (WRITE_TO_FILE_TYPES.contains(mappedStatement.getSqlCommandType())) {
-            sqlExplain(invocation, mappedStatement);
+            writeOutSql(invocation, mappedStatement);
         }
         return invocation.proceed();
     }
@@ -64,7 +64,7 @@ public class MybatisInterceptor implements Interceptor {
     public void setProperties(Properties prop) {
     }
 
-    private void sqlExplain(Invocation invocation, MappedStatement mappedStatement) throws SQLException {
+    private void writeOutSql(Invocation invocation, MappedStatement mappedStatement) throws SQLException {
         Executor executor = (Executor) invocation.getTarget();
         Configuration configuration = mappedStatement.getConfiguration();
         Object parameter = invocation.getArgs()[1];
@@ -83,12 +83,10 @@ public class MybatisInterceptor implements Interceptor {
         DefaultParameterHandler handler = new DefaultParameterHandler(queryStatement, parameter, boundSql);
         try (PreparedStatement statement = connection.prepareStatement(sqlStatement)) {
             handler.setParameters(statement);
-            StringBuilder fad = new StringBuilder();
-            String da = statement.toString();
-            fad.append(da.split("\\s+", 3)[2]);
-            fad.append(";\n\n");
-            Files.write(Paths.get(startupConfig.getSqlLocation()), fad.toString().getBytes(), StandardOpenOption.APPEND);
+            String sql = statement.toString().split("\\s+", 3)[2] + ";\n\n";
+            Files.write(Paths.get(startupConfig.getSqlLocation()), sql.getBytes(), StandardOpenOption.APPEND);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             throw new InternalServerException(e.getMessage());
         }
     }

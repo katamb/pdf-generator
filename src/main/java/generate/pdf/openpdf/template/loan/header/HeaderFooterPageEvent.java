@@ -1,26 +1,34 @@
 package generate.pdf.openpdf.template.loan.header;
 
-import com.lowagie.text.*;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.*;
+import com.lowagie.text.pdf.ColumnText;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfPageEventHelper;
+import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.PdfWriter;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.exception.PdfGenerationException;
 import generate.pdf.openpdf.service.table.CreateCellService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.IOException;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created with help from: https://memorynotfound.com/adding-header-footer-pdf-using-itext-java/
  */
 public class HeaderFooterPageEvent extends PdfPageEventHelper {
 
-    private static final Logger logger = Logger.getLogger(String.valueOf(HeaderFooterPageEvent.class));
+    private static final Logger logger = LoggerFactory.getLogger(HeaderFooterPageEvent.class);
     private static final int HEADER_FOOTER_HEIGHT = 40;
     private static final int HEADER_FOOTER_WIDTH = 530;
 
@@ -52,7 +60,7 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
         try {
             pageCountPlaceholder = Image.getInstance(template);
         } catch (DocumentException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             throw new PdfGenerationException(e.getMessage(), e);
         }
     }
@@ -98,7 +106,7 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
             // write content
             header.writeSelectedRows(0, -1, 35, 800, writer.getDirectContent());
         } catch (DocumentException | IOException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             throw new PdfGenerationException(e.getMessage(), e);
         }
     }
@@ -137,7 +145,7 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
             // write page
             footer.writeSelectedRows(0, -1, 35, 50, writer.getDirectContent());
         } catch (DocumentException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             throw new PdfGenerationException(e.getMessage(), e);
         }
     }

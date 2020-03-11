@@ -73,17 +73,31 @@
 
     <update id="updateTemplateToTextTranslation">
         UPDATE pdf_generator.template_text tt
-        SET text_block_id = #{templateTextBlock.textBlockId},
+        SET text_block_id = (
+                SELECT tb.text_block_id
+                FROM pdf_generator.text_block tb
+                WHERE tb.text_block_value = #{templateTextBlock.textBlockValue}
+            ),
             text_size = #{templateTextBlock.textSize},
             horizontal_alignment = #{templateTextBlock.horizontalAlignment},
             vertical_alignment = #{templateTextBlock.verticalAlignment}
-        WHERE tt.template_text_id = #{templateTextBlock.templateTextId};
+        WHERE tt.template_text_id = (
+            SELECT tt.template_text_id
+            FROM pdf_generator.template_text tt
+            WHERE tt.template_code = #{templateTextBlock.templateCode}
+            AND tt.language_code = #{templateTextBlock.languageCode}
+            AND tt.text_block_name = #{templateTextBlock.textBlockName}
+        );
     </update>
 
     <update id="updateTextBlock">
         UPDATE pdf_generator.text_block tb
         SET text_block_value = #{textBlockValue}
-        WHERE tb.text_block_id = #{textBlockId};
+        WHERE tb.text_block_id = (
+            SELECT t_b.text_block_id
+            FROM pdf_generator.text_block t_b
+            WHERE t_b.text_block_value = #{previousTextBlockValue}
+        );
     </update>
 
     <insert id="insertTextBlock"
@@ -96,8 +110,7 @@
 
     <insert id="batchInsert">
         INSERT INTO
-            pdf_generator.template_text
-            (
+            pdf_generator.template_text (
                 template_code,
                 language_code,
                 text_group_code,
@@ -108,23 +121,22 @@
                 text_block_id,
                 text_size,
                 horizontal_alignment,
-                vertical_alignment
-            )
+                vertical_alignment)
         VALUES
         <foreach collection="templateTextBlocks" item="templateTextBlock" separator=",">
-            (
-                #{templateTextBlock.templateCode},
-                #{templateTextBlock.languageCode},
-                #{templateTextBlock.textGroupCode},
-                #{templateTextBlock.ordering},
-                #{templateTextBlock.numbering},
-                #{templateTextBlock.numberingLevel},
-                #{templateTextBlock.textBlockName},
-                (SELECT tb.text_block_id FROM pdf_generator.text_block tb WHERE tb.text_block_value = #{templateTextBlock.textBlockValue}),
-                #{templateTextBlock.textSize},
-                #{templateTextBlock.horizontalAlignment},
-                #{templateTextBlock.verticalAlignment}
-            )
+            (#{templateTextBlock.templateCode},
+             #{templateTextBlock.languageCode},
+             #{templateTextBlock.textGroupCode},
+             #{templateTextBlock.ordering},
+             #{templateTextBlock.numbering},
+             #{templateTextBlock.numberingLevel},
+             #{templateTextBlock.textBlockName},
+             (SELECT tb.text_block_id
+              FROM pdf_generator.text_block tb
+              WHERE tb.text_block_value = #{templateTextBlock.textBlockValue}),
+             #{templateTextBlock.textSize},
+             #{templateTextBlock.horizontalAlignment},
+             #{templateTextBlock.verticalAlignment})
         </foreach>
         ;
     </insert>

@@ -9,14 +9,14 @@ import com.lowagie.text.pdf.PdfPCellEvent;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.TextField;
 import generate.pdf.openpdf.exception.PdfGenerationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class TextInputCellField implements PdfPCellEvent {
 
-    private static final Logger logger = Logger.getLogger(String.valueOf(TextInputCellField.class));
+    private static final Logger logger = LoggerFactory.getLogger(TextInputCellField.class);
 
     private String fieldName;
     private float fontSize;
@@ -39,7 +39,7 @@ public class TextInputCellField implements PdfPCellEvent {
             final PdfFormField field = textField.getTextField();
             writer.addAnnotation(field);
         } catch (IOException | DocumentException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             throw new PdfGenerationException(e.getMessage(), e);
         }
     }

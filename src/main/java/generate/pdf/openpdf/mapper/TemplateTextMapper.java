@@ -10,6 +10,10 @@ import java.util.List;
 @Mapper
 public interface TemplateTextMapper {
 
+    /* * * * * *
+     * SELECTS *
+     * * * * * */
+
     List<TemplateTextBlock> getTextsByTemplateAndLanguage(
             @Param("templateCode") String templateCode,
             @Param("languageCode") String languageCode
@@ -33,14 +37,23 @@ public interface TemplateTextMapper {
 
     List<ValueTextCombo> findAllAvailableLanguages();
 
+    /* * * * * *
+     * UPDATES * - For all updates avoid using auto-generated id's
+     * * * * * */
+
     Long updateTemplateToTextTranslation(@Param("templateTextBlock") TemplateTextBlock templateTextBlock);
 
     Long updateTextBlock(
-            @Param("textBlockValue") String templateTextBlock,
-            @Param("textBlockId") Long textBlockId
+            @Param("textBlockValue") String textBlockValue,
+            @Param("previousTextBlockValue") String previousTextBlockValue
     );
+
+    /* * * * * *
+     * INSERTS * - For all inserts avoid using auto-generated id's
+     * * * * * */
 
     void insertTextBlock(TemplateTextBlock templateTextBlock);
 
     void batchInsert(@Param("templateTextBlocks") List<TemplateTextBlock> templateTextBlocks);
+
 }

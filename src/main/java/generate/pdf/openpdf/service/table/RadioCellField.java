@@ -9,14 +9,15 @@ import com.lowagie.text.pdf.PdfPCellEvent;
 import com.lowagie.text.pdf.PdfWriter;
 import com.lowagie.text.pdf.RadioCheckField;
 import generate.pdf.openpdf.exception.PdfGenerationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class RadioCellField implements PdfPCellEvent {
 
-    private static final Logger logger = Logger.getLogger(String.valueOf(RadioCellField.class));
+    private static final Logger logger = LoggerFactory.getLogger(RadioCellField.class);
 
     private PdfFormField radioGroup;
     private String value;
@@ -32,7 +33,7 @@ public class RadioCellField implements PdfPCellEvent {
         try {
             radioGroup.addKid(radio.getRadioField());
         } catch (IOException | DocumentException e) {
-            logger.log(Level.WARNING, e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             throw new PdfGenerationException(e.getMessage(), e);
         }
     }

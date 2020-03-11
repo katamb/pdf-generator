@@ -24,10 +24,9 @@ COMMENT ON COLUMN template_code.template_code
 IS 'The name of the template this text block is used in.';
 COMMENT ON COLUMN template_code.template_description
 IS 'Can be used to describe what this template is for.';
-CREATE SEQUENCE IF NOT EXISTS text_block_id_seq INCREMENT 1 START 10001;
 
 CREATE TABLE IF NOT EXISTS text_block (
-    text_block_id                       BIGINT DEFAULT nextval('text_block_id_seq') NOT NULL,
+    text_block_id                       BIGSERIAL NOT NULL,
     text_block_value                    text NOT NULL,
     CONSTRAINT ak_text_block_value_unique UNIQUE (text_block_value),
     CONSTRAINT pk_text_block_id PRIMARY KEY (text_block_id)

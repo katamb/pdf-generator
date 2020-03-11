@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.PageSize;
-import com.lowagie.text.pdf.*;
+import com.lowagie.text.pdf.PdfWriter;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
@@ -14,6 +14,8 @@ import generate.pdf.openpdf.service.printout.BasePdfGenerator;
 import generate.pdf.openpdf.template.editable.dto.FormInputDto;
 import generate.pdf.openpdf.template.editable.form.CreateFormFieldsService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +23,6 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static generate.pdf.openpdf.enums.TemplateCode.EDITABLE_FORM_EE;
 
@@ -30,7 +30,7 @@ import static generate.pdf.openpdf.enums.TemplateCode.EDITABLE_FORM_EE;
 @RequiredArgsConstructor
 public class EditableFormTemplate extends BasePdfGenerator {
 
-    private static final Logger logger = Logger.getLogger(String.valueOf(EditableFormTemplate.class));
+    private static final Logger logger = LoggerFactory.getLogger(EditableFormTemplate.class);
     private static final List<TemplateCode> SUPPORTED_PRINTOUTS = Arrays.asList(
             EDITABLE_FORM_EE
     );
@@ -66,7 +66,7 @@ public class EditableFormTemplate extends BasePdfGenerator {
             document.open();
             createFormFieldsService.createForm(writer, document, templateTextBlockMap, inputValueMap, url, font);
         } catch (Exception e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             throw new BadRequestException(e.getMessage());
         }
     }
@@ -76,7 +76,7 @@ public class EditableFormTemplate extends BasePdfGenerator {
             return objectMapper.readValue(inputData, FormInputDto.class);
         } catch (Exception e) {
             String message = "Failed to map input data to corresponding Java class!";
-            logger.log(Level.WARNING, message, e);
+            logger.warn(message, e);
             throw new BadRequestException(message);
         }
     }
@@ -86,7 +86,7 @@ public class EditableFormTemplate extends BasePdfGenerator {
             return objectMapper.convertValue(formInputDto, Map.class);
         } catch (Exception e) {
             String message = "Failed to map Java class to Map!";
-            logger.log(Level.WARNING, message, e);
+            logger.warn(message, e);
             throw new BadRequestException(message);
         }
     }

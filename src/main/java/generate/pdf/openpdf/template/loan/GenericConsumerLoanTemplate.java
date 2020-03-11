@@ -21,6 +21,8 @@ import generate.pdf.openpdf.template.loan.parties.CreateLoanPartiesService;
 import generate.pdf.openpdf.template.loan.schedule.CreateLoanScheduleService;
 import generate.pdf.openpdf.template.loan.text.CreateSimpleTextService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +30,6 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static generate.pdf.openpdf.enums.TemplateCode.PRIVATE_CAR_LOAN_CONTRACT_EE;
 import static generate.pdf.openpdf.enums.TemplateCode.PRIVATE_SMALL_LOAN_CONTRACT_EE;
@@ -38,7 +38,7 @@ import static generate.pdf.openpdf.enums.TemplateCode.PRIVATE_SMALL_LOAN_CONTRAC
 @RequiredArgsConstructor
 public class GenericConsumerLoanTemplate extends BasePdfGenerator {
 
-    private static final Logger logger = Logger.getLogger(String.valueOf(GenericConsumerLoanTemplate.class));
+    private static final Logger logger = LoggerFactory.getLogger(GenericConsumerLoanTemplate.class);
     private static final List<TemplateCode> SUPPORTED_PRINTOUTS = Arrays.asList(
             PRIVATE_SMALL_LOAN_CONTRACT_EE,
             PRIVATE_CAR_LOAN_CONTRACT_EE
@@ -87,7 +87,7 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
             document.newPage(); // New page
             createLoanScheduleService.createSchedule(document, templateTextBlockMap, loanContractInputDto, url, font);
         } catch (DocumentException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            logger.warn(e.getMessage(), e);
             throw new PdfGenerationException(e.getMessage(), e);
         }
     }
@@ -97,7 +97,7 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
             return objectMapper.readValue(inputData, LoanContractInputDto.class);
         } catch (Exception e) {
             String message = "Failed to map input data to corresponding Java class!";
-            logger.log(Level.WARNING, message, e);
+            logger.warn(message, e);
             throw new BadRequestException(message);
         }
     }
@@ -107,7 +107,7 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
             return objectMapper.convertValue(loanContractInputDto, Map.class);
         } catch (Exception e) {
             String message = "Failed to map Java class to Map!";
-            logger.log(Level.WARNING, message, e);
+            logger.warn(message, e);
             throw new BadRequestException(message);
         }
     }

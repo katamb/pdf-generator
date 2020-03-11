@@ -8,6 +8,8 @@ import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.service.DynamicDataInjectionService;
 import generate.pdf.openpdf.service.FontStylesCreationService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -15,6 +17,8 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class CreateCellService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CreateCellService.class);
 
     private final DynamicDataInjectionService dynamicDataInjectionService;
     private final FontStylesCreationService fontStylesCreationService;

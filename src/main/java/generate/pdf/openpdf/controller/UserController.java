@@ -25,7 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1")
@@ -56,7 +58,10 @@ public class UserController {
     @GetMapping("sql-files")
     public List<UserSqlFile> getSqlFiles(Principal principal) {
         String email = ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
-        return userSqlFileMapper.getUserFiles(email);
+        return userSqlFileMapper.getUserFiles(email)
+                .stream()
+                .sorted(Comparator.comparing(UserSqlFile::getCreatedAt).reversed())
+                .collect(Collectors.toList());
     }
 
     @PutMapping("select-sql/{id}")

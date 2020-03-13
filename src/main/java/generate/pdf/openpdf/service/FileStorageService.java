@@ -56,7 +56,6 @@ public class FileStorageService {
             UserSqlFile userSqlFile = new UserSqlFile();
             userSqlFile.setUsername(username);
             userSqlFile.setSqlFileName(fileName);
-            userSqlFile.setSelected(true);
             userSqlFileMapper.insertSqlFileReference(userSqlFile);
 
             return userSqlFile;

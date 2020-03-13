@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS user_sql_file (
     username                VARCHAR(255) NOT NULL,
     sql_file_name           VARCHAR(255) NOT NULL,
     selected                BOOLEAN NOT NULL DEFAULT false,
-    created_at              TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    created_at              TIMESTAMP NOT NULL DEFAULT now(),
     CONSTRAINT pk_id PRIMARY KEY (id)
 );
 

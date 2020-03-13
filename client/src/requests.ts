@@ -1,33 +1,30 @@
-import {BASE_URL} from "@/constants";
+import {BACKEND_URL} from "@/constants";
 
 export async function getRequest(url: string) {
-    // const jwt = localStorage.getItem("JWT");
-    return await fetch(BASE_URL + url, {
+    return await fetch(BACKEND_URL + url, {
         method: 'GET',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
-            // ,
-            // 'Authorization': jwt !== null ? jwt.toString() : ''
         },
     })
 }
 
 export async function putRequest(url: string, body: any) {
-    //const jwt = localStorage.getItem("JWT");
-    return await fetch(BASE_URL + url, {
+    return await fetch(BACKEND_URL + url, {
         method: 'PUT',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
-            //,
-            //'Authorization': jwt !== null ? jwt.toString() : ''
         },
         body: JSON.stringify(body)
     })
 }
 
 export async function postRequest(url: string, body: any) {
-    return await fetch(BASE_URL + url, {
+    return await fetch(BACKEND_URL + url, {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         },

@@ -39,7 +39,7 @@ public class EditableFormTemplate extends BasePdfGenerator {
     private final TextBlockService textBlockService;
     private final CreateFormFieldsService createFormFieldsService;
 
-    @Value( "${frontend.address}" )
+    @Value( "${front-end.address}" )
     private String frontendAddress;
     private Font font;
 
@@ -58,7 +58,7 @@ public class EditableFormTemplate extends BasePdfGenerator {
         Map<String, TemplateTextBlock> templateTextBlockMap =
                 textBlockService.getTextsByTemplateAndLanguage(templateCode, languageCode);
         String url = inputData == null
-                ? frontendAddress + templateCode.name() + "/" + languageCode.toString() + "/"
+                ? frontendAddress + "/#/edit-pdf/" + templateCode.name() + "/" + languageCode.toString() + "/"
                 : null;
 
         try (Document document = new Document(PageSize.A4, 36, 36, 60, 48)) {

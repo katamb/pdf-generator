@@ -52,7 +52,7 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
     private final CreateCellService createCellService;
     private final CreateSimpleTextService createSimpleTextService;
 
-    @Value( "${frontend.address}" )
+    @Value( "${front-end.address}" )
     private String frontendAddress;
 
     @Override
@@ -69,7 +69,7 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
                 textBlockService.getTextsByTemplateAndLanguage(templateCode, languageCode);
         // Url is only set if in editing mode (which means input-data is missing)
         String url = inputData == null
-                ? frontendAddress + templateCode.name() + "/" + languageCode.toString() + "/"
+                ? frontendAddress + "/#/edit-pdf/" + templateCode.name() + "/" + languageCode.toString() + "/"
                 : null;
 
         // 1: Create document

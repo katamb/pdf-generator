@@ -24,7 +24,7 @@
     @Component
     export default class Login extends Vue {
         loginRedirect() {
-            window.location.href = BACKEND_URL + "/oauth-login";
+            window.location.href = BACKEND_URL + "/api/v1/oauth-login";
         }
     };
 </script>

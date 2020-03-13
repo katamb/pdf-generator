@@ -19,7 +19,7 @@
         tt.vertical_alignment
     </sql>
 
-    <select id="getTextsByTemplateAndLanguage" resultType="generate.pdf.openpdf.dto.TemplateTextBlock">
+    <select id="getTextsByTemplateAndLanguage" resultType="TemplateTextBlock">
         SELECT <include refid="selectAll"/>
         FROM pdf_generator.template_text tt
              INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tt.text_block_id
@@ -27,7 +27,7 @@
           AND tt.language_code = #{languageCode};
     </select>
 
-    <select id="findTextBlockById" resultType="generate.pdf.openpdf.dto.TemplateTextBlock">
+    <select id="findTextBlockById" resultType="TemplateTextBlock">
         SELECT <include refid="selectAll"/>
         FROM pdf_generator.template_text tt
              INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tt.text_block_id
@@ -59,14 +59,14 @@
         FROM pdf_generator.template_code;
     </select>
 
-    <select id="findAllLanguagesForTemplate" resultType="generate.pdf.openpdf.dto.ValueTextCombo">
+    <select id="findAllLanguagesForTemplate" resultType="ValueTextCombo">
         SELECT DISTINCT lc.language_code, lc.language_name
         FROM pdf_generator.template_text tt
         INNER JOIN pdf_generator.language_code lc ON lc.language_code = tt.language_code
         WHERE tt.template_code = #{template};
     </select>
 
-    <select id="findAllAvailableLanguages" resultType="generate.pdf.openpdf.dto.ValueTextCombo">
+    <select id="findAllAvailableLanguages" resultType="ValueTextCombo">
         SELECT lc.language_code, lc.language_name
         FROM pdf_generator.language_code lc;
     </select>

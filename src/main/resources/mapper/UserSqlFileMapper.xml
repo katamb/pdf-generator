@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="generate.pdf.openpdf.mapper.UserSqlFileMapper">
+
+    <sql id="selectAll">
+        usf.id,
+        usf.username,
+        usf.sql_file_name,
+        usf.selected,
+        usf.created_at
+    </sql>
+
+    <select id="getUserFiles" resultType="UserSqlFile">
+        SELECT <include refid="selectAll"/>
+        FROM pdf_generator.user_sql_file usf
+        WHERE usf.username = #{username};
+    </select>
+
+    <update id="selectFile">
+        UPDATE pdf_generator.user_sql_file usf
+        SET selected = true
+        WHERE usf.id = #{id};
+    </update>
+
+    <update id="deSelectUserFiles">
+        UPDATE pdf_generator.user_sql_file usf
+        SET selected = false
+        WHERE usf.username = #{username};
+    </update>
+
+    <insert id="insertSqlFileReference"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO
+            pdf_generator.user_sql_file (username, sql_file_name, selected)
+        VALUES
+            (#{username}, #{sqlFileName}, #{selected});
+    </insert>
+
+</mapper>

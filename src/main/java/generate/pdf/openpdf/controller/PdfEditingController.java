@@ -1,7 +1,7 @@
 package generate.pdf.openpdf.controller;
 
 import generate.pdf.openpdf.dto.ValueTextCombo;
-import generate.pdf.openpdf.dto.ResponseWithReason;
+import generate.pdf.openpdf.dto.ResponseWithMessage;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
@@ -55,7 +55,7 @@ public class PdfEditingController {
     }
 
     @PutMapping("update-text/{updateType}")
-    public ResponseWithReason updateTextBlock(
+    public ResponseWithMessage updateTextBlock(
             @PathVariable UpdateType updateType,
             @RequestBody TemplateTextBlock updatedTextBlock
     ) {

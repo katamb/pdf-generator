@@ -28,6 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                     .disable() //todo idk bout that
                 .authorizeRequests()
+                    .antMatchers("/api/v1/user/email")
+                        .permitAll()
                     .anyRequest()
                         .authenticated()
                     .and()

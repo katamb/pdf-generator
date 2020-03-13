@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.dto.ResponseWithReason;
+import generate.pdf.openpdf.dto.ResponseWithMessage;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.UpdateType;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
@@ -24,7 +24,7 @@ public class TextUpdatingService {
      * @param updateType - Holds state (update only this or all, if text block is used in many places)
      * @return response
      */
-    public ResponseWithReason update(TemplateTextBlock updatedTextBlock, UpdateType updateType) {
+    public ResponseWithMessage update(TemplateTextBlock updatedTextBlock, UpdateType updateType) {
         Long textBlockUsagesAmount = templateTextMapper.findAmountOfTextBlockUsages(updatedTextBlock.getTextBlockId());
         boolean isTextBlockValueUpdated = !templateTextMapper.findTextBlockValueById(updatedTextBlock.getTextBlockId())
                 .equals(updatedTextBlock.getTextBlockValue());
@@ -73,12 +73,12 @@ public class TextUpdatingService {
         updatedTextBlock.setTextBlockId(updatedTextBlock.getTextBlockId());
     }
 
-    private ResponseWithReason multipleChoices(String reason) {
-        return new ResponseWithReason(HttpStatus.MULTIPLE_CHOICES.value(), reason);
+    private ResponseWithMessage multipleChoices(String reason) {
+        return new ResponseWithMessage(HttpStatus.MULTIPLE_CHOICES.value(), reason);
     }
 
-    private ResponseWithReason success(String reason) {
-        return new ResponseWithReason(HttpStatus.OK.value(), reason);
+    private ResponseWithMessage success(String reason) {
+        return new ResponseWithMessage(HttpStatus.OK.value(), reason);
     }
 
 }

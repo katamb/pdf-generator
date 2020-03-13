@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -36,6 +37,7 @@ import java.util.Properties;
 public class MybatisInterceptor implements Interceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(MybatisInterceptor.class);
+    private static final List<String> FILES_TO_LISTEN = Collections.singletonList("mapper/TemplateTextMapper.xml");
     private static final List<SqlCommandType> WRITE_TO_FILE_TYPES = Arrays.asList(
             SqlCommandType.DELETE, SqlCommandType.UPDATE, SqlCommandType.INSERT
     );
@@ -49,7 +51,8 @@ public class MybatisInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-        if (WRITE_TO_FILE_TYPES.contains(mappedStatement.getSqlCommandType())) {
+        if (WRITE_TO_FILE_TYPES.contains(mappedStatement.getSqlCommandType())
+                && FILES_TO_LISTEN.contains(mappedStatement.getResource())) {
             writeOutSql(invocation, mappedStatement);
         }
         return invocation.proceed();
@@ -62,6 +65,7 @@ public class MybatisInterceptor implements Interceptor {
 
     @Override
     public void setProperties(Properties prop) {
+        // Not implemented
     }
 
     private void writeOutSql(Invocation invocation, MappedStatement mappedStatement) throws SQLException {

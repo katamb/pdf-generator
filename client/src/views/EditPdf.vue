@@ -1,28 +1,22 @@
 <template>
   <div>
     <Navigation/>
-    <div class="about">
-      <router-link class="home-button" to="/">
-        <i class="material-icons md-48 icon-center">home</i> Home
-      </router-link>
+    <h1>Edit PDF templates</h1>
 
-      <h1>Edit PDF templates</h1>
+    <b-container fluid>
+      <b-row>
 
-      <b-container fluid>
-        <b-row>
+        <b-col>
+          <PdfTextFieldEditor/>
+        </b-col>
 
-          <b-col>
-            <PdfTextFieldEditor/>
-          </b-col>
+        <b-col>
+          <PdfViewer/>
+        </b-col>
 
-          <b-col>
-            <PdfViewer/>
-          </b-col>
+      </b-row>
+    </b-container>
 
-        </b-row>
-      </b-container>
-
-    </div>
   </div>
 </template>
 

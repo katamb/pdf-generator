@@ -9,8 +9,6 @@ import generate.pdf.openpdf.enums.UpdateType;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
 import generate.pdf.openpdf.service.TextUpdatingService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,18 +27,8 @@ public class PdfEditingController {
     private final TemplateTextMapper templateTextMapper;
     private final TextUpdatingService textUpdatingService;
 
-    @GetMapping("text-by-id/{templateCode}/{languageCode}/{id}")
-    public TemplateTextBlock pdfEditor(
-            @PathVariable TemplateCode templateCode,
-            @PathVariable LanguageCode languageCode,
-            @PathVariable Long id
-    ) {
-        return templateTextMapper.findTextBlockById(templateCode.toString(), languageCode.toString(), id);
-    }
-
     @GetMapping("all-templates")
     public List<String> getAllTemplates() {
-        SecurityContext sa = SecurityContextHolder.getContext();
         return templateTextMapper.findAllAvailableTemplates();
     }
 
@@ -52,6 +40,20 @@ public class PdfEditingController {
     @GetMapping("template-languages/{templateCode}")
     public List<ValueTextCombo> getTemplateLanguages(@PathVariable TemplateCode templateCode) {
         return templateTextMapper.findAllLanguagesForTemplate(templateCode.toString());
+    }
+
+    @GetMapping("languages-by-code/{languageCode}")
+    public ValueTextCombo getTemplateLanguages(@PathVariable LanguageCode languageCode) {
+        return templateTextMapper.findLanguageByCode(languageCode.toString());
+    }
+
+    @GetMapping("text-by-id/{templateCode}/{languageCode}/{id}")
+    public TemplateTextBlock pdfEditor(
+            @PathVariable TemplateCode templateCode,
+            @PathVariable LanguageCode languageCode,
+            @PathVariable Long id
+    ) {
+        return templateTextMapper.findTextBlockById(templateCode.toString(), languageCode.toString(), id);
     }
 
     @PutMapping("update-text/{updateType}")
@@ -75,4 +77,5 @@ public class PdfEditingController {
         }
         templateTextMapper.batchInsert(templateTextRows);
     }
+
 }

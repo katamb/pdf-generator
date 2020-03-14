@@ -1,7 +1,9 @@
 package generate.pdf.openpdf.config;
 
+import generate.pdf.openpdf.dto.UserSqlFile;
+import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.exception.InternalServerException;
-import lombok.RequiredArgsConstructor;
+import generate.pdf.openpdf.mapper.UserSqlFileMapper;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -16,9 +18,14 @@ import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
@@ -30,7 +37,6 @@ import java.util.List;
 import java.util.Properties;
 
 @Component
-@RequiredArgsConstructor
 @Intercepts({
         @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})
 })
@@ -42,7 +48,14 @@ public class MybatisInterceptor implements Interceptor {
             SqlCommandType.DELETE, SqlCommandType.UPDATE, SqlCommandType.INSERT
     );
 
-    private final StartupConfig startupConfig;
+    private StartupConfig startupConfig;
+    private UserSqlFileMapper userSqlFileMapper;
+
+    @Lazy
+    public MybatisInterceptor(StartupConfig startupConfig, UserSqlFileMapper userSqlFileMapper) {
+        this.startupConfig = startupConfig;
+        this.userSqlFileMapper = userSqlFileMapper;
+    }
 
     /**
      * Created with help from
@@ -88,8 +101,16 @@ public class MybatisInterceptor implements Interceptor {
         try (PreparedStatement statement = connection.prepareStatement(sqlStatement)) {
             handler.setParameters(statement);
             String sql = statement.toString().split("\\s+", 3)[2] + ";\n\n";
-            Files.write(Paths.get(startupConfig.getSqlLocation()), sql.getBytes(), StandardOpenOption.APPEND);
-        } catch (Exception e) {
+            String username = ((OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication())
+                    .getPrincipal().getAttribute("email");
+            UserSqlFile userSqlFile = userSqlFileMapper.getUserFiles(username)
+                    .stream()
+                    .filter(UserSqlFile::isSelected)
+                    .findFirst()
+                    .orElseThrow(() -> new BadRequestException("No sql file chosen by user!"));
+            Path pathToFile = Paths.get(startupConfig.getSqlDirectory() + userSqlFile.getSqlFileName());
+            Files.write(pathToFile, sql.getBytes(), StandardOpenOption.APPEND);
+        } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new InternalServerException(e.getMessage());
         }

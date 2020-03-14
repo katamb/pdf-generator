@@ -1,5 +1,6 @@
 <template>
   <div class="text-left">
+
     <b-form-group class="pt-2" label="Choose template" label-for="template-input">
       <b-form-select id="template-input"
                      v-model="selectedTemplate"
@@ -27,13 +28,13 @@
              title="Instructions">
             info
           </i>
-
         </label>
       </b-col>
       <b-col class="text-right">
         <b-button class="ml-auto" variant="primary" size="sm" @click="createNewFile">New file</b-button>
       </b-col>
     </b-row>
+
     <div class="limited-height">
       <b-table striped hover :items="sqlFileOptions" :fields="fields">
         <template v-slot:cell(createdAt)="data">
@@ -59,6 +60,7 @@
                 @click="navigateToEditPage">Proceed to editing page
       </b-button>
     </div>
+
   </div>
 </template>
 

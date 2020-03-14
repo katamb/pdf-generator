@@ -1,12 +1,12 @@
 package generate.pdf.openpdf.service.printout;
 
+import generate.pdf.openpdf.config.StartupConfig;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.exception.InternalServerException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -21,8 +21,7 @@ public abstract class BasePdfGenerator implements PdfGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(BasePdfGenerator.class);
     private static final String PDF_EXTENSION = ".pdf";
-    @Value( "${storage.pdf.folder}" )
-    private String fileLocation;
+    private final StartupConfig startupConfig;
 
     /**
      * This method is called by another service. Generates a file and returns its name.
@@ -33,7 +32,7 @@ public abstract class BasePdfGenerator implements PdfGenerator {
      */
     @Override
     public String generatePrintoutAndReturnFileName(TemplateCode templateCode, LanguageCode languageCode, String inputData) {
-        String fileName = fileLocation + UUID.randomUUID().toString() + PDF_EXTENSION;
+        String fileName = startupConfig.getFileDirectory() + UUID.randomUUID().toString() + PDF_EXTENSION;
         try {
             FileOutputStream outputStream = new FileOutputStream(fileName);
             generatePdf(templateCode, languageCode, inputData, outputStream);

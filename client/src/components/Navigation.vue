@@ -28,17 +28,9 @@
 
         mounted(): void {
             getRequest("/api/v1/user/email")
-                .then((response: any) => {
-                    if (response.status !== 200) {
-                        throw new Error(response.statusText);
-                    }
-                    return response;
-                })
                 .then((body: any) => body.json())
                 .then((json) => this.email = json.message)
-                .catch(() => {
-                    router.push({path: `/`});
-                });
+            ;
         }
 
         routeHome(): void {
@@ -50,7 +42,8 @@
 
         logout(): void {
             getRequest("/logout")
-                .then(() => router.push({path: `/`}));
+                .then(() => router.push({path: `/`}))
+            ;
         }
     };
 </script>

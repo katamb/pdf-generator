@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
@@ -48,16 +47,26 @@ public class UserController {
     @GetMapping("user/email")
     public ResponseWithMessage user(Principal principal) {
         if (principal != null) {
-            String email = ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
+            String email = getEmail((OAuth2AuthenticationToken) principal);
             return new ResponseWithMessage(HttpStatus.OK.value(), email);
         } else {
             throw new UnauthorizedException("You need to login to access this resource!");
         }
     }
 
+    @GetMapping("is-sql-file-selected")
+    public UserSqlFile isSqlFileSelected(Principal principal) {
+        String username = getEmail((OAuth2AuthenticationToken) principal);
+        return userSqlFileMapper.getUserFiles(username)
+                .stream()
+                .filter(UserSqlFile::isSelected)
+                .findFirst()
+                .orElseThrow(() -> new BadRequestException("SQL file needs to be chosen to edit template! This can be done on the home screen."));
+    }
+
     @GetMapping("sql-files")
     public List<UserSqlFile> getSqlFiles(Principal principal) {
-        String email = ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
+        String email = getEmail((OAuth2AuthenticationToken) principal);
         return userSqlFileMapper.getUserFiles(email)
                 .stream()
                 .sorted(Comparator.comparing(UserSqlFile::getCreatedAt).reversed())
@@ -66,56 +75,44 @@ public class UserController {
 
     @PutMapping("select-sql/{id}")
     public void getSqlFiles(Principal principal, @PathVariable Long id) {
-        String email = ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
+        String email = getEmail((OAuth2AuthenticationToken) principal);
         userSqlFileMapper.deSelectUserFiles(email);
         userSqlFileMapper.selectFile(id);
     }
 
     @PostMapping("add-sql")
     public void addSqlFile(Principal principal) {
-        String email = ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
+        String email = getEmail((OAuth2AuthenticationToken) principal);
         fileStorageService.createNewSqlForUser(email);
     }
 
     @GetMapping("download-sql/{fileName}")
     public ResponseEntity<Resource> getSqlFiles(
-            HttpServletRequest request,
             Principal principal,
             @PathVariable String fileName
     ) {
-        // v-bind:href=`${BACKEND_URL}/api/v1/download-sql/${}`
-
-        String email = ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
-        userSqlFileMapper.getUserFiles(email)
-                .stream()
-                .filter(file -> file.getSqlFileName().equals(fileName))
-                .findFirst()
-                .orElseThrow(() -> new BadRequestException("Only allowed to download your own files!"));
+        String email = getEmail((OAuth2AuthenticationToken) principal);
+        validateUserDownloadsOwnFiles(fileName, email);
         // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);
 
-        // Try to determine file's content type
-        String contentType = getContentType(request, resource);
-
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
 
-    private String getContentType(HttpServletRequest request, Resource resource) {
-        String contentType;
-        try {
-            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException ex) {
-            throw new BadRequestException("Unknown file type!");
-        }
-        // Fallback to the default content type if type could not be determined
-        if (contentType == null) {
-            contentType = "application/octet-stream";
-        }
-        return contentType;
+    private void validateUserDownloadsOwnFiles(@PathVariable String fileName, String email) {
+        userSqlFileMapper.getUserFiles(email)
+                .stream()
+                .filter(file -> file.getSqlFileName().equals(fileName))
+                .findFirst()
+                .orElseThrow(() -> new BadRequestException("Only allowed to download your own files!"));
+    }
+
+    private String getEmail(OAuth2AuthenticationToken principal) {
+        return principal.getPrincipal().getAttribute("email");
     }
 
 }

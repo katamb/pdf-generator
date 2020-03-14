@@ -66,6 +66,12 @@
         WHERE tt.template_code = #{template};
     </select>
 
+    <select id="findLanguageByCode" resultType="ValueTextCombo">
+        SELECT lc.language_code, lc.language_name
+        FROM pdf_generator.language_code lc
+        WHERE lc.language_code = #{languageCode};
+    </select>
+
     <select id="findAllAvailableLanguages" resultType="ValueTextCombo">
         SELECT lc.language_code, lc.language_name
         FROM pdf_generator.language_code lc;

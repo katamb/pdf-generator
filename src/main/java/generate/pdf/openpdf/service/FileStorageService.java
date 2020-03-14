@@ -30,7 +30,7 @@ public class FileStorageService {
         this.userSqlFileMapper = userSqlFileMapper;
 
         // Full path to uploads directory
-        this.fileStorageLocation = Paths.get(startupConfig.getSqlArchives()).toAbsolutePath().normalize();
+        this.fileStorageLocation = Paths.get(startupConfig.getSqlDirectory()).toAbsolutePath().normalize();
         try {
             Files.createDirectories(this.fileStorageLocation);
         } catch (Exception e) {

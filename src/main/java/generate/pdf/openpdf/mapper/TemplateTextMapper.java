@@ -35,6 +35,8 @@ public interface TemplateTextMapper {
 
     List<ValueTextCombo> findAllLanguagesForTemplate(@Param("template") String template);
 
+    ValueTextCombo findLanguageByCode(@Param("languageCode") String languageCode);
+
     List<ValueTextCombo> findAllAvailableLanguages();
 
     /* * * * * *

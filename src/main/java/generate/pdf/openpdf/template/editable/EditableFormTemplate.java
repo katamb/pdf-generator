@@ -5,6 +5,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfWriter;
+import generate.pdf.openpdf.config.StartupConfig;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
@@ -13,7 +14,6 @@ import generate.pdf.openpdf.service.TextBlockService;
 import generate.pdf.openpdf.service.printout.BasePdfGenerator;
 import generate.pdf.openpdf.template.editable.dto.FormInputDto;
 import generate.pdf.openpdf.template.editable.form.CreateFormFieldsService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,6 @@ import java.util.Map;
 import static generate.pdf.openpdf.enums.TemplateCode.EDITABLE_FORM_EE;
 
 @Service
-@RequiredArgsConstructor
 public class EditableFormTemplate extends BasePdfGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(EditableFormTemplate.class);
@@ -42,6 +41,18 @@ public class EditableFormTemplate extends BasePdfGenerator {
     @Value( "${front-end.address}" )
     private String frontendAddress;
     private Font font;
+
+    public EditableFormTemplate(
+            StartupConfig startupConfig,
+            ObjectMapper objectMapper,
+            TextBlockService textBlockService,
+            CreateFormFieldsService createFormFieldsService
+    ) {
+        super(startupConfig);
+        this.objectMapper = objectMapper;
+        this.textBlockService = textBlockService;
+        this.createFormFieldsService = createFormFieldsService;
+    }
 
     /**
      * Created with help from: https://itextpdf.com/en/resources/examples/itext-5-legacy/create-fields-table

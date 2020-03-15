@@ -1,6 +1,9 @@
 <template>
   <div>
+    <ErrorModal/>
+
     <Navigation/>
+
     <b-container>
       <b-row class="justify-content-center">
         <b-col class="mt-3">
@@ -20,11 +23,13 @@
     import {Component, Vue} from 'vue-property-decorator';
     import ChooseTemplate from "@/components/ChooseTemplate.vue";
     import Navigation from "@/components/Navigation.vue";
+    import ErrorModal from "@/components/ErrorModal.vue";
 
     @Component({
         components: {
             Navigation,
-            ChooseTemplate
+            ChooseTemplate,
+            ErrorModal
         }
     })
     export default class Home extends Vue {

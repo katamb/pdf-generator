@@ -17,6 +17,13 @@
         WHERE usf.username = #{username};
     </select>
 
+    <select id="getSelectedFile" resultType="UserSqlFile">
+        SELECT <include refid="selectAll"/>
+        FROM pdf_generator.user_sql_file usf
+        WHERE usf.username = #{username}
+        AND usf.selected = true;
+    </select>
+
     <update id="selectFile">
         UPDATE pdf_generator.user_sql_file usf
         SET selected = true

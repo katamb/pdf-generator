@@ -1,6 +1,10 @@
 <template>
   <div>
+
+    <ErrorModal/>
+
     <Navigation/>
+
     <h2 class="pt-2">
       Currently editing:
     </h2>
@@ -24,15 +28,12 @@
 
     <b-container fluid>
       <b-row>
-
         <b-col>
-          <PdfTextFieldEditor/>
+          <EditingToolbar/>
         </b-col>
-
         <b-col>
           <PdfViewer/>
         </b-col>
-
       </b-row>
     </b-container>
 
@@ -40,18 +41,20 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from 'vue-property-decorator';
+    import {Component, Vue, Watch} from 'vue-property-decorator';
     import PdfViewer from "@/components/PdfViewer.vue";
-    import PdfTextFieldEditor from "@/components/PdfTextFieldEditor.vue";
     import Navigation from "@/components/Navigation.vue";
     import {getRequest} from "@/requests";
     import router from "@/router";
+    import EditingToolbar from "@/components/EditingToolbar.vue";
+    import ErrorModal from "@/components/ErrorModal.vue";
 
     @Component({
         components: {
             PdfViewer,
-            PdfTextFieldEditor,
-            Navigation
+            EditingToolbar,
+            Navigation,
+            ErrorModal
         }
     })
     export default class EditPdf extends Vue {
@@ -59,15 +62,13 @@
         showModal = false;
         errorMessage = null;
 
+        @Watch('$route')
+        onPropertyChanged(value: string, oldValue: string) {
+            this.getLanguage();
+        }
+
         mounted(): void {
-            getRequest(`/api/v1/is-sql-file-selected`)
-                .then((body: any) => body.json())
-                .then((json) => {
-                    if (json.status !== undefined && json.status !== 200) {
-                        this.errorMessage = json.message;
-                        this.showModal = true;
-                    }
-                });
+            this.validateFileSelected();
             this.language = this.$route.params.language;
             this.getLanguage();
         }
@@ -76,10 +77,21 @@
             router.push({path: '/home'})
         }
 
-        getLanguage(): void {
+        private getLanguage(): void {
             getRequest(`/api/v1/languages-by-code/${this.$route.params.language}`)
                 .then((body: any) => body.json())
                 .then((json) => this.language = json.text)
+        }
+
+        private validateFileSelected(): void {
+            getRequest(`/api/v1/is-sql-file-selected`, false)
+                .then((body: any) => body.json())
+                .then((json) => {
+                    if (json.status !== undefined && json.status !== 200) {
+                        this.errorMessage = json.message;
+                        this.showModal = true;
+                    }
+                });
         }
     }
 </script>

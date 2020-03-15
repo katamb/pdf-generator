@@ -3,7 +3,6 @@ import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import EditPdf from '@/views/EditPdf.vue';
 import Login from '@/views/Login.vue';
-import {getRequest} from "@/requests";
 
 Vue.use(VueRouter);
 
@@ -30,16 +29,10 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-    // redirect to login page if not logged in and trying to access a restricted page
-    const publicPages = ['/'];
-    const authRequired = !publicPages.includes(to.path);
-
-    if (authRequired) {
-        const response = await getRequest('/api/v1/user/email');
-        if (response.status === 401) {
-            return next('/');
-        }
+    if (from === to) {
+        return;
     }
+
     return next();
 });
 

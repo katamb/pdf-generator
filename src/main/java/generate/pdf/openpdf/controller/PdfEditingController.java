@@ -6,6 +6,7 @@ import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.enums.UpdateType;
+import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
 import generate.pdf.openpdf.service.TextUpdatingService;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,10 @@ public class PdfEditingController {
             @PathVariable LanguageCode oldLanguageCode,
             @PathVariable LanguageCode newLanguageCode
     ) {
+        if (oldLanguageCode == newLanguageCode) {
+            throw new BadRequestException("This template already exists in this language!");
+        }
+
         List<TemplateTextBlock> templateTextRows = templateTextMapper
                 .getTextsByTemplateAndLanguage(templateCode.toString(), oldLanguageCode.toString());
         for (TemplateTextBlock textBlock : templateTextRows) {

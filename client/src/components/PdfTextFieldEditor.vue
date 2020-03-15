@@ -18,50 +18,52 @@
       </div>
     </b-modal>
 
-    <Explanations/>
-    <AddNewLanguage/>
-
     <b-alert v-model="showDismissibleAlert" variant="danger" dismissible>
       Select text before adding the formatting!
     </b-alert>
+
+    <div v-if="this.json === null || this.json === undefined" class="mt-3">
+      <p>
+        Click on a text block in the preview window to edit that text!
+      </p>
+    </div>
 
     <div v-if="this.json !== null && this.json !== undefined" class="mt-3">
 
       <b-button-group class="m-1" size="sm">
         <b-button @click="updateVerticalAlignment(verticalAlignTop)"
-                  v-bind:class="{active: isActive(verticalAlignTop)}">
+                  v-bind:class="{'active-button': isActive(verticalAlignTop)}">
           <i class="material-icons icon-center">vertical_align_top</i>
         </b-button>
         <b-button @click="updateVerticalAlignment(verticalAlignCenter)"
-                  v-bind:class="{active: isActive(verticalAlignCenter)}">
+                  v-bind:class="{'active-button': isActive(verticalAlignCenter)}">
           <i class="material-icons icon-center">vertical_align_center</i>
         </b-button>
         <b-button @click="updateVerticalAlignment(verticalAlignBottom)"
-                  v-bind:class="{active: isActive(verticalAlignBottom)}">
+                  v-bind:class="{'active-button': isActive(verticalAlignBottom)}">
           <i class="material-icons icon-center">vertical_align_bottom</i>
         </b-button>
       </b-button-group>
       <b-button-group class="m-1" size="sm">
         <b-button @click="updateHorizontalAlignment(horizontalAlignLeft)"
-                  v-bind:class="{active: (isActive(horizontalAlignLeft) || isActive(horizontalAlignDefault))}">
+                  v-bind:class="{'active-button': (isActive(horizontalAlignLeft) || isActive(horizontalAlignDefault))}">
           <i class="material-icons icon-center">format_align_left</i>
         </b-button>
         <b-button @click="updateHorizontalAlignment(horizontalAlignCenter)"
-                  v-bind:class="{active: isActive(horizontalAlignCenter)}">
+                  v-bind:class="{'active-button': isActive(horizontalAlignCenter)}">
           <i class="material-icons icon-center">format_align_center</i>
         </b-button>
         <b-button @click="updateHorizontalAlignment(horizontalAlignRight)"
-                  v-bind:class="{active: isActive(horizontalAlignRight)}">
+                  v-bind:class="{'active-button': isActive(horizontalAlignRight)}">
           <i class="material-icons icon-center">format_align_right</i>
         </b-button>
         <b-button @click="updateHorizontalAlignment(horizontalAlignJustified)"
-                  v-bind:class="{active: isActive(horizontalAlignJustified)}">
+                  v-bind:class="{'active-button': isActive(horizontalAlignJustified)}">
           <i class="material-icons icon-center">format_align_justify</i>
         </b-button>
       </b-button-group>
 
       <b-row class="">
-
         <b-col>
           <b-input-group class="mt-1 mb-2 ml-auto limited-width"
                          prepend="Text size">
@@ -70,7 +72,6 @@
             </b-form-input>
           </b-input-group>
         </b-col>
-
         <b-col class="text-left">
           <b-button-group class="my-1" size="sm">
             <b-button @click="applyFormat('BOLD')">
@@ -84,17 +85,17 @@
             </b-button>
           </b-button-group>
         </b-col>
-
       </b-row>
 
       <b-form-textarea @select.native="saveCurrentSelection"
                        v-model="json.textBlockValue"
                        debounce="500"
                        rows="4"
-                       max-rows="25"
-      ></b-form-textarea>
-      <b-button variant="dark"
-                class="m-1"
+                       max-rows="25">
+      </b-form-textarea>
+
+      <b-button variant="success"
+                class="m-2"
                 @click="updateText(confirmUpdate)">
         Update text block
       </b-button>
@@ -114,11 +115,14 @@
     import eventBus from "@/eventBus";
     import Explanations from "@/components/Explanations.vue";
     import AddNewLanguage from "@/components/AddNewLanguage.vue";
+    import DownloadSql from "@/components/DownloadSql.vue";
+    import {isUndefinedOrNull, getTag} from '@/util';
 
     @Component({
         components: {
             Explanations,
-            AddNewLanguage
+            AddNewLanguage,
+            DownloadSql
         }
     })
     export default class PdfTextFieldEditor extends Vue {
@@ -162,8 +166,7 @@
                     } else {
                         this.json = response;
                     }
-                })
-            ;
+                });
         }
 
         updateText(updateType: string): void {
@@ -176,8 +179,7 @@
                     } else if (jsonResponse.statusCode === 200) {
                         this.showModal = false;
                         eventBus.$emit('rerender-pdf');
-                    } else {
-                        console.log(jsonResponse);
+                        this.getText();
                     }
                 });
         }
@@ -210,40 +212,17 @@
         }
 
         applyFormat(format: string): void {
-            if (!this.isUndefinedOrNull(this.selectionStart) && !this.isUndefinedOrNull(this.selectionEnd)) {
+            if (!isUndefinedOrNull(this.selectionStart) && !isUndefinedOrNull(this.selectionEnd)) {
                 const stringBeforeSelection = this.json.textBlockValue.substring(0, this.selectionStart);
                 const selection = this.json.textBlockValue.substring(this.selectionStart, this.selectionEnd);
                 const stringAfterSelection = this.json.textBlockValue.substring(this.selectionEnd, this.json.textBlockValue.length);
-                this.json.textBlockValue = stringBeforeSelection
-                    + this.getTag("START", format) + selection + this.getTag("END", format) + stringAfterSelection;
+                this.json.textBlockValue = stringBeforeSelection + getTag("START", format)
+                    + selection + getTag("END", format) + stringAfterSelection;
                 this.nullCurrentSelection();
             } else {
                 this.showDismissibleAlert = true;
             }
         }
-
-        private isUndefinedOrNull(element: any): boolean {
-            return element === undefined || element === null;
-        }
-
-        private getTag(position: string, format: string): string {
-            let result = "<";
-            if (position === "END") {
-                result += "/";
-            }
-            if (format === "BOLD") {
-                result += "b";
-            }
-            if (format === "ITALIC") {
-                result += "i";
-            }
-            if (format === "UNDERLINE") {
-                result += "u";
-            }
-            result += ">";
-            return result;
-        }
-
     }
 </script>
 
@@ -252,8 +231,8 @@
     vertical-align: middle;
   }
 
-  .active {
-    background-color: black;
+  .active-button {
+    background-color: #191919;
   }
 
   .limited-width {

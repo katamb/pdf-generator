@@ -87,11 +87,22 @@ public class UserController {
     }
 
     @GetMapping("download-sql/{fileName}")
-    public ResponseEntity<Resource> getSqlFiles(
+    public ResponseEntity<Resource> getSqlFile(
             Principal principal,
             @PathVariable String fileName
     ) {
         String email = getEmail((OAuth2AuthenticationToken) principal);
+        return downloadFile(fileName, email);
+    }
+
+    @GetMapping("download-sql/selected")
+    public ResponseEntity<Resource> getSelectedSqlFile(Principal principal) {
+        String email = getEmail((OAuth2AuthenticationToken) principal);
+        UserSqlFile userSqlFile = userSqlFileMapper.getSelectedFile(email);
+        return downloadFile(userSqlFile.getSqlFileName(), email);
+    }
+
+    private ResponseEntity<Resource> downloadFile(@PathVariable String fileName, String email) {
         validateUserDownloadsOwnFiles(fileName, email);
         // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);

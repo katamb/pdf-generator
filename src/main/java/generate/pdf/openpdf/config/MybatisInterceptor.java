@@ -1,9 +1,8 @@
 package generate.pdf.openpdf.config;
 
 import generate.pdf.openpdf.dto.UserSqlFile;
-import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.exception.InternalServerException;
-import generate.pdf.openpdf.mapper.UserSqlFileMapper;
+import generate.pdf.openpdf.service.UserFileService;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -20,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -28,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.security.Principal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -49,12 +48,12 @@ public class MybatisInterceptor implements Interceptor {
     );
 
     private StartupConfig startupConfig;
-    private UserSqlFileMapper userSqlFileMapper;
+    private UserFileService userFileService;
 
     @Lazy
-    public MybatisInterceptor(StartupConfig startupConfig, UserSqlFileMapper userSqlFileMapper) {
+    public MybatisInterceptor(StartupConfig startupConfig, UserFileService userFileService) {
         this.startupConfig = startupConfig;
-        this.userSqlFileMapper = userSqlFileMapper;
+        this.userFileService = userFileService;
     }
 
     /**
@@ -101,13 +100,8 @@ public class MybatisInterceptor implements Interceptor {
         try (PreparedStatement statement = connection.prepareStatement(sqlStatement)) {
             handler.setParameters(statement);
             String sql = statement.toString().split("\\s+", 3)[2] + ";\n\n";
-            String username = ((OAuth2AuthenticationToken) SecurityContextHolder.getContext().getAuthentication())
-                    .getPrincipal().getAttribute("email");
-            UserSqlFile userSqlFile = userSqlFileMapper.getUserFiles(username)
-                    .stream()
-                    .filter(UserSqlFile::isSelected)
-                    .findFirst()
-                    .orElseThrow(() -> new BadRequestException("No sql file chosen by user!"));
+            Principal principal = SecurityContextHolder.getContext().getAuthentication();
+            UserSqlFile userSqlFile = userFileService.getSelectedSqlFile(principal);
             Path pathToFile = Paths.get(startupConfig.getSqlDirectory() + userSqlFile.getSqlFileName());
             Files.write(pathToFile, sql.getBytes(), StandardOpenOption.APPEND);
         } catch (IOException e) {

@@ -41,12 +41,13 @@ public class FileStorageService {
 
     public UserSqlFile createNewSqlForUser(String username) {
         int uniqueNum = 0;
-        String fileName = createFileName(username, uniqueNum);
+        String escapedUsername = username.replaceAll("[^a-zA-Z0-9.-]", "_");
+        String fileName = createFileName(escapedUsername, uniqueNum);
         Path targetLocation = this.fileStorageLocation.resolve(fileName);
 
         while (Files.exists(targetLocation)) {
             uniqueNum++;
-            fileName = createFileName(username, uniqueNum);
+            fileName = createFileName(escapedUsername, uniqueNum);
             targetLocation = this.fileStorageLocation.resolve(fileName);
         }
 
@@ -83,6 +84,7 @@ public class FileStorageService {
             if (resource.exists()) {
                 return resource;
             } else {
+                logger.warn("File not found.");
                 throw new BadRequestException("File not found " + fileName);
             }
         } catch (MalformedURLException e) {

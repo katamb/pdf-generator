@@ -6,8 +6,8 @@ import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.enums.UpdateType;
-import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
+import generate.pdf.openpdf.service.TemplateLanguageCreationService;
 import generate.pdf.openpdf.service.TextUpdatingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,6 +28,7 @@ public class PdfEditingController {
 
     private final TemplateTextMapper templateTextMapper;
     private final TextUpdatingService textUpdatingService;
+    private final TemplateLanguageCreationService templateLanguageCreationService;
 
     @GetMapping("all-templates")
     public List<String> getAllTemplates() {
@@ -60,7 +62,7 @@ public class PdfEditingController {
     @PutMapping("update-text/{updateType}")
     public ResponseWithMessage updateTextBlock(
             @PathVariable UpdateType updateType,
-            @RequestBody TemplateTextBlock updatedTextBlock
+            @RequestBody @Valid TemplateTextBlock updatedTextBlock
     ) {
         return textUpdatingService.update(updatedTextBlock, updateType);
     }
@@ -71,16 +73,7 @@ public class PdfEditingController {
             @PathVariable LanguageCode oldLanguageCode,
             @PathVariable LanguageCode newLanguageCode
     ) {
-        if (oldLanguageCode == newLanguageCode) {
-            throw new BadRequestException("This template already exists in this language!");
-        }
-
-        List<TemplateTextBlock> templateTextRows = templateTextMapper
-                .getTextsByTemplateAndLanguage(templateCode.toString(), oldLanguageCode.toString());
-        for (TemplateTextBlock textBlock : templateTextRows) {
-            textBlock.setLanguageCode(newLanguageCode.toString());
-        }
-        templateTextMapper.batchInsert(templateTextRows);
+        templateLanguageCreationService.createNewLanguageForTemplate(templateCode, oldLanguageCode, newLanguageCode);
     }
 
 }

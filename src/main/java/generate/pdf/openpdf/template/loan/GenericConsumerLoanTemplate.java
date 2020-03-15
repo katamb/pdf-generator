@@ -6,6 +6,7 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Font;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfWriter;
+import generate.pdf.openpdf.config.StartupConfig;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.exception.PdfGenerationException;
@@ -20,7 +21,6 @@ import generate.pdf.openpdf.template.loan.header.HeaderFooterPageEvent;
 import generate.pdf.openpdf.template.loan.parties.CreateLoanPartiesService;
 import generate.pdf.openpdf.template.loan.schedule.CreateLoanScheduleService;
 import generate.pdf.openpdf.template.loan.text.CreateSimpleTextService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +35,6 @@ import static generate.pdf.openpdf.enums.TemplateCode.PRIVATE_CAR_LOAN_CONTRACT_
 import static generate.pdf.openpdf.enums.TemplateCode.PRIVATE_SMALL_LOAN_CONTRACT_EE;
 
 @Service
-@RequiredArgsConstructor
 public class GenericConsumerLoanTemplate extends BasePdfGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericConsumerLoanTemplate.class);
@@ -52,8 +51,28 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
     private final CreateCellService createCellService;
     private final CreateSimpleTextService createSimpleTextService;
 
-    @Value( "${frontend.address}" )
+    @Value("${front-end.address}")
     private String frontendAddress;
+
+    public GenericConsumerLoanTemplate(
+            StartupConfig startupConfig,
+            ObjectMapper objectMapper,
+            TextBlockService textBlockService,
+            CreateLoanPartiesService createLoanPartiesService,
+            CreateLoanConditionsService createLoanConditionsService,
+            CreateLoanScheduleService createLoanScheduleService,
+            CreateCellService createCellService,
+            CreateSimpleTextService createSimpleTextService
+    ) {
+        super(startupConfig);
+        this.objectMapper = objectMapper;
+        this.textBlockService = textBlockService;
+        this.createLoanPartiesService = createLoanPartiesService;
+        this.createLoanConditionsService = createLoanConditionsService;
+        this.createLoanScheduleService = createLoanScheduleService;
+        this.createCellService = createCellService;
+        this.createSimpleTextService = createSimpleTextService;
+    }
 
     @Override
     public void generatePdf(TemplateCode templateCode, LanguageCode languageCode, String inputData, OutputStream outputStream) {
@@ -69,7 +88,7 @@ public class GenericConsumerLoanTemplate extends BasePdfGenerator {
                 textBlockService.getTextsByTemplateAndLanguage(templateCode, languageCode);
         // Url is only set if in editing mode (which means input-data is missing)
         String url = inputData == null
-                ? frontendAddress + templateCode.name() + "/" + languageCode.toString() + "/"
+                ? frontendAddress + "/#/edit-pdf/" + templateCode.name() + "/" + languageCode.toString() + "/"
                 : null;
 
         // 1: Create document

@@ -5,6 +5,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfWriter;
+import generate.pdf.openpdf.config.StartupConfig;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
@@ -13,7 +14,6 @@ import generate.pdf.openpdf.service.TextBlockService;
 import generate.pdf.openpdf.service.printout.BasePdfGenerator;
 import generate.pdf.openpdf.template.editable.dto.FormInputDto;
 import generate.pdf.openpdf.template.editable.form.CreateFormFieldsService;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,6 @@ import java.util.Map;
 import static generate.pdf.openpdf.enums.TemplateCode.EDITABLE_FORM_EE;
 
 @Service
-@RequiredArgsConstructor
 public class EditableFormTemplate extends BasePdfGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(EditableFormTemplate.class);
@@ -39,9 +38,21 @@ public class EditableFormTemplate extends BasePdfGenerator {
     private final TextBlockService textBlockService;
     private final CreateFormFieldsService createFormFieldsService;
 
-    @Value( "${frontend.address}" )
+    @Value( "${front-end.address}" )
     private String frontendAddress;
     private Font font;
+
+    public EditableFormTemplate(
+            StartupConfig startupConfig,
+            ObjectMapper objectMapper,
+            TextBlockService textBlockService,
+            CreateFormFieldsService createFormFieldsService
+    ) {
+        super(startupConfig);
+        this.objectMapper = objectMapper;
+        this.textBlockService = textBlockService;
+        this.createFormFieldsService = createFormFieldsService;
+    }
 
     /**
      * Created with help from: https://itextpdf.com/en/resources/examples/itext-5-legacy/create-fields-table
@@ -58,7 +69,7 @@ public class EditableFormTemplate extends BasePdfGenerator {
         Map<String, TemplateTextBlock> templateTextBlockMap =
                 textBlockService.getTextsByTemplateAndLanguage(templateCode, languageCode);
         String url = inputData == null
-                ? frontendAddress + templateCode.name() + "/" + languageCode.toString() + "/"
+                ? frontendAddress + "/#/edit-pdf/" + templateCode.name() + "/" + languageCode.toString() + "/"
                 : null;
 
         try (Document document = new Document(PageSize.A4, 36, 36, 60, 48)) {

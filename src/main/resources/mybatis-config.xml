@@ -8,10 +8,13 @@
 
     <typeAliases>
         <typeAlias alias="TemplateTextBlock" type="generate.pdf.openpdf.dto.TemplateTextBlock"/>
+        <typeAlias alias="UserSqlFile" type="generate.pdf.openpdf.dto.UserSqlFile"/>
+        <typeAlias alias="ValueTextCombo" type="generate.pdf.openpdf.dto.ValueTextCombo"/>
     </typeAliases>
 
     <mappers>
         <mapper resource="mapper/TemplateTextMapper.xml"/>
+        <mapper resource="mapper/UserSqlFileMapper.xml"/>
     </mappers>
 
 </configuration>

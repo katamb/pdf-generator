@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class UserFileService {
 
     private final UserSqlFileMapper userSqlFileMapper;
-    private final FileStorageService fileStorageService;
+    private final SqlStorageService sqlStorageService;
 
     private String getEmail(Principal principal) {
         return ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
@@ -60,13 +60,13 @@ public class UserFileService {
     }
 
     public void addSqlFile(Principal principal) {
-        fileStorageService.createNewSqlForUser(getEmail(principal));
+        sqlStorageService.createNewSqlForUser(getEmail(principal));
     }
 
     public ResponseEntity<Resource> downloadFile(Principal principal, @PathVariable String fileName) {
         validateUserDownloadsOwnFiles(fileName, getEmail(principal));
         // Load file as Resource
-        Resource resource = fileStorageService.loadFileAsResource(fileName);
+        Resource resource = sqlStorageService.loadFileAsResource(fileName);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))

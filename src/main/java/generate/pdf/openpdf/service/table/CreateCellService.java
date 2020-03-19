@@ -31,7 +31,7 @@ public class CreateCellService {
     ) {
         font.setSize(templateTextBlock.getTextSize());
         String injectedText = getText(templateTextBlock, replacement);
-        Phrase phrase = fontStylesCreationService.phraseWithBoldItalicUnderlineStyles(font, injectedText);
+        Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, injectedText);
         PdfPCell cell = new PdfPCell(phrase);
         cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
         cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
@@ -50,7 +50,7 @@ public class CreateCellService {
     ) {
         font.setSize(templateTextBlock.getTextSize());
         String injectedText = getText(templateTextBlock, inputData);
-        Phrase phrase = fontStylesCreationService.phraseWithBoldItalicUnderlineStyles(font, injectedText);
+        Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, injectedText);
         PdfPCell cell = new PdfPCell(phrase);
         cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
         cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
@@ -63,7 +63,7 @@ public class CreateCellService {
 
     public PdfPCell createCellMakeNoSubstitutions(Font font, TemplateTextBlock templateTextBlock, String url) {
         font.setSize(templateTextBlock.getTextSize());
-        Phrase phrase = fontStylesCreationService.phraseWithBoldItalicUnderlineStyles(font, templateTextBlock.getTextBlockValue());
+        Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, templateTextBlock.getTextBlockValue());
         PdfPCell cell = new PdfPCell(phrase);
         cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
         cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());

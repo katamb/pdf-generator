@@ -20,13 +20,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Service
-public class FileStorageService {
+public class SqlStorageService {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileStorageService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SqlStorageService.class);
     private final Path fileStorageLocation;
     private final UserSqlFileMapper userSqlFileMapper;
 
-    public FileStorageService(StartupConfig startupConfig, UserSqlFileMapper userSqlFileMapper) {
+    public SqlStorageService(StartupConfig startupConfig, UserSqlFileMapper userSqlFileMapper) {
         this.userSqlFileMapper = userSqlFileMapper;
 
         // Full path to uploads directory

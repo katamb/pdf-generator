@@ -86,7 +86,7 @@ public class CreateCellService {
         if (inputData == null) {
             return templateTextBlock.getTextBlockValue();
         } else {
-            return dynamicDataInjectionService.injectValue(templateTextBlock.getTextBlockValue(), inputData);
+            return dynamicDataInjectionService.injectGivenValue(templateTextBlock.getTextBlockValue(), inputData);
         }
     }
 

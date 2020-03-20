@@ -63,7 +63,7 @@ public class UserFileService {
         sqlStorageService.createNewSqlForUser(getEmail(principal));
     }
 
-    public ResponseEntity<Resource> downloadFile(Principal principal, @PathVariable String fileName) {
+    public ResponseEntity<Resource> downloadFile(Principal principal, String fileName) {
         validateUserDownloadsOwnFiles(fileName, getEmail(principal));
         // Load file as Resource
         Resource resource = sqlStorageService.loadFileAsResource(fileName);
@@ -84,7 +84,7 @@ public class UserFileService {
     }
 
     public ResponseEntity<Resource> downloadSelectedFile(Principal principal) {
-        UserSqlFile userSqlFile = userSqlFileMapper.getSelectedFile(getEmail(principal));
+        UserSqlFile userSqlFile = getSelectedSqlFile(principal);
         return downloadFile(principal, userSqlFile.getSqlFileName());
     }
 

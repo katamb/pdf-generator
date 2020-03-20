@@ -32,13 +32,13 @@ import static org.springframework.test.util.AssertionErrors.assertFalse;
 @ExtendWith(MockitoExtension.class)
 class SqlStorageServiceTest {
 
-    private SqlStorageService sqlStorageService;
     private String testFolder;
     private Path pathToTestFolder;
     @Mock
     private StartupConfig startupConfig;
     @Mock
     private UserSqlFileMapper userSqlFileMapper;
+    private SqlStorageService sqlStorageService;
 
     @BeforeEach
     void initUseCase() {
@@ -99,9 +99,7 @@ class SqlStorageServiceTest {
     @Test
     void testLoadFileAsResourceFileNotFound() throws IOException {
         String randomFilename = "randomname.sql";
-        assertThrows(BadRequestException.class, () -> {
-            sqlStorageService.loadFileAsResource(randomFilename);
-        });
+        assertThrows(BadRequestException.class, () -> sqlStorageService.loadFileAsResource(randomFilename));
 
         cleanup();
     }

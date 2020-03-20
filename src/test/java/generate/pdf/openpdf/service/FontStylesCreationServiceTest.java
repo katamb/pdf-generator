@@ -3,10 +3,10 @@ package generate.pdf.openpdf.service;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Font;
 import com.lowagie.text.Phrase;
-import generate.pdf.openpdf.service.FontStylesCreationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,12 +14,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(MockitoExtension.class)
 class FontStylesCreationServiceTest {
 
+    @InjectMocks
     private FontStylesCreationService fontStylesCreationService;
     private Font font;
 
     @BeforeEach
     void initUseCase() {
-        fontStylesCreationService = new FontStylesCreationService();
         font = new Font(Font.HELVETICA);
     }
 

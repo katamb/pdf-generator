@@ -1,4 +1,4 @@
-export const BACKEND_URL = "http://dockerhost:7701";
+export const BACKEND_URL = "http://localhost:7701";
 export const FRONTEND_URL = "http://localhost:8080";
 
 export const HORIZONTAL_ALIGN_LEFT = -1;

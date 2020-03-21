@@ -11,7 +11,7 @@ import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.service.TextBlockService;
-import generate.pdf.openpdf.service.printout.BasePdfGenerator;
+import generate.pdf.openpdf.service.printout.PdfGenerator;
 import generate.pdf.openpdf.template.editable.dto.FormInputDto;
 import generate.pdf.openpdf.template.editable.form.CreateFormFieldsService;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ import java.util.Map;
 import static generate.pdf.openpdf.enums.TemplateCode.EDITABLE_FORM_EE;
 
 @Service
-public class EditableFormTemplate extends BasePdfGenerator {
+public class EditableFormTemplate extends PdfGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(EditableFormTemplate.class);
     private static final List<TemplateCode> SUPPORTED_PRINTOUTS = Arrays.asList(

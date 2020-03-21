@@ -44,7 +44,8 @@ public class CreateCellService {
     }
 
     public PdfPCell createCellMakeNoSubstitutions(Font font, TemplateTextBlock templateTextBlock, String url) {
-        return getPdfPCell(font, templateTextBlock, url, templateTextBlock.getTextBlockValue());
+        String finalText = templateTextBlock.getTextBlockValue();
+        return getPdfPCell(font, templateTextBlock, url, finalText);
     }
 
     private PdfPCell getPdfPCell(Font font, TemplateTextBlock templateTextBlock, String url, String finalText) {

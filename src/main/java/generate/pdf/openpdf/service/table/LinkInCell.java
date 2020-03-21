@@ -1,9 +1,16 @@
 package generate.pdf.openpdf.service.table;
 
 import com.lowagie.text.Rectangle;
-import com.lowagie.text.pdf.*;
+import com.lowagie.text.pdf.PdfAction;
+import com.lowagie.text.pdf.PdfAnnotation;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPCellEvent;
+import com.lowagie.text.pdf.PdfWriter;
+import lombok.Getter;
 
 // Code from https://stackoverflow.com/questions/35288194/how-to-add-url-to-pdf-document-using-itext
+@Getter
 public class LinkInCell implements PdfPCellEvent {
 
     private String url;

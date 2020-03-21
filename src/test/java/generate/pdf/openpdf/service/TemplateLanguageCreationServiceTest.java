@@ -5,7 +5,6 @@ import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,58 +32,58 @@ class TemplateLanguageCreationServiceTest {
         when(templateTextMapper.getTextsByTemplateAndLanguage(any(), any())).thenReturn(Collections.emptyList());
 
         assertThrows(BadRequestException.class, () -> templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.TEMPLATE_CODE_FOR_TESTING, LanguageCode.XX, LanguageCode.XX
+                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.XX, LanguageCode.XX
         ));
         assertThrows(BadRequestException.class, () -> templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.TEMPLATE_CODE_FOR_TESTING, LanguageCode.XX, LanguageCode.YY
+                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.XX, LanguageCode.YY
         ));
     }
 
     @Test
     void testCreateNewLanguageForTemplateValidationNewLanguageExists() {
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.TEMPLATE_CODE_FOR_TESTING.toString(), LanguageCode.XX.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.XX.toString()))
                 .thenReturn(Collections.singletonList(new TemplateTextBlock()));
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.TEMPLATE_CODE_FOR_TESTING.toString(), LanguageCode.YY.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.YY.toString()))
                 .thenReturn(Collections.singletonList(new TemplateTextBlock()));
 
         assertThrows(BadRequestException.class, () -> templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.TEMPLATE_CODE_FOR_TESTING, LanguageCode.XX, LanguageCode.XX
+                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.XX, LanguageCode.XX
         ));
         assertThrows(BadRequestException.class, () -> templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.TEMPLATE_CODE_FOR_TESTING, LanguageCode.XX, LanguageCode.YY
+                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.XX, LanguageCode.YY
         ));
     }
 
     @Test
     void testCreateNewLanguageForTemplateValidationNoNewLanguageExists() {
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.TEMPLATE_CODE_FOR_TESTING.toString(), LanguageCode.XX.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.XX.toString()))
                 .thenReturn(Collections.singletonList(new TemplateTextBlock()));
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.TEMPLATE_CODE_FOR_TESTING.toString(), LanguageCode.YY.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.YY.toString()))
                 .thenReturn(Collections.emptyList());
 
         assertThrows(BadRequestException.class, () -> templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.TEMPLATE_CODE_FOR_TESTING, LanguageCode.XX, LanguageCode.XX
+                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.XX, LanguageCode.XX
         ));
         // Next one shouldn't throw anything
         templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.TEMPLATE_CODE_FOR_TESTING, LanguageCode.XX, LanguageCode.YY);
+                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.XX, LanguageCode.YY);
     }
 
     @Test
     void testCreateNewLanguageForTemplateEverythingCorrect() {
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.TEMPLATE_CODE_FOR_TESTING.toString(), LanguageCode.XX.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.XX.toString()))
                 .thenReturn(Collections.singletonList(new TemplateTextBlock()));
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.TEMPLATE_CODE_FOR_TESTING.toString(), LanguageCode.YY.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.YY.toString()))
                 .thenReturn(Collections.emptyList());
 
         templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.TEMPLATE_CODE_FOR_TESTING, LanguageCode.XX, LanguageCode.YY);
+                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.XX, LanguageCode.YY);
         verify(templateTextMapper, times(1)).batchInsert(any());
     }
 

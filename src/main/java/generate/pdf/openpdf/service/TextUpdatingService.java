@@ -8,11 +8,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 import static generate.pdf.openpdf.enums.UpdateType.CONFIRM_UPDATE;
 import static generate.pdf.openpdf.enums.UpdateType.UPDATE_ONLY_CURRENT;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TextUpdatingService {
 
     private final TemplateTextMapper templateTextMapper;

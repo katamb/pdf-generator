@@ -7,7 +7,7 @@ public enum TemplateCode {
     EDITABLE_FORM_EE,
 
     // This value is for testing purposes
-    TEMPLATE_CODE_FOR_TESTING;
+    DUMMY_TEMPLATE_FOR_TESTING;
 
     @Override
     public String toString() {

@@ -55,11 +55,27 @@ public class TemplateTextBlock {
     @Min(1)
     private float textSize;
 
+    /**
+     * According to values defined in OpenPdf library Element interface.
+     * -1 -> LEFT alignment
+     * 0 -> LEFT alignment (DEFAULT)
+     * 1 -> CENTER alignment
+     * 2 -> RIGHT alignment
+     * 3 -> JUSTIFIED alignment
+     */
     @NotNull
     @Min(-1)
     @Max(3)
     private int horizontalAlignment;
 
+    /**
+     * According to values defined in OpenPdf library Element interface.
+     * 4 -> TOP alignment (DEFAULT)
+     * 5 -> CENTER alignment
+     * 6 -> BOTTOM alignment
+     * 7 -> BASELINE alignment
+     * 8 -> JUSTIFIED alignment
+     */
     @NotNull
     @Min(4)
     @Max(8)

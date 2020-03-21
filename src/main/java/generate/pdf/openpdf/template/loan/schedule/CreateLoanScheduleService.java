@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static generate.pdf.openpdf.util.FormattingUtil.formatBigDecimal;
-
 @Service
 @RequiredArgsConstructor
 public class CreateLoanScheduleService {
@@ -68,7 +66,7 @@ public class CreateLoanScheduleService {
             scheduleYearTable.addCell(scheduleYearCell);
             // Add column for spacing
             if (yearCounter % 2 != 0) {
-                scheduleYearTable.addCell(createCellService.createEmptyCellWithNoStyles());
+                scheduleYearTable.addCell(createCellService.createEmptyCell());
             }
             yearCounter++;
         }
@@ -142,10 +140,10 @@ public class CreateLoanScheduleService {
         List<Pair<String, String>> oneRow = Arrays.asList(
                 Pair.of("SCHEDULE_PAYMENT_NR", Integer.toString(paymentMonthCounter)),
                 Pair.of("SCHEDULE_PAYMENT_DATE", scheduleLine.getPaymentDate()),
-                Pair.of("SCHEDULE_PRINCIPAL_AMOUNT", formatBigDecimal(scheduleLine.getPrincipal())),
-                Pair.of("SCHEDULE_INTEREST_AMOUNT", formatBigDecimal(scheduleLine.getInterest())),
-                Pair.of("SCHEDULE_ADMINISTRATION_FEE", formatBigDecimal(scheduleLine.getAdministrationFee())),
-                Pair.of("SCHEDULE_PAYMENT_SUM", formatBigDecimal(scheduleLine.getPayment()))
+                Pair.of("SCHEDULE_PRINCIPAL_AMOUNT", scheduleLine.getPrincipal()),
+                Pair.of("SCHEDULE_INTEREST_AMOUNT", scheduleLine.getInterest()),
+                Pair.of("SCHEDULE_ADMINISTRATION_FEE", scheduleLine.getAdministrationFee()),
+                Pair.of("SCHEDULE_PAYMENT_SUM", scheduleLine.getPayment())
         );
         createRowReplacingValues(textBlocksWithStyle, oneRow, table, withBackground);
     }

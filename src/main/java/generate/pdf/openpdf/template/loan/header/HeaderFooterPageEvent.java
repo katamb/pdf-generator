@@ -98,7 +98,7 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
 
             // add text
             TemplateTextBlock textBlock = templateTextBlockMap.get("HEADER_TEXT_1");
-            PdfPCell textCell = createCellService.createCellAndInsertDynamicDataIfPossible(font, textBlock, inputDataAsMap, url);
+            PdfPCell textCell = createCellService.createCellAndInsertDynamicData(font, textBlock, inputDataAsMap, url);
             textCell.setBorder(Rectangle.BOTTOM);
             textCell.setBorderColor(Color.GRAY);
             header.addCell(textCell);
@@ -120,7 +120,7 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
 
             // add text
             TemplateTextBlock text = templateTextBlockMap.get("FOOTER_TEXT_1");
-            PdfPCell cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, text, inputDataAsMap, url);
+            PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, text, inputDataAsMap, url);
             cell.setFixedHeight(HEADER_FOOTER_HEIGHT);
             cell.setBorder(Rectangle.TOP);
             cell.setBorderColor(Color.GRAY);

@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;

@@ -6,7 +6,10 @@ build/
 !**/src/test/**
 client/node_modules
 files/
+pdf_files/
 sql_files/
+test_pdf_files/
+test_sql_files/
 
 ### STS ###
 .apt_generated

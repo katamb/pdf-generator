@@ -16,7 +16,6 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     @Value("${front-end.address}")
     private String frontEndAddress;
 

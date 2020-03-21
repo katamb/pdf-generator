@@ -35,7 +35,6 @@ class PrintoutGeneratorProviderTest {
     void testGetPrintoutGeneratorForGivenPrintoutTypeThrowsError() {
         PrintoutGeneratorProvider printoutGeneratorProvider = new PrintoutGeneratorProvider(Collections.emptyList());
 
-
         assertThrows(BadRequestException.class, () ->
                 printoutGeneratorProvider.getPrintoutGeneratorForGivenPrintoutType(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING));
     }

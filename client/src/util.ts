@@ -16,6 +16,9 @@ export function getTag(position: string, format: string): string {
     if (format === "UNDERLINE") {
         result += "u";
     }
+    if (format === "STRIKETHROUGH") {
+        result += "s";
+    }
     result += ">";
     return result;
 }

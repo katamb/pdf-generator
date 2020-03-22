@@ -4,7 +4,7 @@
 
       <b-navbar-nav>
         <b-navbar-brand @click="routeHome" class="link">
-          <i class="material-icons md-48 icon-center">home</i> Home
+          <Home /> Home
         </b-navbar-brand>
       </b-navbar-nav>
 
@@ -21,8 +21,13 @@
     import {Component, Vue} from 'vue-property-decorator';
     import router from "@/router";
     import {getRequest} from "@/requests";
+    import Home from '@/assets/home.svg';
 
-    @Component
+    @Component({
+        components: {
+            Home
+        }
+    })
     export default class Navigation extends Vue {
         email: any = null;
 

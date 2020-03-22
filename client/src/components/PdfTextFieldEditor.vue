@@ -33,33 +33,33 @@
       <b-button-group class="m-1" size="sm">
         <b-button @click="updateVerticalAlignment(verticalAlignTop)"
                   v-bind:class="{'active-button': isActive(verticalAlignTop)}">
-          <i class="material-icons icon-center">vertical_align_top</i>
+          <VerticalAlignTop />
         </b-button>
         <b-button @click="updateVerticalAlignment(verticalAlignCenter)"
                   v-bind:class="{'active-button': isActive(verticalAlignCenter)}">
-          <i class="material-icons icon-center">vertical_align_center</i>
+          <VerticalAlignCenter />
         </b-button>
         <b-button @click="updateVerticalAlignment(verticalAlignBottom)"
                   v-bind:class="{'active-button': isActive(verticalAlignBottom)}">
-          <i class="material-icons icon-center">vertical_align_bottom</i>
+          <VerticalAlignBottom />
         </b-button>
       </b-button-group>
       <b-button-group class="m-1" size="sm">
         <b-button @click="updateHorizontalAlignment(horizontalAlignLeft)"
                   v-bind:class="{'active-button': (isActive(horizontalAlignLeft) || isActive(horizontalAlignDefault))}">
-          <i class="material-icons icon-center">format_align_left</i>
+          <FormatAlignLeft />
         </b-button>
         <b-button @click="updateHorizontalAlignment(horizontalAlignCenter)"
                   v-bind:class="{'active-button': isActive(horizontalAlignCenter)}">
-          <i class="material-icons icon-center">format_align_center</i>
+          <FormatAlignCenter />
         </b-button>
         <b-button @click="updateHorizontalAlignment(horizontalAlignRight)"
                   v-bind:class="{'active-button': isActive(horizontalAlignRight)}">
-          <i class="material-icons icon-center">format_align_right</i>
+          <FormatAlignRight />
         </b-button>
         <b-button @click="updateHorizontalAlignment(horizontalAlignJustified)"
                   v-bind:class="{'active-button': isActive(horizontalAlignJustified)}">
-          <i class="material-icons icon-center">format_align_justify</i>
+          <FormatAlignJustify />
         </b-button>
       </b-button-group>
 
@@ -75,13 +75,16 @@
         <b-col class="text-left">
           <b-button-group class="my-1" size="sm">
             <b-button @click="applyFormat('BOLD')">
-              <i class="material-icons icon-center">format_bold</i>
+              <FormatBold />
             </b-button>
             <b-button @click="applyFormat('ITALIC')">
-              <i class="material-icons icon-center">format_italic</i>
+              <FormatItalic />
             </b-button>
             <b-button @click="applyFormat('UNDERLINE')">
-              <i class="material-icons icon-center">format_underline</i>
+              <FormatUnderlined />
+            </b-button>
+            <b-button @click="applyFormat('STRIKETHROUGH')">
+              <FormatStrikethrough />
             </b-button>
           </b-button-group>
         </b-col>
@@ -116,13 +119,35 @@
     import Explanations from "@/components/Explanations.vue";
     import AddNewLanguage from "@/components/AddNewLanguage.vue";
     import DownloadSql from "@/components/DownloadSql.vue";
+    import FormatStrikethrough from '@/assets/format_strikethrough.svg';
+    import FormatUnderlined from '@/assets/format_underlined.svg';
+    import FormatItalic from '@/assets/format_italic.svg';
+    import FormatBold from '@/assets/format_bold.svg';
+    import FormatAlignCenter from '@/assets/format_align_center.svg';
+    import FormatAlignJustify from '@/assets/format_align_justify.svg';
+    import FormatAlignLeft from '@/assets/format_align_left.svg';
+    import FormatAlignRight from '@/assets/format_align_right.svg';
+    import VerticalAlignCenter from '@/assets/vertical_align_center.svg';
+    import VerticalAlignBottom from '@/assets/vertical_align_bottom.svg';
+    import VerticalAlignTop from '@/assets/vertical_align_top.svg';
     import {isUndefinedOrNull, getTag} from '@/util';
 
     @Component({
         components: {
             Explanations,
             AddNewLanguage,
-            DownloadSql
+            DownloadSql,
+            FormatStrikethrough,
+            FormatUnderlined,
+            FormatItalic,
+            FormatBold,
+            FormatAlignCenter,
+            FormatAlignJustify,
+            FormatAlignLeft,
+            FormatAlignRight,
+            VerticalAlignCenter,
+            VerticalAlignBottom,
+            VerticalAlignTop
         }
     })
     export default class PdfTextFieldEditor extends Vue {

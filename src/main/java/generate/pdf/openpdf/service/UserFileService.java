@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.security.Principal;
@@ -22,10 +23,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserFileService {
 
     private final UserSqlFileMapper userSqlFileMapper;
-    private final FileStorageService fileStorageService;
+    private final SqlStorageService sqlStorageService;
 
     private String getEmail(Principal principal) {
         return ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
@@ -60,13 +62,13 @@ public class UserFileService {
     }
 
     public void addSqlFile(Principal principal) {
-        fileStorageService.createNewSqlForUser(getEmail(principal));
+        sqlStorageService.createNewSqlForUser(getEmail(principal));
     }
 
-    public ResponseEntity<Resource> downloadFile(Principal principal, @PathVariable String fileName) {
+    public ResponseEntity<Resource> downloadFile(Principal principal, String fileName) {
         validateUserDownloadsOwnFiles(fileName, getEmail(principal));
         // Load file as Resource
-        Resource resource = fileStorageService.loadFileAsResource(fileName);
+        Resource resource = sqlStorageService.loadFileAsResource(fileName);
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
@@ -84,7 +86,7 @@ public class UserFileService {
     }
 
     public ResponseEntity<Resource> downloadSelectedFile(Principal principal) {
-        UserSqlFile userSqlFile = userSqlFileMapper.getSelectedFile(getEmail(principal));
+        UserSqlFile userSqlFile = getSelectedSqlFile(principal);
         return downloadFile(principal, userSqlFile.getSqlFileName());
     }
 

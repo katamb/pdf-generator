@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -20,13 +21,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Service
-public class FileStorageService {
+@Transactional
+public class SqlStorageService {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileStorageService.class);
+    private static final Logger logger = LoggerFactory.getLogger(SqlStorageService.class);
     private final Path fileStorageLocation;
     private final UserSqlFileMapper userSqlFileMapper;
 
-    public FileStorageService(StartupConfig startupConfig, UserSqlFileMapper userSqlFileMapper) {
+    public SqlStorageService(StartupConfig startupConfig, UserSqlFileMapper userSqlFileMapper) {
         this.userSqlFileMapper = userSqlFileMapper;
 
         // Full path to uploads directory

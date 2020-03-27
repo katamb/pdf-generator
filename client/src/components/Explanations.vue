@@ -21,7 +21,8 @@
     <p>
       The text between <code>&lt;b&gt;</code> and <code>&lt;/b&gt;</code> will be displayed in bold in the document.
       The text between <code>&lt;i&gt;</code> and <code>&lt;/i&gt;</code> will be displayed in italic in the document.
-      The text between <code>&lt;u&gt;</code> and <code>&lt;/u&gt;</code> will be displayed in underlined in the document.
+      The text between <code>&lt;u&gt;</code> and <code>&lt;/u&gt;</code> will be displayed underlined in the document.
+      The text between <code>&lt;s&gt;</code> and <code>&lt;/s&gt;</code> will be displayed striked through in the document.
     </p>
 
   </div>

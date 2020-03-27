@@ -53,7 +53,7 @@ public class CreateLoanPartiesService {
 
     private void createFirstRow(PdfPTable table) {
         TemplateTextBlock templateTextBlock = textBlocksWithStyle.get("LENDER");
-        PdfPCell cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, templateTextBlock, inputDataAsMap, url);
+        PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextBlock, inputDataAsMap, url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setBorderColor(Color.GRAY);
         cell.setPaddingBottom(PADDING_BOTTOM);
@@ -61,10 +61,10 @@ public class CreateLoanPartiesService {
         cell.setColspan(2);
         table.addCell(cell);
 
-        table.addCell(createCellService.createEmptyCellWithNoStyles());
+        table.addCell(createCellService.createEmptyCell());
 
         templateTextBlock = textBlocksWithStyle.get("BORROWER");
-        cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, templateTextBlock, inputDataAsMap, url);
+        cell = createCellService.createCellAndInsertDynamicData(font, templateTextBlock, inputDataAsMap, url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setBorderColor(Color.GRAY);
         cell.setPaddingBottom(PADDING_BOTTOM);
@@ -85,11 +85,11 @@ public class CreateLoanPartiesService {
     private void createFiveCellRow(PdfPTable table, List<String> cellNames) {
         for (String cellName : cellNames) {
             if (cellName == null) {
-                table.addCell(createCellService.createEmptyCellWithNoStyles());
+                table.addCell(createCellService.createEmptyCell());
                 continue;
             }
             TemplateTextBlock templateTextBlock = textBlocksWithStyle.get(cellName);
-            PdfPCell cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, templateTextBlock, inputDataAsMap, url);
+            PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextBlock, inputDataAsMap, url);
             cell.setBorder(Rectangle.BOTTOM);
             cell.setBorderColor(Color.GRAY);
             cell.setPaddingBottom(PADDING_BOTTOM);

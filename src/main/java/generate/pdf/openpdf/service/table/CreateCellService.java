@@ -29,41 +29,28 @@ public class CreateCellService {
             String replacement,
             String url
     ) {
-        font.setSize(templateTextBlock.getTextSize());
-        String injectedText = getText(templateTextBlock, replacement);
-        Phrase phrase = fontStylesCreationService.phraseWithBoldItalicUnderlineStyles(font, injectedText);
-        PdfPCell cell = new PdfPCell(phrase);
-        cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
-        cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
-        cell.setBorder(Rectangle.NO_BORDER);
-        if (url != null) {
-            cell.setCellEvent(new LinkInCell(url + templateTextBlock.getTemplateTextId()));
-        }
-        return cell;
+        String finalText = getText(templateTextBlock, replacement);
+        return getPdfPCell(font, templateTextBlock, url, finalText);
     }
 
-    public PdfPCell createCellAndInsertDynamicDataIfPossible(
+    public PdfPCell createCellAndInsertDynamicData(
             Font font,
             TemplateTextBlock templateTextBlock,
-            Map<String, Object> inputData,
+            Map<String, Object> replacementValues,
             String url
     ) {
-        font.setSize(templateTextBlock.getTextSize());
-        String injectedText = getText(templateTextBlock, inputData);
-        Phrase phrase = fontStylesCreationService.phraseWithBoldItalicUnderlineStyles(font, injectedText);
-        PdfPCell cell = new PdfPCell(phrase);
-        cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
-        cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
-        cell.setBorder(Rectangle.NO_BORDER);
-        if (url != null) {
-            cell.setCellEvent(new LinkInCell(url + templateTextBlock.getTemplateTextId()));
-        }
-        return cell;
+        String finalText = getText(templateTextBlock, replacementValues);
+        return getPdfPCell(font, templateTextBlock, url, finalText);
     }
 
     public PdfPCell createCellMakeNoSubstitutions(Font font, TemplateTextBlock templateTextBlock, String url) {
+        String finalText = templateTextBlock.getTextBlockValue();
+        return getPdfPCell(font, templateTextBlock, url, finalText);
+    }
+
+    private PdfPCell getPdfPCell(Font font, TemplateTextBlock templateTextBlock, String url, String finalText) {
         font.setSize(templateTextBlock.getTextSize());
-        Phrase phrase = fontStylesCreationService.phraseWithBoldItalicUnderlineStyles(font, templateTextBlock.getTextBlockValue());
+        Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, finalText);
         PdfPCell cell = new PdfPCell(phrase);
         cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
         cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
@@ -75,22 +62,16 @@ public class CreateCellService {
     }
 
     private String getText(TemplateTextBlock templateTextBlock, Map<String, Object> inputData) {
-        if (inputData == null) {
-            return templateTextBlock.getTextBlockValue();
-        } else {
-            return dynamicDataInjectionService.injectValues(templateTextBlock.getTextBlockValue(), inputData);
-        }
+        String text = templateTextBlock.getTextBlockValue();
+        return inputData == null ? text : dynamicDataInjectionService.injectValues(text, inputData);
     }
 
     private String getText(TemplateTextBlock templateTextBlock, String inputData) {
-        if (inputData == null) {
-            return templateTextBlock.getTextBlockValue();
-        } else {
-            return dynamicDataInjectionService.injectValue(templateTextBlock.getTextBlockValue(), inputData);
-        }
+        String text = templateTextBlock.getTextBlockValue();
+        return inputData == null ? text : dynamicDataInjectionService.injectGivenValue(text, inputData);
     }
 
-    public PdfPCell createEmptyCellWithNoStyles() {
+    public PdfPCell createEmptyCell() {
         PdfPCell cell = new PdfPCell();
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;

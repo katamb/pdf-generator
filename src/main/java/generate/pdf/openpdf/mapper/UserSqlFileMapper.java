@@ -11,8 +11,6 @@ public interface UserSqlFileMapper {
 
     List<UserSqlFile> getUserFiles(@Param("username") String username);
 
-    UserSqlFile getSelectedFile(@Param("username") String username);
-
     void selectFile(@Param("id") Long id);
 
     void deSelectUserFiles(@Param("username") String username);

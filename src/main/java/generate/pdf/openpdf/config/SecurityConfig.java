@@ -16,7 +16,6 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-
     @Value("${front-end.address}")
     private String frontEndAddress;
 
@@ -28,7 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                     .disable() //todo idk bout that
                 .authorizeRequests()
-                    .antMatchers("/api/v1/user/email")
+                    .antMatchers("/api/v1/user/email", "/api/v1/file-generator/generate/pdf/**") //todo not reasonable
                         .permitAll()
                     .anyRequest()
                         .authenticated()

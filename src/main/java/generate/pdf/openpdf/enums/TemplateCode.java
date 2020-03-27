@@ -4,7 +4,10 @@ public enum TemplateCode {
 
     PRIVATE_SMALL_LOAN_CONTRACT_EE,
     PRIVATE_CAR_LOAN_CONTRACT_EE,
-    EDITABLE_FORM_EE;
+    EDITABLE_FORM_EE,
+
+    // This value is for testing purposes
+    DUMMY_TEMPLATE_FOR_TESTING;
 
     @Override
     public String toString() {

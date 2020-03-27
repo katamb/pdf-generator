@@ -69,11 +69,11 @@ public class CreateFormFieldsService {
 
     private void createIntroduction(PdfPTable table) {
         TemplateTextBlock text = textBlocksWithStyle.get("PDF_FORM");
-        PdfPCell cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, text, inputDataAsMap, url);
+        PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, text, inputDataAsMap, url);
         cell.setColspan(3);
         table.addCell(cell);
         text = textBlocksWithStyle.get("INTRODUCTION");
-        cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, text, inputDataAsMap, url);
+        cell = createCellService.createCellAndInsertDynamicData(font, text, inputDataAsMap, url);
         cell.setColspan(3);
         cell.setPaddingTop(10);
         cell.setPaddingTop(10);
@@ -90,13 +90,13 @@ public class CreateFormFieldsService {
     private void createFormRows(PdfPTable table, List<TemplateTextBlock> textsByGroup) {
         for (TemplateTextBlock textByGroup : textsByGroup) {
             if (textByGroup.getTextBlockName().contains("HEADING")) {
-                PdfPCell cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, textByGroup, inputDataAsMap, url);
+                PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, textByGroup, inputDataAsMap, url);
                 cell.setColspan(3);
                 table.addCell(cell);
                 continue;
             }
 
-            PdfPCell cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, textByGroup, inputDataAsMap, url);
+            PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, textByGroup, inputDataAsMap, url);
             table.addCell(cell);
 
             if (textByGroup.getTextBlockName().equals("GENERAL_DATA_3")) {
@@ -119,7 +119,7 @@ public class CreateFormFieldsService {
         List<TemplateTextBlock> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, "GENDER_CHOICE");
 
         for (TemplateTextBlock textByGroup : textsByGroup) {
-            PdfPCell cell = createCellService.createCellAndInsertDynamicDataIfPossible(font, textByGroup, inputDataAsMap, url);
+            PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, textByGroup, inputDataAsMap, url);
             cell.setBorder(Rectangle.NO_BORDER);
             innerTable.addCell(cell);
             cell = new PdfPCell();

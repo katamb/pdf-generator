@@ -11,16 +11,14 @@ import generate.pdf.openpdf.template.loan.dto.LoanContractInputDto;
 import generate.pdf.openpdf.template.loan.dto.ScheduleLine;
 import generate.pdf.openpdf.template.loan.dto.ScheduleYear;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.awt.Color;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static generate.pdf.openpdf.util.FormattingUtil.formatBigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +66,7 @@ public class CreateLoanScheduleService {
             scheduleYearTable.addCell(scheduleYearCell);
             // Add column for spacing
             if (yearCounter % 2 != 0) {
-                scheduleYearTable.addCell(createCellService.createEmptyCellWithNoStyles());
+                scheduleYearTable.addCell(createCellService.createEmptyCell());
             }
             yearCounter++;
         }
@@ -139,13 +137,13 @@ public class CreateLoanScheduleService {
             ScheduleLine scheduleLine,
             boolean withBackground
     ) {
-        List<Pair<String, String>> oneRow = Arrays.asList(
-                Pair.of("SCHEDULE_PAYMENT_NR", Integer.toString(paymentMonthCounter)),
-                Pair.of("SCHEDULE_PAYMENT_DATE", scheduleLine.getPaymentDate()),
-                Pair.of("SCHEDULE_PRINCIPAL_AMOUNT", formatBigDecimal(scheduleLine.getPrincipal())),
-                Pair.of("SCHEDULE_INTEREST_AMOUNT", formatBigDecimal(scheduleLine.getInterest())),
-                Pair.of("SCHEDULE_ADMINISTRATION_FEE", formatBigDecimal(scheduleLine.getAdministrationFee())),
-                Pair.of("SCHEDULE_PAYMENT_SUM", formatBigDecimal(scheduleLine.getPayment()))
+        List<AbstractMap.SimpleEntry> oneRow = Arrays.asList(
+                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_NR", Integer.toString(paymentMonthCounter)),
+                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_DATE", scheduleLine.getPaymentDate()),
+                new AbstractMap.SimpleEntry("SCHEDULE_PRINCIPAL_AMOUNT", scheduleLine.getPrincipal()),
+                new AbstractMap.SimpleEntry("SCHEDULE_INTEREST_AMOUNT", scheduleLine.getInterest()),
+                new AbstractMap.SimpleEntry("SCHEDULE_ADMINISTRATION_FEE", scheduleLine.getAdministrationFee()),
+                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_SUM", scheduleLine.getPayment())
         );
         createRowReplacingValues(textBlocksWithStyle, oneRow, table, withBackground);
     }
@@ -155,26 +153,26 @@ public class CreateLoanScheduleService {
             Map<String, TemplateTextBlock> textBlocksWithStyle,
             boolean withBackground
     ) {
-        List<Pair<String, String>> oneRow = Arrays.asList(
-                Pair.of("SCHEDULE_PAYMENT_NR", ""),
-                Pair.of("SCHEDULE_PAYMENT_DATE", ""),
-                Pair.of("SCHEDULE_PRINCIPAL_AMOUNT", ""),
-                Pair.of("SCHEDULE_INTEREST_AMOUNT", ""),
-                Pair.of("SCHEDULE_ADMINISTRATION_FEE", ""),
-                Pair.of("SCHEDULE_PAYMENT_SUM", "")
+        List<AbstractMap.SimpleEntry> oneRow = Arrays.asList(
+                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_NR", ""),
+                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_DATE", ""),
+                new AbstractMap.SimpleEntry("SCHEDULE_PRINCIPAL_AMOUNT", ""),
+                new AbstractMap.SimpleEntry("SCHEDULE_INTEREST_AMOUNT", ""),
+                new AbstractMap.SimpleEntry("SCHEDULE_ADMINISTRATION_FEE", ""),
+                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_SUM", "")
         );
         createRowReplacingValues(textBlocksWithStyle, oneRow, table, withBackground);
     }
 
     private void createRowReplacingValues(
             Map<String, TemplateTextBlock> textBlocksWithStyle,
-            List<Pair<String, String>> textBlocks,
+            List<AbstractMap.SimpleEntry> textBlocks,
             PdfPTable table,
             boolean withBackground
     ) {
-        for (Pair<String, String> textBlock : textBlocks) {
-            TemplateTextBlock block = textBlocksWithStyle.get(textBlock.getFirst());
-            PdfPCell cell = createCellService.createCellAndInsertGivenString(font, block, textBlock.getSecond(), url);
+        for (AbstractMap.SimpleEntry<String, String> textBlock : textBlocks) {
+            TemplateTextBlock block = textBlocksWithStyle.get(textBlock.getKey());
+            PdfPCell cell = createCellService.createCellAndInsertGivenString(font, block, textBlock.getValue(), url);
             cell.setBorder(Rectangle.BOTTOM);
             cell.setMinimumHeight(DEFAULT_MIN_HEIGHT);
             if (withBackground) {

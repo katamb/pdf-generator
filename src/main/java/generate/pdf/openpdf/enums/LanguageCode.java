@@ -10,7 +10,11 @@ public enum LanguageCode {
     LT,
     DE,
     ES,
-    PL;
+    PL,
+
+    // Next values are for testing purposes
+    XX,
+    YY;
 
     @Override
     public String toString() {

@@ -11,7 +11,7 @@ import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.exception.PdfGenerationException;
 import generate.pdf.openpdf.service.TextBlockService;
-import generate.pdf.openpdf.service.printout.BasePdfGenerator;
+import generate.pdf.openpdf.service.printout.PdfGenerator;
 import generate.pdf.openpdf.service.table.CreateCellService;
 import generate.pdf.openpdf.template.loan.conditions.CreateLoanConditionsService;
 import generate.pdf.openpdf.template.loan.dto.LoanContractInputDto;
@@ -35,7 +35,7 @@ import static generate.pdf.openpdf.enums.TemplateCode.PRIVATE_CAR_LOAN_CONTRACT_
 import static generate.pdf.openpdf.enums.TemplateCode.PRIVATE_SMALL_LOAN_CONTRACT_EE;
 
 @Service
-public class GenericConsumerLoanTemplate extends BasePdfGenerator {
+public class GenericConsumerLoanTemplate extends PdfGenerator {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericConsumerLoanTemplate.class);
     private static final List<TemplateCode> SUPPORTED_PRINTOUTS = Arrays.asList(

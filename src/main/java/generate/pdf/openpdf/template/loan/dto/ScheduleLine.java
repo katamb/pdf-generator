@@ -11,9 +11,9 @@ import java.time.LocalDate;
 public class ScheduleLine {
 
     private String paymentDate;
-    private BigDecimal principal;
-    private BigDecimal interest;
-    private BigDecimal administrationFee;
-    private BigDecimal payment;
+    private String principal;
+    private String interest;
+    private String administrationFee;
+    private String payment;
 
 }

@@ -18,16 +18,15 @@
     <b-row class="">
       <b-col class="">
         <label class="pt-2">
-          Choose file &nbsp;
-          <i class="material-icons icon-center"
-             v-b-popover.hover.top="'To start creating new changes click \'New File\'. ' +
-              'This will create a new file on top of the list. Select the new file and proceed. '+
-              'To continue working on the changes started earlier, choose the correct file from the list below. '+
+          Choose file&nbsp;
+          <Info
+              v-b-popover.hover.top="'To start creating new changes click \'New File\'. ' +
+              'This will create a new file on top of the list. Select the new file and proceed. ' +
+              'To continue working on the changes started earlier, choose the correct file from the list below. ' +
               'At least one of the files below needs to be selected to continue. ' +
               'To download one of the files, click on the file name.'"
-             title="Instructions">
-            info
-          </i>
+              title="Instructions">
+          </Info>
         </label>
       </b-col>
       <b-col class="text-right">
@@ -41,7 +40,7 @@
           {{getDateForTable(data.item.createdAt)}}
         </template>
         <template v-slot:cell(sqlFileName)="data">
-          <a :href="backendUrl + '/api/v1/download-sql/' + data.item.sqlFileName">{{data.item.sqlFileName}}</a>
+          <a :href="`${backendUrl}/api/v1/download-sql/${data.item.sqlFileName}`">{{data.item.sqlFileName}}</a>
         </template>
         <template v-slot:cell(selected)="data">
           <b-button size="sm"
@@ -69,8 +68,13 @@
     import {getRequest, postRequest, putRequest} from "@/requests";
     import router from "@/router";
     import {BACKEND_URL} from '@/constants';
+    import Info from "@/assets/info.svg";
 
-    @Component
+    @Component({
+        components: {
+            Info
+        }
+    })
     export default class ChooseTemplate extends Vue {
         selectedTemplate: any = null;
         selectedLanguage: any = null;

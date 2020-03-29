@@ -22,6 +22,7 @@
     import {Component, Vue} from 'vue-property-decorator';
     import {BACKEND_URL} from '@/constants';
     import GoogleLogInLogo from '@/assets/google_log_in_logo.svg';
+    import {getRequest} from "@/requests";
 
     @Component({
         components: {
@@ -31,6 +32,8 @@
     export default class Login extends Vue {
         loginRedirect() {
             window.location.href = BACKEND_URL + "/api/v1/oauth-login";
+            // getRequest("/api/v1/oauth-login-redirect")
+            //     .then((res) => console.log(res))
         }
     };
 </script>

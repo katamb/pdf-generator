@@ -1,5 +1,6 @@
 package generate.pdf.openpdf.service;
 
+import generate.pdf.openpdf.config.security.AppUser;
 import generate.pdf.openpdf.dto.ResponseWithMessage;
 import generate.pdf.openpdf.dto.UserSqlFile;
 import generate.pdf.openpdf.exception.BadRequestException;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,20 +32,29 @@ public class UserFileService {
     private final UserSqlFileMapper userSqlFileMapper;
     private final SqlStorageService sqlStorageService;
 
-    private String getEmail(Principal principal) {
-        return ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
+    public String getEmailFromPrincipal(Principal principal) {
+//        return ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
+        return ((AppUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal()).getUsername();
+    }
+
+    public String getEmailFromAuth(Authentication authentication) {
+        return ((OAuth2AuthenticationToken) authentication).getPrincipal().getAttribute("email");
+    }
+
+    public String getNameFromAuth(Authentication authentication) {
+        return ((OAuth2AuthenticationToken) authentication).getPrincipal().getAttribute("name");
     }
 
     public ResponseWithMessage getUserEmail(Principal principal) {
         if (principal != null) {
-            return new ResponseWithMessage(HttpStatus.OK.value(), getEmail(principal));
+            return new ResponseWithMessage(HttpStatus.OK.value(), getEmailFromPrincipal(principal));
         } else {
             throw new UnauthorizedException("You need to login to access this resource!");
         }
     }
 
     public UserSqlFile getSelectedSqlFile(Principal principal) {
-        return userSqlFileMapper.getUserFiles(getEmail(principal))
+        return userSqlFileMapper.getUserFiles(getEmailFromPrincipal(principal))
                 .stream()
                 .filter(UserSqlFile::isSelected)
                 .findFirst()
@@ -50,23 +62,23 @@ public class UserFileService {
     }
 
     public List<UserSqlFile> getUserSqlFiles(Principal principal) {
-        return userSqlFileMapper.getUserFiles(getEmail(principal))
+        return userSqlFileMapper.getUserFiles(getEmailFromPrincipal(principal))
                 .stream()
                 .sorted(Comparator.comparing(UserSqlFile::getCreatedAt).reversed())
                 .collect(Collectors.toList());
     }
 
     public void selectSqlFile(Principal principal, Long id) {
-        userSqlFileMapper.deSelectUserFiles(getEmail(principal));
+        userSqlFileMapper.deSelectUserFiles(getEmailFromPrincipal(principal));
         userSqlFileMapper.selectFile(id);
     }
 
     public void addSqlFile(Principal principal) {
-        sqlStorageService.createNewSqlForUser(getEmail(principal));
+        sqlStorageService.createNewSqlForUser(getEmailFromPrincipal(principal));
     }
 
     public ResponseEntity<Resource> downloadFile(Principal principal, String fileName) {
-        validateUserDownloadsOwnFiles(fileName, getEmail(principal));
+        validateUserDownloadsOwnFiles(fileName, getEmailFromPrincipal(principal));
         // Load file as Resource
         Resource resource = sqlStorageService.loadFileAsResource(fileName);
 

@@ -32,6 +32,7 @@
         email: any = null;
 
         mounted(): void {
+            //todo from token
             getRequest("/api/v1/user/email")
                 .then((body: any) => body.json())
                 .then((json) => this.email = json.message)
@@ -47,6 +48,7 @@
 
         logout(): void {
             getRequest("/logout")
+                .then(() => localStorage.removeItem('Authorization'))
                 .then(() => router.push({path: `/`}))
             ;
         }

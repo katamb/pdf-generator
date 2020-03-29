@@ -15,6 +15,7 @@
     <mappers>
         <mapper resource="mapper/TemplateTextMapper.xml"/>
         <mapper resource="mapper/UserSqlFileMapper.xml"/>
+        <mapper resource="mapper/UserRoleMapper.xml"/>
     </mappers>
 
 </configuration>

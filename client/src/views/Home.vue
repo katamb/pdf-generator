@@ -1,8 +1,8 @@
 <template>
   <div>
-    <ErrorModal/>
+    <ErrorModal />
 
-    <Navigation/>
+    <Navigation />
 
     <b-container>
       <b-row class="justify-content-center">
@@ -12,7 +12,7 @@
       </b-row>
       <b-row class="justify-content-center">
         <b-col cols="8">
-          <ChooseTemplate/>
+          <ChooseTemplate />
         </b-col>
       </b-row>
     </b-container>

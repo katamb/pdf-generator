@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,11 @@ public class UserController {
 
     @Value("${front-end.address}")
     private String frontEndAddress;
+
+    @GetMapping("oauth-login-redirect")
+    public void oAuthLoginRedirect(HttpServletResponse response) throws IOException {
+        response.sendRedirect("http://localhost:7701/api/v1/oauth-login");
+    }
 
     @GetMapping("oauth-login")
     public void oAuthLogin(HttpServletResponse response) throws IOException {
@@ -68,6 +74,7 @@ public class UserController {
     }
 
     @PostMapping("add-sql")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void addSqlFile(Principal principal) {
         userFileService.addSqlFile(principal);
     }

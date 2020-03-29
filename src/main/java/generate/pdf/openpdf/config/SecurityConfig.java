@@ -1,10 +1,6 @@
 package generate.pdf.openpdf.config;
 
-import generate.pdf.openpdf.config.security.HttpCookieOAuth2AuthorizationRequestRepository;
-import generate.pdf.openpdf.config.security.OAuth2AuthenticationSuccessHandler;
 import generate.pdf.openpdf.config.security.TokenAuthenticationFilter;
-import generate.pdf.openpdf.config.security.TokenProvider;
-//import generate.pdf.openpdf.config.security.UserDetailsProvidingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,9 +21,7 @@ import java.util.Collections;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final TokenProvider tokenProvider;
-//    private final UserDetailsProvidingService userDetailsProvidingService;
-    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
     @Value("${front-end.address}")
     private String frontEndAddress;
@@ -35,29 +29,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
                 .cors()
                     .and()
                 .csrf()
                     .disable() // CSRF attacks are not possible if JWT is kept in local storage
-                .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers("/api/v1/user/email", "/api/v1/oauth-login-redirect",
-                            "/api/v1/file-generator/generate/pdf/**") // todo not reasonable, remove this
+                    .antMatchers("/api/v1/oauth-login")
                         .permitAll()
                     .anyRequest()
-                        .authenticated()
-                    .and()
-                .oauth2Login()
-                    .authorizationEndpoint()
-                        .authorizationRequestRepository(cookieAuthorizationRequestRepository())
-                        .and()
-                    .successHandler(oAuth2AuthenticationSuccessHandler)
-        ;
-
-        // Add our custom Token based authentication filter
-        httpSecurity.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+                        .authenticated();
     }
 
     @Bean
@@ -70,19 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    /**
-     * https://www.callicoder.com/spring-boot-security-oauth2-social-login-part-2/
-     */
-    @Bean
-    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
-        return new HttpCookieOAuth2AuthorizationRequestRepository();
-    }
-
-    @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter() {
-        return new TokenAuthenticationFilter(tokenProvider);
     }
 
 }

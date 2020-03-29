@@ -2,17 +2,14 @@ package generate.pdf.openpdf.config.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
-import java.util.Map;
 
-public class AppUser implements OAuth2User, UserDetails {
+public class AppUser implements UserDetails {
 
     private String username;
     private String name;
     private Collection<? extends GrantedAuthority> authorities;
-    private Map<String, Object> attributes;
 
     public AppUser(
             String username,
@@ -57,20 +54,6 @@ public class AppUser implements OAuth2User, UserDetails {
     @Override
     public String getPassword() {
         return null;
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(Map<String, Object> attributes) {
-        this.attributes = attributes;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
 }

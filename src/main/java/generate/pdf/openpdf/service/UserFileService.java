@@ -1,24 +1,25 @@
 package generate.pdf.openpdf.service;
 
 import generate.pdf.openpdf.config.security.AppUser;
+import generate.pdf.openpdf.dto.FileResponse;
 import generate.pdf.openpdf.dto.ResponseWithMessage;
 import generate.pdf.openpdf.dto.UserSqlFile;
 import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.exception.UnauthorizedException;
 import generate.pdf.openpdf.mapper.UserSqlFileMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Comparator;
 import java.util.List;
@@ -33,16 +34,7 @@ public class UserFileService {
     private final SqlStorageService sqlStorageService;
 
     public String getEmailFromPrincipal(Principal principal) {
-//        return ((OAuth2AuthenticationToken) principal).getPrincipal().getAttribute("email");
         return ((AppUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal()).getUsername();
-    }
-
-    public String getEmailFromAuth(Authentication authentication) {
-        return ((OAuth2AuthenticationToken) authentication).getPrincipal().getAttribute("email");
-    }
-
-    public String getNameFromAuth(Authentication authentication) {
-        return ((OAuth2AuthenticationToken) authentication).getPrincipal().getAttribute("name");
     }
 
     public ResponseWithMessage getUserEmail(Principal principal) {
@@ -77,16 +69,9 @@ public class UserFileService {
         sqlStorageService.createNewSqlForUser(getEmailFromPrincipal(principal));
     }
 
-    public ResponseEntity<Resource> downloadFile(Principal principal, String fileName) {
+    public FileResponse downloadFile(Principal principal, String fileName) {
         validateUserDownloadsOwnFiles(fileName, getEmailFromPrincipal(principal));
-        // Load file as Resource
-        Resource resource = sqlStorageService.loadFileAsResource(fileName);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType("application/octet-stream"))
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+        return sqlStorageService.loadFileAsResource(fileName);
     }
 
     private void validateUserDownloadsOwnFiles(@PathVariable String fileName, String email) {
@@ -97,7 +82,7 @@ public class UserFileService {
                 .orElseThrow(() -> new BadRequestException("Only allowed to download your own files!"));
     }
 
-    public ResponseEntity<Resource> downloadSelectedFile(Principal principal) {
+    public FileResponse downloadSelectedFile(Principal principal) {
         UserSqlFile userSqlFile = getSelectedSqlFile(principal);
         return downloadFile(principal, userSqlFile.getSqlFileName());
     }

@@ -40,7 +40,7 @@
           {{getDateForTable(data.item.createdAt)}}
         </template>
         <template v-slot:cell(sqlFileName)="data">
-          <a :href="`${backendUrl}/api/v1/download-sql/${data.item.sqlFileName}`">{{data.item.sqlFileName}}</a>
+          <a class="normal-link" v-on:click.prevent="download(data)">{{data.item.sqlFileName}}</a>
         </template>
         <template v-slot:cell(selected)="data">
           <b-button size="sm"
@@ -69,6 +69,7 @@
     import router from "@/router";
     import {BACKEND_URL} from '@/constants';
     import Info from "@/assets/info.svg";
+    import {Base64} from "js-base64";
 
     @Component({
         components: {
@@ -153,6 +154,21 @@
             putRequest(`/api/v1/select-sql/${id}`, null)
                 .then(() => this.getFiles());
         }
+
+        download(data: any): void {
+            getRequest(`/api/v1/download-sql/${data.item.sqlFileName}`)
+                .then(response => response.json())
+                .then(file => {
+                    const element = document.createElement('a');
+                    element.setAttribute('href',
+                        'data:text/plain;charset=utf-8,' + Base64.decode(file.file));
+                    element.setAttribute('download', file.fileName);
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    element.click();
+                    document.body.removeChild(element);
+                });
+        }
     }
 </script>
 
@@ -160,5 +176,16 @@
   .limited-height {
     max-height: 55vh;
     overflow: scroll;
+  }
+
+  .normal-link {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+  }
+
+  .normal-link:hover {
+    text-decoration: none;
+    color: #0000c1;
   }
 </style>

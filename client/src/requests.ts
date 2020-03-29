@@ -3,22 +3,20 @@ import eventBus from "@/eventBus";
 import router from "@/router";
 
 function isValid(response: any): void {
-    const noErrorMessageStatuses = [200, 300, 401];
+    const noErrorMessageStatuses = [200, 300, 401, 403];
     if (!noErrorMessageStatuses.includes(response.status)) {
         response.json()
             .then((error: any) => eventBus.$emit('show-error', error.message));
     }
-    if (response.status === 401) {
+    if (response.status === 401 || response.status === 403) {
         router.push({path: '/'});
     }
 }
 
-//todo
 export async function getRequest(url: string, validate = true) {
     const jwt = localStorage.getItem("Authorization");
     const response = await fetch(BACKEND_URL + url, {
         method: 'GET',
-        mode: 'no-cors',
         credentials: 'include',
         headers: {
             'Content-Type': 'application/json',

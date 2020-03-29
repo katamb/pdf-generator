@@ -42,11 +42,6 @@ function removeJwtIfExists(jwt: any): void {
     }
 }
 router.beforeEach(async (to, from, next) => {
-    if (!isUndefinedOrNull(to.query.token)) {
-        localStorage.setItem('Authorization', 'Bearer ' + to.query.token);
-        return next(to.path);
-    }
-
     const publicPages = ['/'];
     const authRequired = !publicPages.includes(to.path);
     const jwt = localStorage.getItem('Authorization');

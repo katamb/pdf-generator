@@ -20,18 +20,17 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from 'vue-property-decorator';
-    import ChooseTemplate from "@/components/ChooseTemplate.vue";
-    import Navigation from "@/components/Navigation.vue";
-    import ErrorModal from "@/components/ErrorModal.vue";
+import { Component, Vue } from "vue-property-decorator";
+import ChooseTemplate from "@/components/ChooseTemplate.vue";
+import Navigation from "@/components/Navigation.vue";
+import ErrorModal from "@/components/ErrorModal.vue";
 
-    @Component({
-        components: {
-            Navigation,
-            ChooseTemplate,
-            ErrorModal
-        }
-    })
-    export default class Home extends Vue {
-    };
+@Component({
+  components: {
+    Navigation,
+    ChooseTemplate,
+    ErrorModal
+  }
+})
+export default class Home extends Vue {}
 </script>

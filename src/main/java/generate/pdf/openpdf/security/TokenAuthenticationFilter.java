@@ -1,4 +1,4 @@
-package generate.pdf.openpdf.config.security;
+package generate.pdf.openpdf.security;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

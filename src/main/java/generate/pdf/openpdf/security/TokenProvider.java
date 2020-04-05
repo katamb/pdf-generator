@@ -1,4 +1,4 @@
-package generate.pdf.openpdf.config.security;
+package generate.pdf.openpdf.security;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

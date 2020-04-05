@@ -1,18 +1,15 @@
 package generate.pdf.openpdf.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import generate.pdf.openpdf.config.security.TokenProvider;
+import generate.pdf.openpdf.security.TokenProvider;
 import generate.pdf.openpdf.dto.FileResponse;
 import generate.pdf.openpdf.dto.JwtToken;
-import generate.pdf.openpdf.dto.ResponseWithMessage;
 import generate.pdf.openpdf.dto.UserSqlFile;
 import generate.pdf.openpdf.exception.UnauthorizedException;
 import generate.pdf.openpdf.mapper.UserRoleMapper;
 import generate.pdf.openpdf.service.UserFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -72,7 +69,7 @@ public class UserController {
         if (!map.get("iss").equals("accounts.google.com")) {
             throw new UnauthorizedException("The server received invalid jwt!");
         }
-        if (!clientId.equals("831887232071-k6dmabuu48v05rn4h5h12evh70r1m5tj.apps.googleusercontent.com")) {
+        if (!clientId.equals("831887232071-k6dmabuu48v05rn4h5h12evh70r1m5tj.apps.googleusercontent.com")) { //todo read value from json
             throw new UnauthorizedException("The server received invalid jwt!");
         }
 
@@ -94,22 +91,20 @@ public class UserController {
         return returnJwt;
     }
 
-    @GetMapping("user/email")
-    public ResponseWithMessage user(Principal principal) {
-        return userFileService.getUserEmail(principal);
-    }
-
     @GetMapping("is-sql-file-selected")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public UserSqlFile getSelectedSqlFile(Principal principal) {
         return userFileService.getSelectedSqlFile(principal);
     }
 
     @GetMapping("sql-files")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<UserSqlFile> getSqlFiles(Principal principal) {
         return userFileService.getUserSqlFiles(principal);
     }
 
     @GetMapping("download-sql/{fileName}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public FileResponse getSqlFile(
             Principal principal,
             @PathVariable String fileName
@@ -118,11 +113,13 @@ public class UserController {
     }
 
     @GetMapping("download-sql/selected")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public FileResponse downloadSelectedSqlFile(Principal principal) {
         return userFileService.downloadSelectedFile(principal);
     }
 
     @PutMapping("select-sql/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void selectSqlFile(Principal principal, @PathVariable Long id) {
         userFileService.selectSqlFile(principal, id);
     }

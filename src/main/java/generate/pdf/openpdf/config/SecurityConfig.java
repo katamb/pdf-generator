@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.config;
 
-import generate.pdf.openpdf.config.security.TokenAuthenticationFilter;
+import generate.pdf.openpdf.security.TokenAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

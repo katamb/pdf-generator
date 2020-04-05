@@ -100,8 +100,8 @@ class TextUpdatingServiceTest {
 
         ResponseWithMessage response = textUpdatingService.update(textBlock, UPDATE_ALL);
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-        verify(templateTextMapper, times(1)).updateTextBlock(any(), any());
-        verify(templateTextMapper, times(1)).updateTemplateToTextTranslation(any());
+        verify(templateTextMapper, times(1)).updateAllTemplatesWithGivenText(any());
+        verify(templateTextMapper, times(0)).updateTemplateToTextTranslation(any());
     }
 
     @Test
@@ -116,8 +116,8 @@ class TextUpdatingServiceTest {
 
         ResponseWithMessage response = textUpdatingService.update(textBlock, UPDATE_ALL);
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
-        verify(templateTextMapper, times(0)).updateTextBlock(any(), any());
-        verify(templateTextMapper, times(1)).updateTemplateToTextTranslation(any());
+        verify(templateTextMapper, times(1)).updateAllTemplatesWithGivenText(any());
+        verify(templateTextMapper, times(0)).updateTemplateToTextTranslation(any());
     }
 
 }

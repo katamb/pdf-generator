@@ -25,7 +25,7 @@ public class TemplateLanguageCreationService {
     ) {
         List<TemplateTextBlock> templateTextRows = templateTextMapper
                 .getTextsByTemplateAndLanguage(templateCode.name(), oldLanguageCode.name());
-        isValidAddition(templateTextRows, templateCode, oldLanguageCode, newLanguageCode);
+        validateAddingNewLanguage(templateTextRows, templateCode, oldLanguageCode, newLanguageCode);
 
         for (TemplateTextBlock textBlock : templateTextRows) {
             textBlock.setLanguageCode(newLanguageCode.name());
@@ -33,7 +33,7 @@ public class TemplateLanguageCreationService {
         templateTextMapper.batchInsert(templateTextRows);
     }
 
-    private void isValidAddition(
+    private void validateAddingNewLanguage(
             List<TemplateTextBlock> templateTextRows,
             TemplateCode templateCode,
             LanguageCode oldLanguageCode,

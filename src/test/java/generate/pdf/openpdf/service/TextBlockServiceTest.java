@@ -41,7 +41,7 @@ class TextBlockServiceTest {
         when(templateTextMapper.getTextsByTemplateAndLanguage(any(), any())).thenReturn(generatedTextBlocks);
 
         Map<String, TemplateTextBlock> valueMap =
-                textBlockService.getTextsByTemplateAndLanguage(TemplateCode.PRIVATE_CAR_LOAN_CONTRACT_EE, LanguageCode.ET);
+                textBlockService.getTextsByTemplateAndLanguage(TemplateCode.PRIVATE_CAR_LOAN_CONTRACT_EE, LanguageCode.et);
         assertEquals(100, valueMap.keySet().size());
     }
 

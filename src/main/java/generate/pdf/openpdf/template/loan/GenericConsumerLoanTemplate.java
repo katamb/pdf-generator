@@ -88,7 +88,7 @@ public class GenericConsumerLoanTemplate extends PdfGenerator {
                 textBlockService.getTextsByTemplateAndLanguage(templateCode, languageCode);
         // Url is only set if in editing mode (which means input-data is missing)
         String url = inputData == null
-                ? frontendAddress + "/#/edit-pdf/" + templateCode.name() + "/" + languageCode.toString() + "/"
+                ? frontendAddress + "/#/edit-pdf/" + templateCode.name() + "/" + languageCode.name() + "/"
                 : null;
 
         // 1: Create document

@@ -23,7 +23,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
 
-    private final TokenProvider tokenProvider;
+    private final TokenService tokenService;
 
     @Override
     protected void doFilterInternal(
@@ -34,8 +34,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         try {
             String jwt = getJwtFromRequest(request);
 
-            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-                UserDetails user = tokenProvider.getAppUserFromToken(jwt);
+            if (StringUtils.hasText(jwt) && tokenService.validateToken(jwt)) {
+                UserDetails user = tokenService.getAppUserFromToken(jwt);
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

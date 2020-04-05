@@ -38,8 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .disable() // CSRF attacks are not possible if JWT is kept in local storage
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers("/api/v1/oauth-login")
-                        .permitAll()
                     .anyRequest()
                         .authenticated();
     }

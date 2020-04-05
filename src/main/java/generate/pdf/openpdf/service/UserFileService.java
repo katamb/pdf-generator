@@ -1,5 +1,6 @@
 package generate.pdf.openpdf.service;
 
+import generate.pdf.openpdf.mapper.UserRoleMapper;
 import generate.pdf.openpdf.security.AppUser;
 import generate.pdf.openpdf.dto.FileResponse;
 import generate.pdf.openpdf.dto.ResponseWithMessage;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ public class UserFileService {
 
     private final UserSqlFileMapper userSqlFileMapper;
     private final SqlStorageService sqlStorageService;
+    private final UserRoleMapper userRoleMapper;
 
     public String getEmailFromPrincipal(Principal principal) {
         return ((AppUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal()).getUsername();
@@ -37,6 +40,11 @@ public class UserFileService {
         } else {
             throw new UnauthorizedException("You need to login to access this resource!");
         }
+    }
+
+    public List<String> findRoles(Principal principal) {
+        List<String> roles = userRoleMapper.findRolesByUsername(getEmailFromPrincipal(principal));
+        return roles.isEmpty() ? Collections.singletonList("ROLE_USER") : roles;
     }
 
     public UserSqlFile getSelectedSqlFile(Principal principal) {

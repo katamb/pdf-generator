@@ -33,7 +33,7 @@ export default class Navigation extends Vue {
     const jwt: string | null = localStorage.getItem('Authorization');
     if (jwt) {
       const decodedJwt: any = jwtDecode(jwt.substring(7));
-      this.email = decodedJwt.sub;
+      this.email = decodedJwt.email;
     }
   }
 

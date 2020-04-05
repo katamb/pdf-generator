@@ -31,8 +31,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import GoogleLogInLogo from "@/assets/google_log_in_logo.svg";
-import { postRequest } from "@/requests";
 import router from "@/router";
+import { getRequest } from "@/requests";
 
 @Component({
   components: {
@@ -41,14 +41,20 @@ import router from "@/router";
 })
 export default class Login extends Vue {
   logIn(): void {
-    this.$store.state.googleAuth2.signIn().then((token: any) => {
-      postRequest("/api/v1/oauth-login", { jwt: token.uc.id_token })
-        .then(res => res.json())
-        .then(json =>
-          localStorage.setItem("Authorization", "Bearer " + json.jwt)
-        )
-        .then(() => router.push({ path: "/home" }));
-    });
+    this.$store.state.googleAuth2
+      .signIn()
+      .then((token: any) =>
+        localStorage.setItem("Authorization", "Bearer " + token.uc.id_token)
+      )
+      .then(() =>
+        getRequest("/api/v1/user/roles")
+          .then(response => response.json())
+          .then((roles: any) => {
+              console.log(roles)
+              localStorage.setItem("Roles", roles)
+          })
+      )
+      .then(() => router.push({ path: "/home" }));
   }
 }
 </script>

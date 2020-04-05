@@ -18,8 +18,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import router from "@/router";
-import { getRequest } from "@/requests";
 import Home from "@/assets/home.svg";
+import jwtDecode from "jwt-decode";
 
 @Component({
   components: {
@@ -27,13 +27,14 @@ import Home from "@/assets/home.svg";
   }
 })
 export default class Navigation extends Vue {
-  email: any = null;
+  email: string | null = null;
 
   mounted(): void {
-    //todo from token
-    getRequest("/api/v1/user/email")
-      .then((body: any) => body.json())
-      .then(json => (this.email = json.message));
+    const jwt: string | null = localStorage.getItem('Authorization');
+    if (jwt) {
+      const decodedJwt: any = jwtDecode(jwt.substring(7));
+      this.email = decodedJwt.sub;
+    }
   }
 
   routeHome(): void {

@@ -1,6 +1,7 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.config.security.AppUser;
+import generate.pdf.openpdf.mapper.UserRoleMapper;
+import generate.pdf.openpdf.security.AppUser;
 import generate.pdf.openpdf.dto.FileResponse;
 import generate.pdf.openpdf.dto.ResponseWithMessage;
 import generate.pdf.openpdf.dto.UserSqlFile;
@@ -8,19 +9,14 @@ import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.exception.UnauthorizedException;
 import generate.pdf.openpdf.mapper.UserSqlFileMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.io.IOException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,6 +28,7 @@ public class UserFileService {
 
     private final UserSqlFileMapper userSqlFileMapper;
     private final SqlStorageService sqlStorageService;
+    private final UserRoleMapper userRoleMapper;
 
     public String getEmailFromPrincipal(Principal principal) {
         return ((AppUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal()).getUsername();
@@ -43,6 +40,11 @@ public class UserFileService {
         } else {
             throw new UnauthorizedException("You need to login to access this resource!");
         }
+    }
+
+    public List<String> findRoles(Principal principal) {
+        List<String> roles = userRoleMapper.findRolesByUsername(getEmailFromPrincipal(principal));
+        return roles.isEmpty() ? Collections.singletonList("ROLE_USER") : roles;
     }
 
     public UserSqlFile getSelectedSqlFile(Principal principal) {

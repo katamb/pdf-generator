@@ -6,6 +6,7 @@ import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TextBlockService {
 
     private final TemplateTextMapper templateTextMapper;
@@ -27,7 +29,7 @@ public class TextBlockService {
             LanguageCode languageCode
     ) {
         List<TemplateTextBlock> textBlocksWithStyle = templateTextMapper
-                .getTextsByTemplateAndLanguage(templateCode.toString(), languageCode.toString());
+                .getTextsByTemplateAndLanguage(templateCode.name(), languageCode.name());
         Map<String, TemplateTextBlock> map = new HashMap<>();
         for (TemplateTextBlock templateTextBlock : textBlocksWithStyle) {
             map.put(templateTextBlock.getTextBlockName(), templateTextBlock);

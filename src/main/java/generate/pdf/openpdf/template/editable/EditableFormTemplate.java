@@ -69,7 +69,7 @@ public class EditableFormTemplate extends PdfGenerator {
         Map<String, TemplateTextBlock> templateTextBlockMap =
                 textBlockService.getTextsByTemplateAndLanguage(templateCode, languageCode);
         String url = inputData == null
-                ? frontendAddress + "/#/edit-pdf/" + templateCode.name() + "/" + languageCode.toString() + "/"
+                ? frontendAddress + "/#/edit-pdf/" + templateCode.name() + "/" + languageCode.name() + "/"
                 : null;
 
         try (Document document = new Document(PageSize.A4, 36, 36, 60, 48)) {

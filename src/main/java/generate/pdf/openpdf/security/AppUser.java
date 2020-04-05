@@ -1,4 +1,4 @@
-package generate.pdf.openpdf.config.security;
+package generate.pdf.openpdf.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

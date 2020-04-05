@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.config;
 
-import generate.pdf.openpdf.config.security.TokenAuthenticationFilter;
+import generate.pdf.openpdf.security.TokenAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,8 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .disable() // CSRF attacks are not possible if JWT is kept in local storage
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers("/api/v1/oauth-login")
-                        .permitAll()
                     .anyRequest()
                         .authenticated();
     }

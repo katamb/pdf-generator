@@ -14,7 +14,7 @@ public class LanguageCodeToEnumConverter implements Converter<String, LanguageCo
     @Override
     public LanguageCode convert(String source) {
         try {
-            return LanguageCode.valueOf(source.toUpperCase());
+            return LanguageCode.valueOf(source.toLowerCase());
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("This language code does not exist!");
         }

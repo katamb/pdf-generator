@@ -45,10 +45,7 @@ public interface TemplateTextMapper {
 
     Long updateTemplateToTextTranslation(@Param("templateTextBlock") TemplateTextBlock templateTextBlock);
 
-    Long updateTextBlock(
-            @Param("textBlockValue") String textBlockValue,
-            @Param("previousTextBlockValue") String previousTextBlockValue
-    );
+    Long updateAllTemplatesWithGivenText(@Param("templateTextBlock") TemplateTextBlock templateTextBlock);
 
     /* * * * * *
      * INSERTS * - For all inserts avoid using auto-generated id's

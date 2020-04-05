@@ -9,9 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static generate.pdf.openpdf.enums.UpdateType.CONFIRM_UPDATE;
-import static generate.pdf.openpdf.enums.UpdateType.UPDATE_ONLY_CURRENT;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -31,33 +28,21 @@ public class TextUpdatingService {
         boolean isTextBlockValueUpdated = !templateTextMapper.findTextBlockValueById(updatedTextBlock.getTextBlockId())
                 .equals(updatedTextBlock.getTextBlockValue());
 
-        if (isTextBlockValueUpdated && textBlockUsagesAmount > 1 && CONFIRM_UPDATE.equals(updateType)) {
+        if (isTextBlockValueUpdated && textBlockUsagesAmount > 1 && UpdateType.CONFIRM_UPDATE.equals(updateType)) {
             return multipleChoices(String.format("This text block is used by %s templates.", textBlockUsagesAmount));
         }
 
-        if (isTextBlockValueUpdated && UPDATE_ONLY_CURRENT.equals(updateType)) {
+        if (isTextBlockValueUpdated) {
             insertNewTextBlockIfNecessaryElseUseExisting(updatedTextBlock);
-        } else if (isTextBlockValueUpdated) {
-            updateTextBlockIfNeededElseUseExisting(updatedTextBlock);
         }
 
-        templateTextMapper.updateTemplateToTextTranslation(updatedTextBlock);
-        return success("Template updated successfully!");
-    }
-
-    /**
-     * If text block with the exact value already exists, use that, else insert new text block and use that.
-     * @param updatedTextBlock - Text block updated by user.
-     */
-    private void updateTextBlockIfNeededElseUseExisting(TemplateTextBlock updatedTextBlock) {
-        Long existingTextBlockWithNeededValue = templateTextMapper
-                .findTextBlockIdByValue(updatedTextBlock.getTextBlockValue());
-        if (existingTextBlockWithNeededValue != null) {
-            updatedTextBlock.setTextBlockId(existingTextBlockWithNeededValue);
+        if (UpdateType.UPDATE_ALL.equals(updateType)) {
+            templateTextMapper.updateAllTemplatesWithGivenText(updatedTextBlock);
         } else {
-            templateTextMapper.updateTextBlock(
-                    updatedTextBlock.getTextBlockValue(), updatedTextBlock.getPreviousTextBlockValue());
+            templateTextMapper.updateTemplateToTextTranslation(updatedTextBlock);
         }
+
+        return success("Template updated successfully!");
     }
 
     /**

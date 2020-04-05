@@ -6,8 +6,4 @@ public enum UpdateType {
     UPDATE_ONLY_CURRENT,
     CONFIRM_UPDATE;
 
-    @Override
-    public String toString() {
-        return this.name();
-    }
 }

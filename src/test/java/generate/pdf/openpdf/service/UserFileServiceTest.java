@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.config.security.AppUser;
+import generate.pdf.openpdf.security.AppUser;
 import generate.pdf.openpdf.dto.ResponseWithMessage;
 import generate.pdf.openpdf.dto.UserSqlFile;
 import generate.pdf.openpdf.exception.BadRequestException;

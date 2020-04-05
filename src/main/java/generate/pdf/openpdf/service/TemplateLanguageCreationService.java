@@ -24,16 +24,16 @@ public class TemplateLanguageCreationService {
             LanguageCode newLanguageCode
     ) {
         List<TemplateTextBlock> templateTextRows = templateTextMapper
-                .getTextsByTemplateAndLanguage(templateCode.toString(), oldLanguageCode.toString());
-        isValidAddition(templateTextRows, templateCode, oldLanguageCode, newLanguageCode);
+                .getTextsByTemplateAndLanguage(templateCode.name(), oldLanguageCode.name());
+        validateAddingNewLanguage(templateTextRows, templateCode, oldLanguageCode, newLanguageCode);
 
         for (TemplateTextBlock textBlock : templateTextRows) {
-            textBlock.setLanguageCode(newLanguageCode.toString());
+            textBlock.setLanguageCode(newLanguageCode.name());
         }
         templateTextMapper.batchInsert(templateTextRows);
     }
 
-    private void isValidAddition(
+    private void validateAddingNewLanguage(
             List<TemplateTextBlock> templateTextRows,
             TemplateCode templateCode,
             LanguageCode oldLanguageCode,
@@ -46,7 +46,7 @@ public class TemplateLanguageCreationService {
             throw new BadRequestException("The language to base the new language on, doesn't exist!");
         }
         List<TemplateTextBlock> templateTextRowForNew = templateTextMapper
-                .getTextsByTemplateAndLanguage(templateCode.toString(), newLanguageCode.toString());
+                .getTextsByTemplateAndLanguage(templateCode.name(), newLanguageCode.name());
         if (!templateTextRowForNew.isEmpty()) {
             throw new BadRequestException("This language already exists!");
         }

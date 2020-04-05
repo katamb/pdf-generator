@@ -7,6 +7,7 @@ import generate.pdf.openpdf.exception.InternalServerException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +19,7 @@ import java.util.UUID;
 /**
  * All PDF templates need to extend this abstract class.
  */
+@Transactional
 @RequiredArgsConstructor
 public abstract class PdfGenerator {
 

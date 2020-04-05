@@ -1,6 +1,7 @@
 package generate.pdf.openpdf.service;
 
 import generate.pdf.openpdf.config.StartupConfig;
+import generate.pdf.openpdf.dto.FileResponse;
 import generate.pdf.openpdf.dto.UserSqlFile;
 import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.exception.InternalServerException;
@@ -79,19 +80,20 @@ public class SqlStorageService {
         return filenameBuilder.toString();
     }
 
-    public Resource loadFileAsResource(String fileName) {
+    public FileResponse loadFileAsResource(String fileName) {
         try {
             Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-            if (resource.exists()) {
-                return resource;
-            } else {
-                logger.warn("File not found.");
-                throw new BadRequestException("File not found " + fileName);
-            }
-        } catch (MalformedURLException e) {
+            byte[] fileAsByteArray = Files.readAllBytes(filePath);
+
+            FileResponse fileResponse = new FileResponse();
+            fileResponse.setFileName(fileName);
+            fileResponse.setFile(fileAsByteArray);
+            return fileResponse;
+
+        } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new BadRequestException("File not found " + fileName);
         }
     }
+
 }

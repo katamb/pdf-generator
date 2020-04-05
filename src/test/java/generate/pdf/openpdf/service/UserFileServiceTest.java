@@ -1,5 +1,6 @@
 package generate.pdf.openpdf.service;
 
+import generate.pdf.openpdf.config.security.AppUser;
 import generate.pdf.openpdf.dto.ResponseWithMessage;
 import generate.pdf.openpdf.dto.UserSqlFile;
 import generate.pdf.openpdf.exception.BadRequestException;
@@ -11,16 +12,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,7 +29,7 @@ class UserFileServiceTest {
 
     private static final String TEST_EMAIL = "katamb@taltech.ee";
 
-    private OAuth2AuthenticationToken principal;
+    private UsernamePasswordAuthenticationToken principal;
     private UserSqlFile file1;
     private UserSqlFile file2;
     private UserSqlFile file3;
@@ -44,25 +42,9 @@ class UserFileServiceTest {
 
     @BeforeEach
     void initUseCase() {
-        OAuth2User user = new OAuth2User() {
-            @Override
-            public Map<String, Object> getAttributes() {
-                HashMap<String, Object> attributes = new HashMap<>();
-                attributes.put("email", TEST_EMAIL);
-                return attributes;
-            }
-
-            @Override
-            public Collection<? extends GrantedAuthority> getAuthorities() {
-                return null;
-            }
-
-            @Override
-            public String getName() {
-                return null;
-            }
-        };
-        principal = new OAuth2AuthenticationToken(user, null, "123456789");
+        AppUser user = new AppUser(TEST_EMAIL, "unit_test",
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        principal = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
         file1 = new UserSqlFile();
         file1.setUsername(TEST_EMAIL);

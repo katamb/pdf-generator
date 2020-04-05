@@ -1,8 +1,8 @@
 <template>
   <div>
-    <ErrorModal/>
+    <ErrorModal />
 
-    <Navigation/>
+    <Navigation />
 
     <b-container>
       <b-row class="justify-content-center">
@@ -12,7 +12,7 @@
       </b-row>
       <b-row class="justify-content-center">
         <b-col cols="8">
-          <ChooseTemplate/>
+          <ChooseTemplate />
         </b-col>
       </b-row>
     </b-container>
@@ -20,18 +20,17 @@
 </template>
 
 <script lang="ts">
-    import {Component, Vue} from 'vue-property-decorator';
-    import ChooseTemplate from "@/components/ChooseTemplate.vue";
-    import Navigation from "@/components/Navigation.vue";
-    import ErrorModal from "@/components/ErrorModal.vue";
+import { Component, Vue } from "vue-property-decorator";
+import ChooseTemplate from "@/components/ChooseTemplate.vue";
+import Navigation from "@/components/Navigation.vue";
+import ErrorModal from "@/components/ErrorModal.vue";
 
-    @Component({
-        components: {
-            Navigation,
-            ChooseTemplate,
-            ErrorModal
-        }
-    })
-    export default class Home extends Vue {
-    };
+@Component({
+  components: {
+    Navigation,
+    ChooseTemplate,
+    ErrorModal
+  }
+})
+export default class Home extends Vue {}
 </script>

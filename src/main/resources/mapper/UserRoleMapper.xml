@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="generate.pdf.openpdf.mapper.UserRoleMapper">
+
+    <select id="findRolesByUsername" resultType="String">
+        SELECT ar.user_role AS authorities
+        FROM pdf_generator.application_roles ar
+        WHERE ar.username = #{username};
+    </select>
+
+</mapper>

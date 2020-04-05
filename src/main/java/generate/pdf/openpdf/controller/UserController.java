@@ -1,37 +1,97 @@
 package generate.pdf.openpdf.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import generate.pdf.openpdf.config.security.TokenProvider;
+import generate.pdf.openpdf.dto.FileResponse;
+import generate.pdf.openpdf.dto.JwtToken;
 import generate.pdf.openpdf.dto.ResponseWithMessage;
 import generate.pdf.openpdf.dto.UserSqlFile;
+import generate.pdf.openpdf.exception.UnauthorizedException;
+import generate.pdf.openpdf.mapper.UserRoleMapper;
 import generate.pdf.openpdf.service.UserFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1")
 @RequiredArgsConstructor
 public class UserController {
 
+    private static final HttpClient httpClient = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_2)
+            .build();
+
     private final UserFileService userFileService;
+    private final ObjectMapper objectMapper;
+    private final UserRoleMapper userRoleMapper;
+    private final TokenProvider tokenProvider;
 
-    @Value("${front-end.address}")
-    private String frontEndAddress;
+    @Value("${spring.security.oauth2.client.registration.google.clientId}")
+    private String clientId;
 
-    @GetMapping("oauth-login")
-    public void oAuthLogin(HttpServletResponse response) throws IOException {
-        response.sendRedirect(frontEndAddress + "/#/home");
+    @PostMapping("oauth-login")
+    public JwtToken oAuthLogin(@RequestBody JwtToken jwtToken) throws Exception {
+        String jwt = URLEncoder.encode(jwtToken.getJwt(), StandardCharsets.UTF_8);
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("https://oauth2.googleapis.com/tokeninfo?id_token=" + jwt))
+                .timeout(Duration.ofSeconds(2))
+                .build();
+
+        HttpResponse<String> res = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        if (res.statusCode() != 200) {
+            throw new UnauthorizedException("The server received invalid jwt!");
+        }
+        String json = res.body();
+        Map<String, String> map = objectMapper.readValue(json, Map.class);
+        if (!map.get("iss").equals("accounts.google.com")) {
+            throw new UnauthorizedException("The server received invalid jwt!");
+        }
+        if (!clientId.equals("831887232071-k6dmabuu48v05rn4h5h12evh70r1m5tj.apps.googleusercontent.com")) {
+            throw new UnauthorizedException("The server received invalid jwt!");
+        }
+
+        String username = map.get("email");
+        String name = map.get("name");
+        List<String> authorityStrings = userRoleMapper.findRolesByUsername(username);
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        if (authorityStrings.isEmpty()) {
+            authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        } else {
+            for (String auth : authorityStrings) {
+                authorities.add(new SimpleGrantedAuthority(auth));
+            }
+        }
+        String token = tokenProvider.createToken(username, name, authorities);
+        JwtToken returnJwt = new JwtToken();
+        returnJwt.setJwt(token);
+
+        return returnJwt;
     }
 
     @GetMapping("user/email")
@@ -50,7 +110,7 @@ public class UserController {
     }
 
     @GetMapping("download-sql/{fileName}")
-    public ResponseEntity<Resource> getSqlFile(
+    public FileResponse getSqlFile(
             Principal principal,
             @PathVariable String fileName
     ) {
@@ -58,7 +118,7 @@ public class UserController {
     }
 
     @GetMapping("download-sql/selected")
-    public ResponseEntity<Resource> downloadSelectedSqlFile(Principal principal) {
+    public FileResponse downloadSelectedSqlFile(Principal principal) {
         return userFileService.downloadSelectedFile(principal);
     }
 
@@ -68,6 +128,7 @@ public class UserController {
     }
 
     @PostMapping("add-sql")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public void addSqlFile(Principal principal) {
         userFileService.addSqlFile(principal);
     }

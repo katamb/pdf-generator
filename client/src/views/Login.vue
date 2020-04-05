@@ -49,10 +49,7 @@ export default class Login extends Vue {
       .then(() =>
         getRequest("/api/v1/user/roles")
           .then(response => response.json())
-          .then((roles: any) => {
-              console.log(roles)
-              localStorage.setItem("Roles", roles)
-          })
+          .then((roles: any) => localStorage.setItem("Roles", roles))
       )
       .then(() => router.push({ path: "/home" }));
   }

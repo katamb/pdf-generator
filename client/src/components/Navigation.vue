@@ -48,6 +48,7 @@ export default class Navigation extends Vue {
     this.$store.state.googleAuth2.signOut();
     this.$store.state.googleAuth2.disconnect();
     localStorage.removeItem("Authorization");
+    localStorage.removeItem("Roles");
     router.push({ path: "/" });
   }
 }

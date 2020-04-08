@@ -1,7 +1,5 @@
 <template>
   <div>
-    <ErrorModal />
-
     <Navigation />
 
     <h2 class="pt-2">
@@ -18,15 +16,15 @@
         <h4 class="text-danger">{{ this.errorMessage }}</h4>
       </div>
       <div class="text-center">
-        <b-button class="m-3" variant="success" @click="goHome"
-          >Go to home page
+        <b-button class="m-3" variant="success" @click="goHome">
+          Go to home page
         </b-button>
       </div>
     </b-modal>
 
     <b-container fluid>
       <b-row>
-        <b-col>
+        <b-col v-if="isRoleEditor">
           <EditingToolbar />
         </b-col>
         <b-col>
@@ -44,20 +42,20 @@ import Navigation from "@/components/Navigation.vue";
 import { getRequest } from "@/requests";
 import router from "@/router";
 import EditingToolbar from "@/components/EditingToolbar.vue";
-import ErrorModal from "@/components/ErrorModal.vue";
+import { isCurrentUserEditor } from "@/util";
 
 @Component({
   components: {
     PdfViewer,
     EditingToolbar,
-    Navigation,
-    ErrorModal
+    Navigation
   }
 })
 export default class EditPdf extends Vue {
   language = "";
   showModal = false;
   errorMessage = null;
+  isRoleEditor = false;
 
   @Watch("$route")
   onPropertyChanged(value: string, oldValue: string) {
@@ -65,7 +63,10 @@ export default class EditPdf extends Vue {
   }
 
   mounted(): void {
-    this.validateFileSelected();
+    this.isRoleEditor = isCurrentUserEditor();
+    if (this.isRoleEditor) {
+      this.validateFileSelected();
+    }
     this.language = this.$route.params.language;
     this.getLanguage();
   }
@@ -94,15 +95,4 @@ export default class EditPdf extends Vue {
 </script>
 
 <style scoped>
-.home-button {
-  font-size: 26px;
-}
-
-.home-button:hover {
-  text-decoration: none;
-}
-
-.icon-center {
-  vertical-align: middle;
-}
 </style>

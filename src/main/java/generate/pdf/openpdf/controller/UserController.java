@@ -27,20 +27,20 @@ public class UserController {
         return userFileService.findRoles(principal);
     }
 
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
     @GetMapping("is-sql-file-selected")
-    @PreAuthorize("hasRole('ROLE_USER')")
     public UserSqlFile getSelectedSqlFile(Principal principal) {
         return userFileService.getSelectedSqlFile(principal);
     }
 
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
     @GetMapping("sql-files")
-    @PreAuthorize("hasRole('ROLE_USER')")
     public List<UserSqlFile> getSqlFiles(Principal principal) {
         return userFileService.getUserSqlFiles(principal);
     }
 
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
     @GetMapping("download-sql/{fileName}")
-    @PreAuthorize("hasRole('ROLE_USER')")
     public FileResponse getSqlFile(
             Principal principal,
             @PathVariable String fileName
@@ -48,20 +48,20 @@ public class UserController {
         return userFileService.downloadFile(principal, fileName);
     }
 
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
     @GetMapping("download-sql/selected")
-    @PreAuthorize("hasRole('ROLE_USER')")
     public FileResponse downloadSelectedSqlFile(Principal principal) {
         return userFileService.downloadSelectedFile(principal);
     }
 
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
     @PutMapping("select-sql/{id}")
-    @PreAuthorize("hasRole('ROLE_USER')")
     public void selectSqlFile(Principal principal, @PathVariable Long id) {
         userFileService.selectSqlFile(principal, id);
     }
 
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
     @PostMapping("add-sql")
-    @PreAuthorize("hasRole('ROLE_USER')")
     public void addSqlFile(Principal principal) {
         userFileService.addSqlFile(principal);
     }

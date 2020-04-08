@@ -33,6 +33,9 @@ public class PdfGeneratorController {
         return pdfGenerator.generatePrintoutAndReturnFileName(templateCode, languageCode, inputData);
     }
 
+    /**
+     * This is only for back-office, as the pdf generated under this endpoint has links in text for editing purposes
+     */
     @GetMapping(value = "edit/pdf/{templateCode}/{languageCode}", produces = MediaType.APPLICATION_PDF_VALUE)
     public ResponseEntity<byte[]> pdfEditor(
             @PathVariable TemplateCode templateCode,
@@ -45,4 +48,5 @@ public class PdfGeneratorController {
 
         return new ResponseEntity<>(pdfFile, headers, HttpStatus.OK);
     }
+
 }

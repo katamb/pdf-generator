@@ -1,13 +1,19 @@
 <template>
   <div id="app">
+    <ErrorModal />
     <router-view />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import ErrorModal from "@/components/ErrorModal.vue";
 
-@Component
+@Component({
+  components: {
+    ErrorModal
+  }
+})
 export default class Login extends Vue {
   mounted(): void {
     this.$nextTick(() => this.loadLoginButton());
@@ -38,8 +44,5 @@ export default class Login extends Vue {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
-.icon-center {
-  vertical-align: middle;
 }
 </style>

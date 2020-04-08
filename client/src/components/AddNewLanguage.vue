@@ -29,21 +29,20 @@
 import { Component, Vue } from "vue-property-decorator";
 import { getRequest, postRequest } from "@/requests";
 import router from "@/router";
+import { isEmptyString } from "@/util";
 
 @Component
 export default class AddNewLanguage extends Vue {
-  private selectedLanguage: any = null;
-  private languageOptions: any = [];
-  private unavailableLanguageValues: any = [];
+  private selectedLanguage = "";
+  private languageOptions: Array<string> = [];
+  private unavailableLanguageValues: Array<string> = [];
 
   mounted(): void {
     this.getLanguages();
   }
 
   isLanguageSelected(): boolean {
-    return (
-      this.selectedLanguage !== undefined && this.selectedLanguage !== null
-    );
+    return !isEmptyString(this.selectedLanguage);
   }
 
   private getLanguages(): void {
@@ -80,7 +79,7 @@ export default class AddNewLanguage extends Vue {
       )
       .then(() => {
         this.getLanguages();
-        this.selectedLanguage = null;
+        this.selectedLanguage = "";
       });
   }
 }

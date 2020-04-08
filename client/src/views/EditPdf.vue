@@ -6,14 +6,14 @@
       Currently editing:
     </h2>
     <h4 class="pb-3">
-      <b-badge variant="info">{{ this.$route.params.template }}</b-badge>
+      <b-badge variant="info">{{ $route.params.template }}</b-badge>
       template in
       <b-badge variant="info">{{ language }}</b-badge>
     </h4>
 
     <b-modal v-model="showModal" hide-footer hide-header>
       <div class="d-block text-center">
-        <h4 class="text-danger">{{ this.errorMessage }}</h4>
+        <h4 class="text-danger">{{ errorMessage }}</h4>
       </div>
       <div class="text-center">
         <b-button class="m-3" variant="success" @click="goHome">
@@ -94,5 +94,4 @@ export default class EditPdf extends Vue {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

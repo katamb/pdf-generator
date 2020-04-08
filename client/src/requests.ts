@@ -18,7 +18,6 @@ export async function getRequest(url: string, validate = true) {
   const jwt = localStorage.getItem("Authorization");
   const response = await fetch(BACKEND_URL + url, {
     method: "GET",
-    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: jwt !== null ? jwt.toString() : ""
@@ -36,7 +35,6 @@ export async function putRequest(url: string, body: any, validate = true) {
   const jwt = localStorage.getItem("Authorization");
   const response = await fetch(BACKEND_URL + url, {
     method: "PUT",
-    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       Authorization: jwt !== null ? jwt.toString() : ""

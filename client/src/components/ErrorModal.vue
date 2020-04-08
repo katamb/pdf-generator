@@ -18,7 +18,7 @@ import eventBus from "@/eventBus";
 @Component
 export default class ErrorModal extends Vue {
   showModal = false;
-  errorMessage: any = null;
+  errorMessage = "";
 
   created(): void {
     eventBus.$on("show-error", (message: string) => {
@@ -29,7 +29,7 @@ export default class ErrorModal extends Vue {
 
   close(): void {
     this.showModal = false;
-    this.errorMessage = null;
+    this.errorMessage = "";
   }
 }
 </script>

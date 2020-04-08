@@ -20,7 +20,7 @@
     >
       <b-form-select
         id="language-input"
-        v-if="languageSelectionAllowed"
+        v-if="isLanguageSelectionAllowed"
         v-model="selectedLanguage"
         :options="languageOptions"
       ></b-form-select>
@@ -80,11 +80,12 @@
 
     <div class="text-center">
       <b-button
-        :disabled="!navigationAllowed()"
+        :disabled="!isNavigationAllowed()"
         class="mt-3"
         variant="success"
         @click="navigateToEditPage"
-        >Proceed to editing page
+      >
+        {{ getNavigationButtonText() }}
       </b-button>
     </div>
   </div>
@@ -96,7 +97,7 @@ import { getRequest, postRequest, putRequest } from "@/requests";
 import router from "@/router";
 import Info from "@/assets/info.svg";
 import { Base64 } from "js-base64";
-import { isCurrentUserEditor } from "@/util";
+import { isCurrentUserEditor, isEmptyString } from "@/util";
 
 @Component({
   components: {
@@ -104,13 +105,13 @@ import { isCurrentUserEditor } from "@/util";
   }
 })
 export default class ChooseTemplate extends Vue {
-  selectedTemplate: any = null;
-  selectedLanguage: any = null;
-  templateOptions: any = [];
-  languageOptions: any = [];
-  fields: Array<string> = ["createdAt", "sqlFileName", "selected"];
-  sqlFileOptions: any = null;
   isRoleEditor = false;
+  selectedTemplate = "";
+  selectedLanguage = "";
+  templateOptions: Array<string> = [];
+  languageOptions: Array<string> = [];
+  fields: Array<string> = ["createdAt", "sqlFileName", "selected"];
+  sqlFileOptions: Array<any> = [];
 
   mounted(): void {
     this.isRoleEditor = isCurrentUserEditor();
@@ -142,28 +143,30 @@ export default class ChooseTemplate extends Vue {
     postRequest(`/api/v1/add-sql`, null).then(() => this.getFiles());
   }
 
-  languageSelectionAllowed(): boolean {
-    return this.elementSelectionAllowed(this.selectedTemplate);
+  isLanguageSelectionAllowed(): boolean {
+    return !isEmptyString(this.selectedTemplate);
   }
 
-  navigationAllowed(): boolean {
+  isNavigationAllowed(): boolean {
     if (this.isRoleEditor) {
       return (
-        this.elementSelectionAllowed(this.selectedTemplate) &&
-        this.elementSelectionAllowed(this.selectedLanguage) &&
-        this.elementSelectionAllowed(this.sqlFileOptions) &&
+        !isEmptyString(this.selectedTemplate) &&
+        !isEmptyString(this.selectedLanguage) &&
+        !isEmptyString(this.sqlFileOptions) &&
         this.sqlFileOptions.filter((el: any) => el.selected).length === 1
       );
     } else {
       return (
-        this.elementSelectionAllowed(this.selectedTemplate) &&
-        this.elementSelectionAllowed(this.selectedLanguage)
+        !isEmptyString(this.selectedTemplate) &&
+        !isEmptyString(this.selectedLanguage)
       );
     }
   }
 
-  private elementSelectionAllowed(element: any): boolean {
-    return element !== undefined && element !== null && element !== "";
+  getNavigationButtonText(): string {
+    return this.isRoleEditor
+      ? "Proceed to editing template"
+      : "Proceed to view template";
   }
 
   navigateToEditPage(): void {

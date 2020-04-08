@@ -2,7 +2,7 @@
   <div>
     <b-modal v-model="showModal" hide-footer>
       <div class="d-block text-center">
-        <h4 class="text-danger">{{ this.errorMessage }}</h4>
+        <h4 class="text-danger">{{ errorMessage }}</h4>
         <h5>
           Would you like to make that change in all templates where this text is
           shown or only in this template?
@@ -25,13 +25,13 @@
       Select text before adding the formatting!
     </b-alert>
 
-    <div v-if="this.json === null || this.json === undefined" class="mt-3">
+    <div v-if="json === null || json === undefined" class="mt-3">
       <p>
         Click on a text block in the preview window to edit that text!
       </p>
     </div>
 
-    <div v-if="this.json !== null && this.json !== undefined" class="mt-3">
+    <div v-if="json !== null && json !== undefined" class="mt-3">
       <b-button-group class="m-1" size="sm">
         <b-button
           @click="updateVerticalAlignment(verticalAlignTop)"
@@ -193,9 +193,9 @@ export default class PdfTextFieldEditor extends Vue {
   updateOnlyCurrent = UPDATE_ONLY_CURRENT;
   confirmUpdate = CONFIRM_UPDATE;
   showDismissibleAlert = false;
-  private json: any = null;
   private showModal = false;
   private errorMessage = "";
+  private json: any = null;
   private selectionStart: any = null;
   private selectionEnd: any = null;
 
@@ -204,7 +204,7 @@ export default class PdfTextFieldEditor extends Vue {
   }
 
   @Watch("$route")
-  onPropertyChanged(value: string, oldValue: string) {
+  onPropertyChanged() {
     this.getText();
   }
 
@@ -219,8 +219,8 @@ export default class PdfTextFieldEditor extends Vue {
       .then(response => response.json())
       .then(response => {
         if (
-          response.status !== null &&
           response.status !== undefined &&
+          response.status !== null &&
           response.status !== 200
         ) {
           this.json = null;
@@ -320,10 +320,6 @@ export default class PdfTextFieldEditor extends Vue {
 </script>
 
 <style scoped>
-.icon-center {
-  vertical-align: middle;
-}
-
 .active-button {
   background-color: #191919;
 }

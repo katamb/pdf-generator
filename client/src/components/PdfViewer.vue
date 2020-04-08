@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div v-if="this.pdf !== null">
-      <b-embed type="iframe" aspect="4by3" :src="this.pdf"> </b-embed>
+    <div v-if="pdf !== null">
+      <b-embed type="iframe" aspect="4by3" :src="pdf"> </b-embed>
     </div>
-    <div v-if="this.pdf === null">
+    <div v-if="pdf === null">
       <p>Loading or unable to display file!</p>
     </div>
   </div>
@@ -16,7 +16,7 @@ import eventBus from "@/eventBus";
 
 @Component
 export default class PdfViewer extends Vue {
-  private pdf: any = null;
+  pdf: any = null;
 
   created(): void {
     eventBus.$on("rerender-pdf", () => this.getPdf());

@@ -9,10 +9,10 @@
         </h5>
       </div>
       <div class="text-center">
-        <b-button class="m-3" variant="success" @click="updateText(updateOnlyCurrent)">
+        <b-button class="m-3" variant="success" @click="updateText(UPDATE_ONLY_CURRENT)">
           Only in this template
         </b-button>
-        <b-button class="m-3" variant="warning" @click="updateText(updateAll)">
+        <b-button class="m-3" variant="warning" @click="updateText(UPDATE_ALL)">
           In all templates
         </b-button>
       </div>
@@ -111,7 +111,7 @@
       >
       </b-form-textarea>
 
-      <b-button variant="success" class="m-2" @click="updateText(confirmUpdate)">
+      <b-button variant="success" class="m-2" @click="updateText(CONFIRM_UPDATE)">
         Update text block
       </b-button>
     </div>
@@ -121,20 +121,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { getRequest, putRequest } from '@/scripts/requests';
-import {
-  CONFIRM_UPDATE,
-  HORIZONTAL_ALIGN_CENTER,
-  HORIZONTAL_ALIGN_DEFAULT,
-  HORIZONTAL_ALIGN_JUSTIFIED,
-  HORIZONTAL_ALIGN_LEFT,
-  HORIZONTAL_ALIGN_RIGHT,
-  RERENDER_PDF_EVENT,
-  UPDATE_ALL,
-  UPDATE_ONLY_CURRENT,
-  VERTICAL_ALIGN_BOTTOM,
-  VERTICAL_ALIGN_CENTER,
-  VERTICAL_ALIGN_TOP
-} from '@/scripts/constants';
+import { RERENDER_PDF_EVENT } from '@/scripts/constants';
 import eventBus from '@/scripts/eventBus';
 import Explanations from '@/components/Explanations.vue';
 import AddNewLanguage from '@/components/AddNewLanguage.vue';
@@ -171,31 +158,31 @@ import { isUndefinedOrNull, getTag } from '@/scripts/util';
   }
 })
 export default class PdfTextFieldEditor extends Vue {
-  verticalAlignTop = VERTICAL_ALIGN_TOP;
+  horizontalAlignLeft = -1;
 
-  verticalAlignCenter = VERTICAL_ALIGN_CENTER;
+  horizontalAlignDefault = 0;
 
-  verticalAlignBottom = VERTICAL_ALIGN_BOTTOM;
+  horizontalAlignCenter = 1;
 
-  horizontalAlignLeft = HORIZONTAL_ALIGN_LEFT;
+  horizontalAlignRight = 2;
 
-  horizontalAlignDefault = HORIZONTAL_ALIGN_DEFAULT;
+  horizontalAlignJustified = 3;
 
-  horizontalAlignCenter = HORIZONTAL_ALIGN_CENTER;
+  verticalAlignTop = 4;
 
-  horizontalAlignRight = HORIZONTAL_ALIGN_RIGHT;
+  verticalAlignCenter = 5;
 
-  horizontalAlignJustified = HORIZONTAL_ALIGN_JUSTIFIED;
+  verticalAlignBottom = 6;
 
-  updateAll = UPDATE_ALL;
+  UPDATE_ALL = 'UPDATE_ALL';
 
-  updateOnlyCurrent = UPDATE_ONLY_CURRENT;
+  UPDATE_ONLY_CURRENT = 'UPDATE_ONLY_CURRENT';
 
-  confirmUpdate = CONFIRM_UPDATE;
+  CONFIRM_UPDATE = 'CONFIRM_UPDATE';
 
   showDismissibleAlert = false;
 
-  private showModal = false;
+  showModal = false;
 
   private errorMessage = '';
 

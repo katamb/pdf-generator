@@ -29,7 +29,7 @@ export async function getRequest(url: string, validate = true) {
   return response;
 }
 
-export async function putRequest(url: string, body: any, validate = true) {
+export async function putRequest(url: string, body: any = null, validate = true) {
   const jwt = localStorage.getItem(AUTHORIZATION);
   const response = await fetch(BACKEND_URL + url, {
     method: 'PUT',
@@ -47,7 +47,7 @@ export async function putRequest(url: string, body: any, validate = true) {
   return response;
 }
 
-export async function postRequest(url: string, body: any, validate = true) {
+export async function postRequest(url: string, body: any = null, validate = true) {
   const jwt = localStorage.getItem(AUTHORIZATION);
   const response = await fetch(BACKEND_URL + url, {
     method: 'POST',

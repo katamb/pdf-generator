@@ -20,11 +20,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import Explanations from "@/components/Explanations.vue";
-import AddNewLanguage from "@/components/AddNewLanguage.vue";
-import DownloadSql from "@/components/DownloadSql.vue";
-import PdfTextFieldEditor from "@/components/PdfTextFieldEditor.vue";
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import Explanations from '@/components/Explanations.vue';
+import AddNewLanguage from '@/components/AddNewLanguage.vue';
+import DownloadSql from '@/components/DownloadSql.vue';
+import PdfTextFieldEditor from '@/components/PdfTextFieldEditor.vue';
 
 @Component({
   components: {
@@ -37,9 +37,9 @@ import PdfTextFieldEditor from "@/components/PdfTextFieldEditor.vue";
 export default class EditingToolbar extends Vue {
   tabIndex = 0;
 
-  @Watch("$route")
+  @Watch('$route')
   onPropertyChanged() {
-    if (this.$route.params.id === "-") {
+    if (this.$route.params.id === '-') {
       this.tabIndex = 0;
     } else {
       this.tabIndex = 2;

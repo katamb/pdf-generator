@@ -6,8 +6,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import ErrorModal from "@/components/ErrorModal.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import ErrorModal from '@/components/ErrorModal.vue';
 
 @Component({
   components: {
@@ -20,17 +20,14 @@ export default class Login extends Vue {
   }
 
   loadLoginButton(): void {
-    window.gapi.load("auth2", () => {
+    window.gapi.load('auth2', () => {
       window.gapi.auth2
         .init({
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          client_id:
-            "831887232071-k6dmabuu48v05rn4h5h12evh70r1m5tj.apps.googleusercontent.com",
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          cookie_policy: "single_host_origin"
+          client_id: '831887232071-k6dmabuu48v05rn4h5h12evh70r1m5tj.apps.googleusercontent.com',
+          cookie_policy: 'single_host_origin'
         })
-        .then(auth => {
-          this.$store.dispatch("setGoogleOauth", auth);
+        .then((auth) => {
+          this.$store.dispatch('setGoogleOauth', auth);
         });
     });
   }

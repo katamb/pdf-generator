@@ -4,19 +4,16 @@
       <div class="d-block text-center">
         <h4 class="text-danger">{{ errorMessage }}</h4>
         <h5>
-          Would you like to make that change in all templates where this text is
-          shown or only in this template?
+          Would you like to make that change in all templates where this text is shown or only in
+          this template?
         </h5>
       </div>
       <div class="text-center">
-        <b-button
-          class="m-3"
-          variant="success"
-          @click="updateText(updateOnlyCurrent)"
-          >Only in this template
+        <b-button class="m-3" variant="success" @click="updateText(updateOnlyCurrent)">
+          Only in this template
         </b-button>
-        <b-button class="m-3" variant="warning" @click="updateText(updateAll)"
-          >In all templates
+        <b-button class="m-3" variant="warning" @click="updateText(updateAll)">
+          In all templates
         </b-button>
       </div>
     </b-modal>
@@ -56,8 +53,7 @@
         <b-button
           @click="updateHorizontalAlignment(horizontalAlignLeft)"
           v-bind:class="{
-            'active-button':
-              isActive(horizontalAlignLeft) || isActive(horizontalAlignDefault)
+            'active-button': isActive(horizontalAlignLeft) || isActive(horizontalAlignDefault)
           }"
         >
           <FormatAlignLeft />
@@ -84,10 +80,7 @@
 
       <b-row class="">
         <b-col>
-          <b-input-group
-            class="mt-1 mb-2 ml-auto limited-width"
-            prepend="Text size"
-          >
+          <b-input-group class="mt-1 mb-2 ml-auto limited-width" prepend="Text size">
             <b-form-input type="number" v-model="json.textSize"> </b-form-input>
           </b-input-group>
         </b-col>
@@ -118,11 +111,7 @@
       >
       </b-form-textarea>
 
-      <b-button
-        variant="success"
-        class="m-2"
-        @click="updateText(confirmUpdate)"
-      >
+      <b-button variant="success" class="m-2" @click="updateText(confirmUpdate)">
         Update text block
       </b-button>
     </div>
@@ -130,8 +119,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import { getRequest, putRequest } from "@/requests";
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import { getRequest, putRequest } from '@/scripts/requests';
 import {
   CONFIRM_UPDATE,
   HORIZONTAL_ALIGN_CENTER,
@@ -139,28 +128,29 @@ import {
   HORIZONTAL_ALIGN_JUSTIFIED,
   HORIZONTAL_ALIGN_LEFT,
   HORIZONTAL_ALIGN_RIGHT,
+  RERENDER_PDF_EVENT,
   UPDATE_ALL,
   UPDATE_ONLY_CURRENT,
   VERTICAL_ALIGN_BOTTOM,
   VERTICAL_ALIGN_CENTER,
   VERTICAL_ALIGN_TOP
-} from "@/constants";
-import eventBus from "@/eventBus";
-import Explanations from "@/components/Explanations.vue";
-import AddNewLanguage from "@/components/AddNewLanguage.vue";
-import DownloadSql from "@/components/DownloadSql.vue";
-import FormatStrikethrough from "@/assets/format_strikethrough.svg";
-import FormatUnderlined from "@/assets/format_underlined.svg";
-import FormatItalic from "@/assets/format_italic.svg";
-import FormatBold from "@/assets/format_bold.svg";
-import FormatAlignCenter from "@/assets/format_align_center.svg";
-import FormatAlignJustify from "@/assets/format_align_justify.svg";
-import FormatAlignLeft from "@/assets/format_align_left.svg";
-import FormatAlignRight from "@/assets/format_align_right.svg";
-import VerticalAlignCenter from "@/assets/vertical_align_center.svg";
-import VerticalAlignBottom from "@/assets/vertical_align_bottom.svg";
-import VerticalAlignTop from "@/assets/vertical_align_top.svg";
-import { isUndefinedOrNull, getTag } from "@/util";
+} from '@/scripts/constants';
+import eventBus from '@/scripts/eventBus';
+import Explanations from '@/components/Explanations.vue';
+import AddNewLanguage from '@/components/AddNewLanguage.vue';
+import DownloadSql from '@/components/DownloadSql.vue';
+import FormatStrikethrough from '@/assets/format_strikethrough.svg';
+import FormatUnderlined from '@/assets/format_underlined.svg';
+import FormatItalic from '@/assets/format_italic.svg';
+import FormatBold from '@/assets/format_bold.svg';
+import FormatAlignCenter from '@/assets/format_align_center.svg';
+import FormatAlignJustify from '@/assets/format_align_justify.svg';
+import FormatAlignLeft from '@/assets/format_align_left.svg';
+import FormatAlignRight from '@/assets/format_align_right.svg';
+import VerticalAlignCenter from '@/assets/vertical_align_center.svg';
+import VerticalAlignBottom from '@/assets/vertical_align_bottom.svg';
+import VerticalAlignTop from '@/assets/vertical_align_top.svg';
+import { isUndefinedOrNull, getTag } from '@/scripts/util';
 
 @Component({
   components: {
@@ -182,47 +172,59 @@ import { isUndefinedOrNull, getTag } from "@/util";
 })
 export default class PdfTextFieldEditor extends Vue {
   verticalAlignTop = VERTICAL_ALIGN_TOP;
+
   verticalAlignCenter = VERTICAL_ALIGN_CENTER;
+
   verticalAlignBottom = VERTICAL_ALIGN_BOTTOM;
+
   horizontalAlignLeft = HORIZONTAL_ALIGN_LEFT;
+
   horizontalAlignDefault = HORIZONTAL_ALIGN_DEFAULT;
+
   horizontalAlignCenter = HORIZONTAL_ALIGN_CENTER;
+
   horizontalAlignRight = HORIZONTAL_ALIGN_RIGHT;
+
   horizontalAlignJustified = HORIZONTAL_ALIGN_JUSTIFIED;
+
   updateAll = UPDATE_ALL;
+
   updateOnlyCurrent = UPDATE_ONLY_CURRENT;
+
   confirmUpdate = CONFIRM_UPDATE;
+
   showDismissibleAlert = false;
+
   private showModal = false;
-  private errorMessage = "";
+
+  private errorMessage = '';
+
   private json: any = null;
+
   private selectionStart: any = null;
+
   private selectionEnd: any = null;
 
   mounted(): void {
     this.getText();
   }
 
-  @Watch("$route")
+  @Watch('$route')
   onPropertyChanged() {
     this.getText();
   }
 
   private getText(): void {
-    if (this.$route.params.id === "-") {
+    if (this.$route.params.id === '-') {
       this.json = null;
       return;
     }
     getRequest(
       `/api/v1/text-by-id/${this.$route.params.template}/${this.$route.params.language}/${this.$route.params.id}`
     )
-      .then(response => response.json())
-      .then(response => {
-        if (
-          response.status !== undefined &&
-          response.status !== null &&
-          response.status !== 200
-        ) {
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.status !== undefined && response.status !== null && response.status !== 200) {
           this.json = null;
         } else {
           this.json = response;
@@ -232,50 +234,29 @@ export default class PdfTextFieldEditor extends Vue {
 
   updateText(updateType: string): void {
     putRequest(`/api/v1/update-text/${updateType}`, this.json)
-      .then(response => response.json())
-      .then(jsonResponse => {
+      .then((response) => response.json())
+      .then((jsonResponse) => {
         if (jsonResponse.statusCode === 300) {
           this.errorMessage = jsonResponse.message;
           this.showModal = true;
         } else if (jsonResponse.statusCode === 200) {
           this.showModal = false;
-          eventBus.$emit("rerender-pdf");
+          eventBus.$emit(RERENDER_PDF_EVENT);
           this.getText();
         }
       });
   }
 
   isActive(data: number): boolean {
-    return (
-      data == this.json.horizontalAlignment ||
-      data == this.json.verticalAlignment
-    );
+    return data === this.json.horizontalAlignment || data === this.json.verticalAlignment;
   }
 
   updateHorizontalAlignment(newAlignment: number): void {
-    if (
-      [
-        this.horizontalAlignLeft,
-        this.horizontalAlignDefault,
-        this.horizontalAlignCenter,
-        this.horizontalAlignRight,
-        this.horizontalAlignJustified
-      ].includes(newAlignment)
-    ) {
-      this.json.horizontalAlignment = newAlignment;
-    }
+    this.json.horizontalAlignment = newAlignment;
   }
 
   updateVerticalAlignment(newAlignment: number): void {
-    if (
-      [
-        this.verticalAlignTop,
-        this.verticalAlignCenter,
-        this.verticalAlignBottom
-      ].includes(newAlignment)
-    ) {
-      this.json.verticalAlignment = newAlignment;
-    }
+    this.json.verticalAlignment = newAlignment;
   }
 
   nullCurrentSelection(): void {
@@ -289,27 +270,18 @@ export default class PdfTextFieldEditor extends Vue {
   }
 
   applyFormat(format: string): void {
-    if (
-      !isUndefinedOrNull(this.selectionStart) &&
-      !isUndefinedOrNull(this.selectionEnd)
-    ) {
-      const stringBeforeSelection = this.json.textBlockValue.substring(
-        0,
-        this.selectionStart
-      );
-      const selection = this.json.textBlockValue.substring(
-        this.selectionStart,
-        this.selectionEnd
-      );
+    if (!isUndefinedOrNull(this.selectionStart) && !isUndefinedOrNull(this.selectionEnd)) {
+      const stringBeforeSelection = this.json.textBlockValue.substring(0, this.selectionStart);
+      const selection = this.json.textBlockValue.substring(this.selectionStart, this.selectionEnd);
       const stringAfterSelection = this.json.textBlockValue.substring(
         this.selectionEnd,
         this.json.textBlockValue.length
       );
       this.json.textBlockValue =
         stringBeforeSelection +
-        getTag("START", format) +
+        getTag('START', format) +
         selection +
-        getTag("END", format) +
+        getTag('END', format) +
         stringAfterSelection;
       this.nullCurrentSelection();
     } else {

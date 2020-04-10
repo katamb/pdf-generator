@@ -1,5 +1,5 @@
-import Vue from "vue";
-import Vuex from "vuex";
+import Vue from 'vue';
+import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
@@ -8,7 +8,7 @@ export default new Vuex.Store({
     googleAuth2: null
   },
   getters: {
-    getGoogleOauth: state => {
+    getGoogleOauth: (state) => {
       return state.googleAuth2;
     }
   },
@@ -19,7 +19,7 @@ export default new Vuex.Store({
   },
   actions: {
     setGoogleOauth: (context, newValue) => {
-      context.commit("setGoogleOauth", newValue);
+      context.commit('setGoogleOauth', newValue);
     }
   },
   modules: {}

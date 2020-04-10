@@ -18,9 +18,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import ChooseTemplate from "@/components/ChooseTemplate.vue";
-import Navigation from "@/components/Navigation.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import ChooseTemplate from '@/components/ChooseTemplate.vue';
+import Navigation from '@/components/Navigation.vue';
 
 @Component({
   components: {

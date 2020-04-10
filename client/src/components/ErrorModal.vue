@@ -12,16 +12,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import eventBus from "@/eventBus";
+import { Component, Vue } from 'vue-property-decorator';
+import eventBus from '@/scripts/eventBus';
+import { SHOW_ERROR_EVENT } from '@/scripts/constants';
 
 @Component
 export default class ErrorModal extends Vue {
   showModal = false;
-  errorMessage = "";
+
+  errorMessage = '';
 
   created(): void {
-    eventBus.$on("show-error", (message: string) => {
+    eventBus.$on(SHOW_ERROR_EVENT, (message: string) => {
       this.errorMessage = message;
       this.showModal = true;
     });
@@ -29,7 +31,7 @@ export default class ErrorModal extends Vue {
 
   close(): void {
     this.showModal = false;
-    this.errorMessage = "";
+    this.errorMessage = '';
   }
 }
 </script>

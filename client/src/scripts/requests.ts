@@ -1,26 +1,24 @@
-import { BACKEND_URL } from "@/constants";
-import eventBus from "@/eventBus";
-import router from "@/router";
+import { AUTHORIZATION, BACKEND_URL, SHOW_ERROR_EVENT } from '@/scripts/constants';
+import eventBus from '@/scripts/eventBus';
+import { removeCredentialsFromLocalStorage } from '@/scripts/util';
 
 function isValid(response: any): void {
   const noErrorMessageStatuses = [200, 300, 401, 403];
   if (!noErrorMessageStatuses.includes(response.status)) {
-    response
-      .json()
-      .then((error: any) => eventBus.$emit("show-error", error.message));
+    response.json().then((error: any) => eventBus.$emit(SHOW_ERROR_EVENT, error.message));
   }
   if (response.status === 401 || response.status === 403) {
-    router.push({ path: "/" });
+    removeCredentialsFromLocalStorage();
   }
 }
 
 export async function getRequest(url: string, validate = true) {
-  const jwt = localStorage.getItem("Authorization");
+  const jwt = localStorage.getItem(AUTHORIZATION);
   const response = await fetch(BACKEND_URL + url, {
-    method: "GET",
+    method: 'GET',
     headers: {
-      "Content-Type": "application/json",
-      Authorization: jwt !== null ? jwt.toString() : ""
+      'Content-Type': 'application/json',
+      Authorization: jwt !== null ? jwt.toString() : ''
     }
   });
 
@@ -32,12 +30,12 @@ export async function getRequest(url: string, validate = true) {
 }
 
 export async function putRequest(url: string, body: any, validate = true) {
-  const jwt = localStorage.getItem("Authorization");
+  const jwt = localStorage.getItem(AUTHORIZATION);
   const response = await fetch(BACKEND_URL + url, {
-    method: "PUT",
+    method: 'PUT',
     headers: {
-      "Content-Type": "application/json",
-      Authorization: jwt !== null ? jwt.toString() : ""
+      'Content-Type': 'application/json',
+      Authorization: jwt !== null ? jwt.toString() : ''
     },
     body: JSON.stringify(body)
   });
@@ -50,12 +48,12 @@ export async function putRequest(url: string, body: any, validate = true) {
 }
 
 export async function postRequest(url: string, body: any, validate = true) {
-  const jwt = localStorage.getItem("Authorization");
+  const jwt = localStorage.getItem(AUTHORIZATION);
   const response = await fetch(BACKEND_URL + url, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
-      Authorization: jwt !== null ? jwt.toString() : ""
+      'Content-Type': 'application/json',
+      Authorization: jwt !== null ? jwt.toString() : ''
     },
     body: JSON.stringify(body)
   });

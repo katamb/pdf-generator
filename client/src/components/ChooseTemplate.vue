@@ -1,10 +1,6 @@
 <template>
   <div class="text-left">
-    <b-form-group
-      class="pt-2"
-      label="Choose template"
-      label-for="template-input"
-    >
+    <b-form-group class="pt-2" label="Choose template" label-for="template-input">
       <b-form-select
         id="template-input"
         v-model="selectedTemplate"
@@ -13,11 +9,7 @@
       ></b-form-select>
     </b-form-group>
 
-    <b-form-group
-      class="pt-2"
-      label="Choose language"
-      label-for="language-input"
-    >
+    <b-form-group class="pt-2" label="Choose language" label-for="language-input">
       <b-form-select
         id="language-input"
         v-if="isLanguageSelectionAllowed"
@@ -34,10 +26,10 @@
             <Info
               v-b-popover.hover.top="
                 'To start creating new changes click \'New File\'. ' +
-                  'This will create a new file on top of the list. Select the new file and proceed. ' +
-                  'To continue working on the changes started earlier, choose the correct file from the list below. ' +
-                  'At least one of the files below needs to be selected to continue. ' +
-                  'To download one of the files, click on the file name.'
+                'This will create a new file on top of the list. Select the new file and proceed. ' +
+                'To continue working on the changes started earlier, choose the correct file from the list below. ' +
+                'At least one of the files below needs to be selected to continue. ' +
+                'To download one of the files, click on the file name.'
               "
               title="Instructions"
             >
@@ -45,13 +37,9 @@
           </label>
         </b-col>
         <b-col class="text-right">
-          <b-button
-            class="ml-auto"
-            variant="primary"
-            size="sm"
-            @click="createNewFile"
-            >New file</b-button
-          >
+          <b-button class="ml-auto" variant="primary" size="sm" @click="createNewFile">
+            New file
+          </b-button>
         </b-col>
       </b-row>
 
@@ -61,7 +49,7 @@
             {{ getDateForTable(data.item.createdAt) }}
           </template>
           <template v-slot:cell(sqlFileName)="data">
-            <a class="normal-link" v-on:click.prevent="download(data)">
+            <a class="normal-link" v-on:click.prevent="downloadFile(data)">
               {{ data.item.sqlFileName }}
             </a>
           </template>
@@ -92,25 +80,42 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { getRequest, postRequest, putRequest } from "@/requests";
-import router from "@/router";
-import Info from "@/assets/info.svg";
-import { Base64 } from "js-base64";
-import { isCurrentUserEditor, isEmptyString } from "@/util";
+import { Component, Vue } from 'vue-property-decorator';
+import { getRequest, postRequest, putRequest } from '@/scripts/requests';
+import Info from '@/assets/info.svg';
+import {
+  isCurrentUserEditor,
+  isEmptyString,
+  getDateForTable,
+  getButtonText,
+  getButtonStyle
+} from '@/scripts/util';
+import downloadFile from '@/scripts/downloading';
 
 @Component({
   components: {
     Info
+  },
+  methods: {
+    downloadFile,
+    getDateForTable,
+    getButtonText,
+    getButtonStyle
   }
 })
 export default class ChooseTemplate extends Vue {
   isRoleEditor = false;
-  selectedTemplate = "";
-  selectedLanguage = "";
+
+  selectedTemplate = '';
+
+  selectedLanguage = '';
+
   templateOptions: Array<string> = [];
+
   languageOptions: Array<string> = [];
-  fields: Array<string> = ["createdAt", "sqlFileName", "selected"];
+
+  fields: Array<string> = ['createdAt', 'sqlFileName', 'selected'];
+
   sqlFileOptions: Array<any> = [];
 
   mounted(): void {
@@ -122,21 +127,27 @@ export default class ChooseTemplate extends Vue {
   }
 
   getTemplates(): void {
-    getRequest("/api/v1/all-templates")
-      .then(response => response.json())
-      .then(data => (this.templateOptions = data));
+    getRequest('/api/v1/all-templates')
+      .then((response) => response.json())
+      .then((data) => {
+        this.templateOptions = data;
+      });
   }
 
   getFiles(): void {
-    getRequest("/api/v1/sql-files")
-      .then(response => response.json())
-      .then(data => (this.sqlFileOptions = data));
+    getRequest('/api/v1/sql-files')
+      .then((response) => response.json())
+      .then((data) => {
+        this.sqlFileOptions = data;
+      });
   }
 
   getLanguages(): void {
     getRequest(`/api/v1/template-languages/${this.selectedTemplate}`)
-      .then(response => response.json())
-      .then(data => (this.languageOptions = data));
+      .then((response) => response.json())
+      .then((data) => {
+        this.languageOptions = data;
+      });
   }
 
   createNewFile(): void {
@@ -155,59 +166,22 @@ export default class ChooseTemplate extends Vue {
         !isEmptyString(this.sqlFileOptions) &&
         this.sqlFileOptions.filter((el: any) => el.selected).length === 1
       );
-    } else {
-      return (
-        !isEmptyString(this.selectedTemplate) &&
-        !isEmptyString(this.selectedLanguage)
-      );
     }
+    return !isEmptyString(this.selectedTemplate) && !isEmptyString(this.selectedLanguage);
   }
 
   getNavigationButtonText(): string {
-    return this.isRoleEditor
-      ? "Proceed to editing template"
-      : "Proceed to view template";
+    return this.isRoleEditor ? 'Proceed to editing template' : 'Proceed to view template';
   }
 
   navigateToEditPage(): void {
-    router.push({
+    this.$router.push({
       path: `edit-pdf/${this.selectedTemplate}/${this.selectedLanguage}/-`
     });
   }
 
-  getDateForTable(dateTime: string) {
-    const date = dateTime.split("T")[0];
-    const time = dateTime.split("T")[1].split(".")[0];
-    return date + " " + time;
-  }
-
-  getButtonText(selected: boolean) {
-    return selected ? "Selected" : "Select";
-  }
-
-  getButtonStyle(selected: boolean) {
-    return selected ? "primary" : "outline-primary";
-  }
-
   select(id: number) {
     putRequest(`/api/v1/select-sql/${id}`, null).then(() => this.getFiles());
-  }
-
-  download(data: any): void {
-    getRequest(`/api/v1/download-sql/${data.item.sqlFileName}`)
-      .then(response => response.json())
-      .then(file => {
-        const element = document.createElement("a");
-        element.setAttribute(
-          "href",
-          "data:text/plain;charset=utf-8," + Base64.decode(file.file)
-        );
-        element.setAttribute("download", file.fileName);
-        element.style.display = "none";
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-      });
   }
 }
 </script>

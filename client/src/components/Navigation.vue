@@ -2,9 +2,7 @@
   <div>
     <b-navbar type="dark" variant="dark">
       <b-navbar-nav>
-        <b-navbar-brand @click="routeHome" class="link">
-          <Home /> Home
-        </b-navbar-brand>
+        <b-navbar-brand @click="routeHome" class="link"> <Home /> Home </b-navbar-brand>
       </b-navbar-nav>
 
       <b-navbar-nav class="ml-auto">
@@ -16,10 +14,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import router from "@/router";
-import Home from "@/assets/home.svg";
-import jwtDecode from "jwt-decode";
+import { Component, Vue } from 'vue-property-decorator';
+import Home from '@/assets/home.svg';
+import jwtDecode from 'jwt-decode';
+import { removeCredentialsFromLocalStorage } from '@/scripts/util';
+import { AUTHORIZATION } from '@/scripts/constants';
 
 @Component({
   components: {
@@ -30,7 +29,7 @@ export default class Navigation extends Vue {
   email: string | null = null;
 
   mounted(): void {
-    const jwt: string | null = localStorage.getItem("Authorization");
+    const jwt: string | null = localStorage.getItem(AUTHORIZATION);
     if (jwt) {
       const decodedJwt: any = jwtDecode(jwt.substring(7));
       this.email = decodedJwt.email;
@@ -38,18 +37,17 @@ export default class Navigation extends Vue {
   }
 
   routeHome(): void {
-    const routeTo = "/home";
+    const routeTo = '/home';
     if (this.$route.path !== routeTo) {
-      router.push({ path: routeTo });
+      this.$router.push({ path: routeTo });
     }
   }
 
   logout(): void {
     this.$store.state.googleAuth2.signOut();
     this.$store.state.googleAuth2.disconnect();
-    localStorage.removeItem("Authorization");
-    localStorage.removeItem("Roles");
-    router.push({ path: "/" });
+    removeCredentialsFromLocalStorage();
+    this.$router.push({ path: '/' });
   }
 }
 </script>

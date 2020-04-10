@@ -36,13 +36,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import PdfViewer from "@/components/PdfViewer.vue";
-import Navigation from "@/components/Navigation.vue";
-import { getRequest } from "@/requests";
-import router from "@/router";
-import EditingToolbar from "@/components/EditingToolbar.vue";
-import { isCurrentUserEditor } from "@/util";
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import PdfViewer from '@/components/PdfViewer.vue';
+import Navigation from '@/components/Navigation.vue';
+import EditingToolbar from '@/components/EditingToolbar.vue';
+import { getRequest } from '@/scripts/requests';
+import { isCurrentUserEditor } from '@/scripts/util';
 
 @Component({
   components: {
@@ -52,13 +51,16 @@ import { isCurrentUserEditor } from "@/util";
   }
 })
 export default class EditPdf extends Vue {
-  language = "";
+  language = '';
+
   showModal = false;
+
   errorMessage = null;
+
   isRoleEditor = false;
 
-  @Watch("$route")
-  onPropertyChanged(value: string, oldValue: string) {
+  @Watch('$route')
+  onPropertyChanged() {
     this.getLanguage();
   }
 
@@ -72,19 +74,21 @@ export default class EditPdf extends Vue {
   }
 
   goHome(): void {
-    router.push({ path: "/home" });
+    this.$router.push({ path: '/home' });
   }
 
   private getLanguage(): void {
     getRequest(`/api/v1/languages-by-code/${this.$route.params.language}`)
       .then((body: any) => body.json())
-      .then(json => (this.language = json.text));
+      .then((json) => {
+        this.language = json.text;
+      });
   }
 
   private validateFileSelected(): void {
     getRequest(`/api/v1/is-sql-file-selected`, false)
       .then((body: any) => body.json())
-      .then(json => {
+      .then((json) => {
         if (json.status !== undefined && json.status !== 200) {
           this.errorMessage = json.message;
           this.showModal = true;

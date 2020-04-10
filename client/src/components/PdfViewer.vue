@@ -10,16 +10,17 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { getRequest } from "@/requests";
-import eventBus from "@/eventBus";
+import { Component, Vue } from 'vue-property-decorator';
+import { getRequest } from '@/scripts/requests';
+import eventBus from '@/scripts/eventBus';
+import { RERENDER_PDF_EVENT } from '@/scripts/constants';
 
 @Component
 export default class PdfViewer extends Vue {
   pdf: any = null;
 
   created(): void {
-    eventBus.$on("rerender-pdf", () => this.getPdf());
+    eventBus.$on(RERENDER_PDF_EVENT, () => this.getPdf());
   }
 
   mounted(): void {
@@ -30,8 +31,10 @@ export default class PdfViewer extends Vue {
     getRequest(
       `/api/v1/file-generator/edit/pdf/${this.$route.params.template}/${this.$route.params.language}`
     )
-      .then(response => response.blob())
-      .then(blob => (this.pdf = URL.createObjectURL(blob)));
+      .then((response) => response.blob())
+      .then((blob) => {
+        this.pdf = URL.createObjectURL(blob);
+      });
   }
 }
 </script>

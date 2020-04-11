@@ -2,8 +2,9 @@ version: '3'
 
 services:
   postgres:
+    container_name: pdf_generator_db
     image: postgres:12.2
-    restart: always
+    restart: on-failure
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
@@ -12,6 +13,11 @@ services:
       - 7702:5432
 
   spring-app:
-    build: ./
+    container_name: pdf_generator_app
+    build: 
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 7701:7701
+    depends_on:
+      - postgres

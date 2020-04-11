@@ -3,21 +3,11 @@
     <b-container>
       <b-row class="justify-content-center">
         <b-col cols="12" md="auto">
-          <b-card
-            bg-variant="light"
-            title="PDF generator"
-            class="text-center card-margin"
-          >
+          <b-card bg-variant="light" title="PDF generator" class="text-center card-margin">
             <b-card-text>
-              Click the button below to log in via Google and continue to the
-              application.
+              Click the button below to log in via Google and continue to the application.
             </b-card-text>
-            <b-button
-              ref="signInBtn"
-              @click="logIn"
-              variant="outline-primary"
-              class="my-3"
-            >
+            <b-button ref="signInBtn" @click="logIn" variant="outline-primary" class="my-3">
               <GoogleLogInLogo />
               Sign in with Google
             </b-button>
@@ -29,10 +19,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import GoogleLogInLogo from "@/assets/google_log_in_logo.svg";
-import router from "@/router";
-import { getRequest } from "@/requests";
+import { Component, Vue } from 'vue-property-decorator';
+import GoogleLogInLogo from '@/assets/google_log_in_logo.svg';
+import { getRequest } from '@/scripts/requests';
+import { AUTHORIZATION, BEARER, ROLES } from '@/scripts/constants';
 
 @Component({
   components: {
@@ -43,15 +33,13 @@ export default class Login extends Vue {
   logIn(): void {
     this.$store.state.googleAuth2
       .signIn()
-      .then((token: any) =>
-        localStorage.setItem("Authorization", "Bearer " + token.uc.id_token)
-      )
+      .then((token: any) => localStorage.setItem(AUTHORIZATION, `${BEARER} ${token.tc.id_token}`))
       .then(() =>
-        getRequest("/api/v1/user/roles")
-          .then(response => response.json())
-          .then((roles: any) => localStorage.setItem("Roles", roles))
+        getRequest('/api/v1/user/roles')
+          .then((response) => response.json())
+          .then((roles: any) => localStorage.setItem(ROLES, roles))
       )
-      .then(() => router.push({ path: "/home" }));
+      .then(() => this.$router.push({ path: '/home' }));
   }
 }
 </script>
@@ -60,11 +48,7 @@ export default class Login extends Vue {
 .background {
   min-height: 100vh;
   min-width: 100vw;
-  background-image: linear-gradient(
-    to bottom right,
-    rgb(97, 98, 98) 24%,
-    rgb(31, 30, 31) 90%
-  );
+  background-image: linear-gradient(to bottom right, rgb(97, 98, 98) 24%, rgb(31, 30, 31) 90%);
 }
 
 .card-margin {

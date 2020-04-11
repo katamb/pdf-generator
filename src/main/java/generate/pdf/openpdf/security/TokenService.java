@@ -45,7 +45,7 @@ public class TokenService {
 
     private final UserRoleMapper userRoleMapper;
 
-    @Value("${spring.security.oauth2.client.registration.google.clientId}")
+    @Value("${security.oauth2.google.clientId}")
     private String clientId;
 
     public AppUser getAppUserFromToken(String token) {

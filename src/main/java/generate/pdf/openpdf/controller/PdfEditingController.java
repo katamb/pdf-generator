@@ -10,6 +10,7 @@ import generate.pdf.openpdf.mapper.TemplateTextMapper;
 import generate.pdf.openpdf.service.TemplateLanguageCreationService;
 import generate.pdf.openpdf.service.TextUpdatingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,6 +60,7 @@ public class PdfEditingController {
         return templateTextMapper.findTextBlockById(templateCode.name(), languageCode.name(), id);
     }
 
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
     @PutMapping("update-text/{updateType}")
     public ResponseWithMessage updateTextBlock(
             @PathVariable UpdateType updateType,
@@ -67,6 +69,7 @@ public class PdfEditingController {
         return textUpdatingService.update(updatedTextBlock, updateType);
     }
 
+    @PreAuthorize("hasRole('ROLE_EDITOR')")
     @PostMapping("add-language/{templateCode}/{oldLanguageCode}/{newLanguageCode}")
     public void createNewLanguageForTemplate(
             @PathVariable TemplateCode templateCode,

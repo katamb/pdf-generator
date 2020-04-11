@@ -3,7 +3,6 @@ package generate.pdf.openpdf.service;
 import generate.pdf.openpdf.config.StartupConfig;
 import generate.pdf.openpdf.dto.FileResponse;
 import generate.pdf.openpdf.dto.UserSqlFile;
-import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.exception.InternalServerException;
 import generate.pdf.openpdf.mapper.UserSqlFileMapper;
 import org.slf4j.Logger;
@@ -25,18 +24,18 @@ public class SqlStorageService {
     private static final Logger logger = LoggerFactory.getLogger(SqlStorageService.class);
     private final Path fileStorageLocation;
     private final UserSqlFileMapper userSqlFileMapper;
+    private final FileDownloadService fileDownloadService;
 
-    public SqlStorageService(StartupConfig startupConfig, UserSqlFileMapper userSqlFileMapper) {
+    public SqlStorageService(
+            StartupConfig startupConfig,
+            UserSqlFileMapper userSqlFileMapper,
+            FileDownloadService fileDownloadService
+    ) {
         this.userSqlFileMapper = userSqlFileMapper;
+        this.fileDownloadService = fileDownloadService;
 
         // Full path to uploads directory
         this.fileStorageLocation = Paths.get(startupConfig.getSqlDirectory()).toAbsolutePath().normalize();
-        try {
-            Files.createDirectories(this.fileStorageLocation);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new InternalServerException("Could not create the directory where the uploaded files will be stored.");
-        }
     }
 
     public UserSqlFile createNewSqlForUser(String username) {
@@ -78,19 +77,8 @@ public class SqlStorageService {
     }
 
     public FileResponse loadFileAsResource(String fileName) {
-        try {
-            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
-            byte[] fileAsByteArray = Files.readAllBytes(filePath);
-
-            FileResponse fileResponse = new FileResponse();
-            fileResponse.setFileName(fileName);
-            fileResponse.setFile(fileAsByteArray);
-            return fileResponse;
-
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw new BadRequestException("File not found " + fileName);
-        }
+        Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+        return fileDownloadService.downloadFile(filePath, fileName);
     }
 
 }

@@ -99,7 +99,8 @@ public class MybatisInterceptor implements Interceptor {
         DefaultParameterHandler handler = new DefaultParameterHandler(queryStatement, parameter, boundSql);
         try (PreparedStatement statement = connection.prepareStatement(sqlStatement)) {
             handler.setParameters(statement);
-            String sql = statement.toString().split("\\s+", 3)[2] + ";\n\n";
+            String sql = statement.toString().split("\\s+", 3)[2];
+            sql = sql.trim().replaceAll("\\s+", " ") + ";\n\n";
             Principal principal = SecurityContextHolder.getContext().getAuthentication();
             UserSqlFile userSqlFile = userFileService.getSelectedSqlFile(principal);
             Path pathToFile = Paths.get(startupConfig.getSqlDirectory() + userSqlFile.getSqlFileName());

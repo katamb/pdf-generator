@@ -1,0 +1,16 @@
+DELETE FROM pdf_generator.user_sql_file
+WHERE username = 'INTEG_TEST';
+
+DELETE FROM pdf_generator.template_text
+WHERE template_code = 'TEST'
+AND language_code = 'et'
+AND text_block_name = 'LOAN_CONTRACT';
+
+DELETE FROM pdf_generator.template_code
+WHERE template_code = 'TEST';
+
+DELETE FROM pdf_generator.text_block
+WHERE text_block_value = 'Old text block';
+
+DELETE FROM pdf_generator.text_block
+WHERE text_block_value = 'New text block';

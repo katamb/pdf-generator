@@ -40,7 +40,7 @@ public class SqlStorageService {
 
     public UserSqlFile createNewSqlForUser(String username) {
         int uniqueNum = 0;
-        String escapedUsername = username.replaceAll("[^a-zA-Z0-9.-]", "_");
+        String escapedUsername = username.replaceAll("[^a-zA-Z0-9._-]", "_");
         String fileName = createFileName(escapedUsername, uniqueNum);
         Path targetLocation = this.fileStorageLocation.resolve(fileName);
 

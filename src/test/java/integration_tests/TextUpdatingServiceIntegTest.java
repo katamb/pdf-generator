@@ -37,28 +37,4 @@ public class TextUpdatingServiceIntegTest {
         assertTrue(templateTextMapper.findAllAvailableTemplates().size() > 0);
     }
 
-
-//
-//    @Configuration
-//    static class TestRdbsConfiguration {
-//
-//        @Bean
-//        public PostgreSQLContainer postgreSQLContainer() {
-//            return BasePostgreSqlContainer.getInstance();
-//        }
-//
-//        @Bean
-//        @Primary
-//        public DataSource dataSource(final PostgreSQLContainer postgreSQLContainer) {
-//            return DataSourceBuilder.create()
-//                    .url(postgreSQLContainer.getJdbcUrl())
-//                    .username(postgreSQLContainer.getUsername())
-//                    .password(postgreSQLContainer.getPassword())
-//                    .driverClassName(postgreSQLContainer.getDriverClassName())
-//                    .build();
-//        }
-//
-//    }
-
-
 }

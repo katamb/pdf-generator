@@ -1,7 +1,9 @@
 package generate.pdf.openpdf.service;
 
 import generate.pdf.openpdf.config.StartupConfig;
+import generate.pdf.openpdf.dto.FileResponse;
 import generate.pdf.openpdf.exception.BadRequestException;
+import generate.pdf.openpdf.exception.InternalServerException;
 import generate.pdf.openpdf.mapper.UserSqlFileMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.util.AssertionErrors.assertFalse;
+import static org.springframework.test.util.AssertionErrors.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 class SqlStorageServiceTest {
@@ -38,15 +41,18 @@ class SqlStorageServiceTest {
     private StartupConfig startupConfig;
     @Mock
     private UserSqlFileMapper userSqlFileMapper;
+    @Mock
+    private FileDownloadService fileDownloadService;
     private SqlStorageService sqlStorageService;
 
     @BeforeEach
-    void initUseCase() {
+    void initUseCase() throws IOException{
         testFolder = UUID.randomUUID().toString();
         pathToTestFolder = Paths.get(testFolder).toAbsolutePath().normalize();
         assumeFalse(Files.exists(pathToTestFolder));
         when(startupConfig.getSqlDirectory()).thenReturn(testFolder);
-        sqlStorageService = new SqlStorageService(startupConfig, userSqlFileMapper);
+        sqlStorageService = new SqlStorageService(startupConfig, userSqlFileMapper, fileDownloadService);
+        Files.createDirectories(pathToTestFolder);
     }
 
     @Test
@@ -97,21 +103,16 @@ class SqlStorageServiceTest {
     }
 
     @Test
-    void testLoadFileAsResourceFileNotFound() throws IOException {
-        String randomFilename = "randomname.sql";
-        assertThrows(BadRequestException.class, () -> sqlStorageService.loadFileAsResource(randomFilename));
-
-        cleanup();
-    }
-
-    @Test
     void testLoadFileAsResourceFileIsFound() throws IOException {
+        when(fileDownloadService.downloadFile(any(), any())).thenReturn(new FileResponse());
+
         String username = "karl.tamberg";
         sqlStorageService.createNewSqlForUser(username);
         String expectedFileName = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "-" + username + "-0.sql";
         Path targetLocation = pathToTestFolder.resolve(expectedFileName);
         assertTrue(Files.exists(targetLocation));
-        sqlStorageService.loadFileAsResource(expectedFileName);
+        FileResponse response = sqlStorageService.loadFileAsResource(expectedFileName);
+        assertNotNull("This file is supposed to be found!", response);
 
         cleanup();
     }

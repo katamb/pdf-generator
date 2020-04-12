@@ -36,6 +36,13 @@
             AND tt.template_text_id = #{id};
     </select>
 
+    <select id="findTextBlocksById" resultType="TemplateTextBlock">
+        SELECT <include refid="selectAll"/>
+        FROM pdf_generator.template_text tt
+        INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tt.text_block_id
+        WHERE tt.text_block_id = #{id};
+    </select>
+
     <select id="findTextBlockValueById" resultType="java.lang.String">
         SELECT tb.text_block_value
         FROM pdf_generator.text_block tb

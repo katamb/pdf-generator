@@ -32,58 +32,58 @@ class TemplateLanguageCreationServiceTest {
         when(templateTextMapper.getTextsByTemplateAndLanguage(any(), any())).thenReturn(Collections.emptyList());
 
         assertThrows(BadRequestException.class, () -> templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.xx, LanguageCode.xx
+                TemplateCode.EDITABLE_FORM_EE, LanguageCode.et, LanguageCode.et
         ));
         assertThrows(BadRequestException.class, () -> templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.xx, LanguageCode.yy
+                TemplateCode.EDITABLE_FORM_EE, LanguageCode.et, LanguageCode.en
         ));
     }
 
     @Test
     void testCreateNewLanguageForTemplateValidationNewLanguageExists() {
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.xx.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.et.toString()))
                 .thenReturn(Collections.singletonList(new TemplateTextBlock()));
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.yy.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.en.toString()))
                 .thenReturn(Collections.singletonList(new TemplateTextBlock()));
 
         assertThrows(BadRequestException.class, () -> templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.xx, LanguageCode.xx
+                TemplateCode.EDITABLE_FORM_EE, LanguageCode.et, LanguageCode.et
         ));
         assertThrows(BadRequestException.class, () -> templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.xx, LanguageCode.yy
+                TemplateCode.EDITABLE_FORM_EE, LanguageCode.et, LanguageCode.en
         ));
     }
 
     @Test
     void testCreateNewLanguageForTemplateValidationNoNewLanguageExists() {
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.xx.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.et.toString()))
                 .thenReturn(Collections.singletonList(new TemplateTextBlock()));
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.yy.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.en.toString()))
                 .thenReturn(Collections.emptyList());
 
         assertThrows(BadRequestException.class, () -> templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.xx, LanguageCode.xx
+                TemplateCode.EDITABLE_FORM_EE, LanguageCode.et, LanguageCode.et
         ));
         // Next one shouldn't throw anything
         templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.xx, LanguageCode.yy);
+                TemplateCode.EDITABLE_FORM_EE, LanguageCode.et, LanguageCode.en);
     }
 
     @Test
     void testCreateNewLanguageForTemplateEverythingCorrect() {
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.xx.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.et.toString()))
                 .thenReturn(Collections.singletonList(new TemplateTextBlock()));
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.DUMMY_TEMPLATE_FOR_TESTING.toString(), LanguageCode.yy.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.en.toString()))
                 .thenReturn(Collections.emptyList());
 
         templateLanguageCreationService.createNewLanguageForTemplate(
-                TemplateCode.DUMMY_TEMPLATE_FOR_TESTING, LanguageCode.xx, LanguageCode.yy);
+                TemplateCode.EDITABLE_FORM_EE, LanguageCode.et, LanguageCode.en);
         verify(templateTextMapper, times(1)).batchInsert(any());
     }
 

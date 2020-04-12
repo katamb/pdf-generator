@@ -1,7 +1,7 @@
 package generate.pdf.openpdf.config;
 
 import generate.pdf.openpdf.util.LanguageCodeToEnumConverter;
-import generate.pdf.openpdf.util.PrintoutTypeToEnumConverter;
+import generate.pdf.openpdf.util.TemplateCodeToEnumConverter;
 import generate.pdf.openpdf.util.UpdateTypeToEnumConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -15,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addFormatters(FormatterRegistry registry) {
-        registry.addConverter(new PrintoutTypeToEnumConverter());
+        registry.addConverter(new TemplateCodeToEnumConverter());
         registry.addConverter(new UpdateTypeToEnumConverter());
         registry.addConverter(new LanguageCodeToEnumConverter());
     }

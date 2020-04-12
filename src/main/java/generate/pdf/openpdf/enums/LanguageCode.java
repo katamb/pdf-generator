@@ -14,9 +14,6 @@ public enum LanguageCode {
     de,
     es,
     pl,
-
-    // Next values are for testing purposes
-    xx,
-    yy;
+    en;
 
 }

@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +34,10 @@ public class Util {
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(appUser, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    public static Principal getUserPrincipal() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
 }

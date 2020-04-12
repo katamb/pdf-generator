@@ -72,16 +72,16 @@ public class UserFileService {
     }
 
     public FileResponse downloadFile(Principal principal, String fileName) {
-        validateUserDownloadsOwnFiles(fileName, getEmailFromPrincipal(principal));
+        validateTheFileExists(fileName, getEmailFromPrincipal(principal));
         return sqlStorageService.loadFileAsResource(fileName);
     }
 
-    private void validateUserDownloadsOwnFiles(@PathVariable String fileName, String email) {
+    private void validateTheFileExists(@PathVariable String fileName, String email) {
         userSqlFileMapper.getUserFiles(email)
                 .stream()
                 .filter(file -> file.getSqlFileName().equals(fileName))
                 .findFirst()
-                .orElseThrow(() -> new BadRequestException("Only allowed to download your own files!"));
+                .orElseThrow(() -> new BadRequestException("This file does not exist!"));
     }
 
     public FileResponse downloadSelectedFile(Principal principal) {

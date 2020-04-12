@@ -52,9 +52,10 @@ public abstract class PdfGenerator {
             LanguageCode languageCode,
             String inputData
     ) {
-        String fileName = startupConfig.getFileDirectory() + UUID.randomUUID().toString() + PDF_EXTENSION;
+        String fileName = UUID.randomUUID().toString() + PDF_EXTENSION;
+        String filePath = startupConfig.getPdfDirectory() + fileName;
         try {
-            FileOutputStream outputStream = new FileOutputStream(fileName);
+            FileOutputStream outputStream = new FileOutputStream(filePath);
             startPdfGeneration(templateCode, languageCode, inputData, outputStream, false);
         } catch (FileNotFoundException e) {
             logger.warn(e.getMessage(), e);

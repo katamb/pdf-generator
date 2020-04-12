@@ -6,7 +6,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PrintoutTypeToEnumConverter implements Converter<String, TemplateCode> {
+public class TemplateCodeToEnumConverter implements Converter<String, TemplateCode> {
 
     /**
      * Allow lowercase values to be mapped to uppercase enums for printout types.

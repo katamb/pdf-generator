@@ -47,12 +47,12 @@ public class PdfEditingController {
     }
 
     @GetMapping("languages-by-code/{languageCode}")
-    public ValueTextCombo getTemplateLanguages(@PathVariable LanguageCode languageCode) {
+    public ValueTextCombo getLanguageName(@PathVariable LanguageCode languageCode) {
         return templateTextMapper.findLanguageByCode(languageCode.name());
     }
 
     @GetMapping("text-by-id/{templateCode}/{languageCode}/{id}")
-    public TemplateTextBlock pdfEditor(
+    public TemplateTextBlock findTextById(
             @PathVariable TemplateCode templateCode,
             @PathVariable LanguageCode languageCode,
             @PathVariable Long id

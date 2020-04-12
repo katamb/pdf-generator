@@ -25,6 +25,8 @@ public interface TemplateTextMapper {
             @Param("id") Long id
     );
 
+    List<TemplateTextBlock> findTextBlocksById(@Param("id") Long id);
+
     String findTextBlockValueById(@Param("id") Long id);
 
     Long findTextBlockIdByValue(@Param("textBlockValue") String textBlockValue);

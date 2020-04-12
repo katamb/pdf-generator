@@ -2,7 +2,6 @@ package generate.pdf.openpdf.config;
 
 import generate.pdf.openpdf.security.TokenAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,9 +21,7 @@ import java.util.Collections;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
-
-    @Value("${front-end.address}")
-    private String frontEndAddress;
+    private final EnvironmentVariableProvider environmentVariableProvider;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -45,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList(frontEndAddress));
+        configuration.setAllowedOrigins(Collections.singletonList(environmentVariableProvider.getFrontendAddress()));
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

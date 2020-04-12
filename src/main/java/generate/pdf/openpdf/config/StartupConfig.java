@@ -12,7 +12,7 @@ import java.io.File;
 public class StartupConfig {
 
     @Value( "${pdf.storage.dir}" )
-    private String fileDirectory;
+    private String pdfDirectory;
     @Value( "${sql.storage.dir}" )
     private String sqlDirectory;
 
@@ -21,7 +21,7 @@ public class StartupConfig {
      */
     @PostConstruct
     public void createDirectories() {
-        new File(fileDirectory).mkdirs();
+        new File(pdfDirectory).mkdirs();
         new File(sqlDirectory).mkdirs();
     }
 

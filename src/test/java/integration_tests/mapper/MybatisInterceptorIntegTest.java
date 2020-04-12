@@ -1,0 +1,109 @@
+package integration_tests.mapper;
+
+import generate.pdf.MainApplication;
+import generate.pdf.openpdf.config.StartupConfig;
+import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.mapper.TemplateTextMapper;
+import integration_tests.BasePostgreSqlContainer;
+import org.junit.ClassRule;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.containers.PostgreSQLContainer;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static integration_tests.Util.TEST_USERNAME;
+import static integration_tests.Util.setEditorContextForIntegTests;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(
+        classes = MainApplication.class,
+        webEnvironment = SpringBootTest.WebEnvironment.MOCK
+)
+@SqlConfig(encoding = "UTF-8")
+public class MybatisInterceptorIntegTest {
+
+    @ClassRule
+    public static PostgreSQLContainer postgreSQLContainer = BasePostgreSqlContainer.getInstance();
+
+    @Autowired
+    private TemplateTextMapper templateTextMapper;
+
+    @Autowired
+    private StartupConfig startupConfig;
+
+    @Test
+    @Sql(scripts = "classpath:sql/mapper/mybatisInterceptorTestData.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:sql/mapper/removeMybatisInterceptorTestData.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void givenSecurityContextAndFileAndTextBlock_whenInsertingTextBlock_thenChangesGetSavedToFile() throws IOException {
+        Path sqlPath = Paths.get(startupConfig.getSqlDirectory()).toAbsolutePath().normalize().resolve(TEST_USERNAME + ".sql");
+        Files.deleteIfExists(sqlPath);
+        Files.createFile(sqlPath);
+        setEditorContextForIntegTests();
+        TemplateTextBlock textBlock = new TemplateTextBlock();
+        textBlock.setTextBlockValue("Great new text block");
+        templateTextMapper.insertTextBlock(textBlock);
+
+        String fileContent = new String(Files.readAllBytes(sqlPath));
+        assertEquals("INSERT INTO pdf_generator.text_block (text_block_value) VALUES ('Great new text block');\n\n", fileContent);
+
+        Files.deleteIfExists(sqlPath);
+    }
+
+    @Test
+    @Sql("classpath:sql/mapper/mybatisInterceptorTestData.sql")
+    @Sql(scripts = "classpath:sql/mapper/mybatisInterceptorTestData.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:sql/mapper/removeMybatisInterceptorTestData.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void givenSecurityContextAndFileAndTextBlock_whenUpdatingTextBlock_thenChangesGetSavedToFile() throws IOException {
+        Path sqlPath = Paths.get(startupConfig.getSqlDirectory()).toAbsolutePath().normalize().resolve(TEST_USERNAME + ".sql");
+        Files.deleteIfExists(sqlPath);
+        Files.createFile(sqlPath);
+        setEditorContextForIntegTests();
+        TemplateTextBlock textBlock = new TemplateTextBlock();
+        textBlock.setTextBlockValue("New text block");
+        textBlock.setHorizontalAlignment(1);
+        textBlock.setVerticalAlignment(4);
+        textBlock.setLanguageCode("et");
+        textBlock.setTemplateCode("TEST");
+        textBlock.setTextBlockName("LOAN_CONTRACT");
+        textBlock.setTextSize(13);
+
+        templateTextMapper.updateTemplateToTextTranslation(textBlock);
+
+        String fileContent = new String(Files.readAllBytes(sqlPath));
+        assertEquals(
+                "UPDATE pdf_generator.template_text tt SET text_block_id = ( SELECT tb.text_block_id FROM pdf_generator.text_block tb WHERE tb.text_block_value = 'New text block'), text_size = 13.0, horizontal_alignment = 1, vertical_alignment = 4 WHERE tt.template_code = 'TEST' AND tt.language_code = 'et' AND tt.text_block_name = 'LOAN_CONTRACT';\n\n",
+                fileContent
+        );
+
+        Files.deleteIfExists(sqlPath);
+    }
+
+    @Test
+    @Sql("classpath:sql/mapper/mybatisInterceptorTestData.sql")
+    @Sql(scripts = "classpath:sql/mapper/mybatisInterceptorTestData.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "classpath:sql/mapper/removeMybatisInterceptorTestData.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void givenSecurityContextAndFileAndTextBlock_whenSelectingTextBlock_thenChangesDontGetSavedToFile() throws IOException {
+        Path sqlPath = Paths.get(startupConfig.getSqlDirectory()).toAbsolutePath().normalize().resolve(TEST_USERNAME + ".sql");
+        Files.deleteIfExists(sqlPath);
+        Files.createFile(sqlPath);
+        setEditorContextForIntegTests();
+
+        templateTextMapper.getTextsByTemplateAndLanguage("TEST", "et");
+
+        String fileContent = new String(Files.readAllBytes(sqlPath));
+        assertEquals("", fileContent);
+
+        Files.deleteIfExists(sqlPath);
+    }
+
+}

@@ -86,8 +86,12 @@ public class TemplateTextBlock {
         this.previousTextBlockValue = textBlockValue;
     }
 
+    public void setPreviousTextBlockValue(String textBlockValue) {
+        this.previousTextBlockValue = textBlockValue;
+    }
+
     @PostConstruct
-    public void setPreviousTextBlockValue() {
+    public void assignPreviousTextBlockValue() {
         this.previousTextBlockValue = this.textBlockValue;
     }
 

@@ -11,5 +11,6 @@ VALUES
     ('lt', 'Lithuanian'),
     ('de', 'German'),
     ('es', 'Spanish'),
-    ('pl', 'Polish')
+    ('pl', 'Polish'),
+    ('en', 'English')
 ;

@@ -1,9 +1,5 @@
 version: '3'
 
-#networks:
-#  core:
-#    external: true
-
 services:
   postgres:
     container_name: pdf_generator_db
@@ -15,8 +11,6 @@ services:
       POSTGRES_DB: postgres
     ports:
       - 7702:5432
-#    networks:
-#      - core
 
   spring-app:
     container_name: pdf_generator_app
@@ -29,19 +23,12 @@ services:
       - postgres
     environment:
       - spring.datasource.url=jdbc:postgresql://pdf_generator_db:5432/postgres
-#    networks:
-#      - core
+      - front-end.address=http://dockerhost:8080
 
   client-app:
     container_name: pdf_generator_client
     build:
       context: client
       dockerfile: Dockerfile
-#    volumes:
-#      - '.client:/app'
-#      - '/app/node_modules'
     ports:
       - 8080:8080
-#    networks:
-#      - core
-

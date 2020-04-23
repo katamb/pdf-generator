@@ -1,4 +1,5 @@
 export const BACKEND_URL = 'http://localhost:7701';
+export const CLIENT_ID = '831887232071-k6dmabuu48v05rn4h5h12evh70r1m5tj.apps.googleusercontent.com';
 
 export const AUTHORIZATION = 'Authorization';
 export const BEARER = 'Bearer';

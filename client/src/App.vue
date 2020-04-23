@@ -8,6 +8,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import ErrorModal from '@/components/ErrorModal.vue';
+import { CLIENT_ID } from './scripts/constants';
 
 @Component({
   components: {
@@ -23,7 +24,7 @@ export default class Login extends Vue {
     window.gapi.load('auth2', () => {
       window.gapi.auth2
         .init({
-          client_id: '831887232071-k6dmabuu48v05rn4h5h12evh70r1m5tj.apps.googleusercontent.com',
+          client_id: CLIENT_ID,
           cookie_policy: 'single_host_origin'
         })
         .then((auth) => {

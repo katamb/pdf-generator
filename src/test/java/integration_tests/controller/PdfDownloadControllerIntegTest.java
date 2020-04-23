@@ -18,15 +18,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
-import static integration_tests.Util.TEST_USERNAME;
-import static integration_tests.Util.getUserPrincipal;
 import static integration_tests.Util.setEditorContextForIntegTests;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(

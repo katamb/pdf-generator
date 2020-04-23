@@ -21,3 +21,14 @@ services:
       - 7701:7701
     depends_on:
       - postgres
+    environment:
+      - spring.datasource.url=jdbc:postgresql://pdf_generator_db:5432/postgres
+      - front-end.address=http://dockerhost:8080
+
+  client-app:
+    container_name: pdf_generator_client
+    build:
+      context: client
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080

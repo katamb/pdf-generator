@@ -16,7 +16,11 @@
         tt.text_block_name,
         tt.text_size,
         tt.horizontal_alignment,
-        tt.vertical_alignment
+        tt.vertical_alignment,
+        tt.padding_top,
+        tt.padding_bottom,
+        tt.padding_left,
+        tt.padding_right
     </sql>
 
     <select id="getTextsByTemplateAndLanguage" resultType="TemplateTextBlock">
@@ -92,7 +96,11 @@
                 WHERE tb.text_block_value = #{templateTextBlock.textBlockValue}),
             text_size = #{templateTextBlock.textSize},
             horizontal_alignment = #{templateTextBlock.horizontalAlignment},
-            vertical_alignment = #{templateTextBlock.verticalAlignment}
+            vertical_alignment = #{templateTextBlock.verticalAlignment},
+            padding_top = #{templateTextBlock.paddingTop},
+            padding_bottom = #{templateTextBlock.paddingBottom},
+            padding_left = #{templateTextBlock.paddingLeft},
+            padding_right = #{templateTextBlock.paddingRight}
         WHERE tt.template_code = #{templateTextBlock.templateCode}
         AND tt.language_code = #{templateTextBlock.languageCode}
         AND tt.text_block_name = #{templateTextBlock.textBlockName};
@@ -106,7 +114,11 @@
                 WHERE tb.text_block_value = #{templateTextBlock.textBlockValue}),
             text_size = #{templateTextBlock.textSize},
             horizontal_alignment = #{templateTextBlock.horizontalAlignment},
-            vertical_alignment = #{templateTextBlock.verticalAlignment}
+            vertical_alignment = #{templateTextBlock.verticalAlignment},
+            padding_top = #{templateTextBlock.paddingTop},
+            padding_bottom = #{templateTextBlock.paddingBottom},
+            padding_left = #{templateTextBlock.paddingLeft},
+            padding_right = #{templateTextBlock.paddingRight}
         WHERE tt.text_block_id = (
             SELECT t_b.text_block_id
             FROM pdf_generator.text_block t_b
@@ -119,7 +131,8 @@
         INSERT INTO
             pdf_generator.text_block (text_block_value)
         VALUES
-            (#{textBlockValue});
+            (#{textBlockValue})
+        ON CONFLICT DO NOTHING;
     </insert>
 
     <insert id="batchInsert">
@@ -135,7 +148,11 @@
                 text_block_id,
                 text_size,
                 horizontal_alignment,
-                vertical_alignment)
+                vertical_alignment,
+                padding_top,
+                padding_bottom,
+                padding_left,
+                padding_right)
         VALUES
         <foreach collection="templateTextBlocks" item="templateTextBlock" separator=",">
             (#{templateTextBlock.templateCode},
@@ -150,7 +167,11 @@
               WHERE tb.text_block_value = #{templateTextBlock.textBlockValue}),
              #{templateTextBlock.textSize},
              #{templateTextBlock.horizontalAlignment},
-             #{templateTextBlock.verticalAlignment})
+             #{templateTextBlock.verticalAlignment},
+             #{templateTextBlock.paddingTop},
+             #{templateTextBlock.paddingBottom},
+             #{templateTextBlock.paddingLeft},
+             #{templateTextBlock.paddingRight})
         </foreach>
         ;
     </insert>

@@ -81,6 +81,22 @@ public class TemplateTextBlock {
     @Max(8)
     private int verticalAlignment;
 
+    @NotNull
+    @Min(0)
+    private int paddingTop;
+
+    @NotNull
+    @Min(0)
+    private int paddingBottom;
+
+    @NotNull
+    @Min(0)
+    private int paddingLeft;
+
+    @NotNull
+    @Min(0)
+    private int paddingRight;
+
     public void setTextBlockValue(String textBlockValue) {
         this.textBlockValue = textBlockValue;
         this.previousTextBlockValue = textBlockValue;
@@ -104,6 +120,10 @@ public class TemplateTextBlock {
         blockWithStyle.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
         blockWithStyle.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
         blockWithStyle.setTextBlockValue(text);
+        blockWithStyle.setPaddingTop(templateTextBlock.getPaddingTop());
+        blockWithStyle.setPaddingBottom(templateTextBlock.getPaddingBottom());
+        blockWithStyle.setPaddingLeft(templateTextBlock.getPaddingLeft());
+        blockWithStyle.setPaddingRight(templateTextBlock.getPaddingRight());
         return blockWithStyle;
     }
 

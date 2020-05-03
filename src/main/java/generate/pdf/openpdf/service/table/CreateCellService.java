@@ -52,9 +52,13 @@ public class CreateCellService {
         font.setSize(templateTextBlock.getTextSize());
         Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, finalText);
         PdfPCell cell = new PdfPCell(phrase);
+        cell.setBorder(Rectangle.NO_BORDER);
+        cell.setPaddingTop(templateTextBlock.getPaddingTop());
+        cell.setPaddingBottom(templateTextBlock.getPaddingBottom());
+        cell.setPaddingLeft(templateTextBlock.getPaddingLeft());
+        cell.setPaddingRight(templateTextBlock.getPaddingRight());
         cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
         cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
-        cell.setBorder(Rectangle.NO_BORDER);
         if (url != null) {
             cell.setCellEvent(new LinkInCell(url + templateTextBlock.getTemplateTextId()));
         }
@@ -76,4 +80,5 @@ public class CreateCellService {
         cell.setBorder(Rectangle.NO_BORDER);
         return cell;
     }
+
 }

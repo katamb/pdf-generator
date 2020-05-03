@@ -84,7 +84,7 @@ public class GenericConsumerLoanTemplate extends PdfGenerator {
 
         // Create a writer that listens to the document
         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-        // Add header and footer
+        // Add header and footer to every page
         writer.setPageEvent(new HeaderFooterPageEvent(createCellService, templateTexts, dynamicData, editingUrl, font));
         // Open the document
         document.open();

@@ -32,9 +32,7 @@ public class TextUpdatingService {
             return multipleChoices(String.format("This text block is used by %s templates.", textBlockUsagesAmount));
         }
 
-        if (isTextBlockValueUpdated) {
-            insertNewTextBlockIfNecessaryElseUseExisting(updatedTextBlock);
-        }
+        templateTextMapper.insertTextBlock(updatedTextBlock);
 
         if (UpdateType.UPDATE_ALL.equals(updateType)) {
             templateTextMapper.updateAllTemplatesWithGivenText(updatedTextBlock);
@@ -49,6 +47,7 @@ public class TextUpdatingService {
      * If text block with the exact value already exists, use that, else insert new text block and use that.
      * @param updatedTextBlock - Text block updated by user.
      */
+    @Deprecated
     private void insertNewTextBlockIfNecessaryElseUseExisting(TemplateTextBlock updatedTextBlock) {
         Long existingTextBlockWithNeededValue = templateTextMapper
                 .findTextBlockIdByValue(updatedTextBlock.getTextBlockValue());

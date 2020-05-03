@@ -1,7 +1,17 @@
+# Licence info
+Although being licenced under MIT licence, the library uses LibrePDF dependancy, which is licenced under LGPL licence.
+
+# Quickstart
+3 steps to get going. Make sure You have Java, Gradle and Docker installed and `dockerhost` defined in hosts file.
+1) Run `gradle build`.
+2) Go to `client/src/script/constants.ts` and change on the first line `http://localhost:7701` to 
+`http://dockerhost:7701`.
+3) Run `docker-compose up`.
+
 # Getting started
 
 ## Docker
-Make sure You have docker installed and `dockerhost` defined in the hosts file. In Windows 10 for example, 
+Make sure You have Docker installed and `dockerhost` defined in the hosts file. In Windows 10 for example, 
 there is hosts file in `C:\Windows\System32\drivers\etc` folder. This file needs to contain a line with 
 `dockerhost x.x.x.x`, where `x.x.x.x` is the IP for docker.
 

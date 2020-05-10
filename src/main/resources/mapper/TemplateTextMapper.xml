@@ -119,7 +119,7 @@
             padding_bottom = #{templateTextBlock.paddingBottom},
             padding_left = #{templateTextBlock.paddingLeft},
             padding_right = #{templateTextBlock.paddingRight}
-        WHERE tt.text_block_id = (
+        WHERE tt.text_block_id IN (
             SELECT t_b.text_block_id
             FROM pdf_generator.text_block t_b
             WHERE t_b.text_block_value = #{templateTextBlock.previousTextBlockValue}
@@ -173,7 +173,7 @@
              #{templateTextBlock.paddingLeft},
              #{templateTextBlock.paddingRight})
         </foreach>
-        ;
+        ON CONFLICT DO NOTHING;
     </insert>
 
 </mapper>

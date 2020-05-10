@@ -17,7 +17,7 @@ class DynamicDataInjectionServiceTest {
     private DynamicDataInjectionService templateLanguageCreationService;
 
     @Test
-    void testInjectGivenValueSimple() {
+    void givenStringWithPlaceholder_whenReplacingPlaceholder_thenPlaceholderGetsReplaced() {
         String baseString = "Say my name! - You are ${pseudonym}.";
         String replacementValue = "Heisenberg";
         String expectedResult = "Say my name! - You are Heisenberg.";
@@ -27,7 +27,7 @@ class DynamicDataInjectionServiceTest {
     }
 
     @Test
-    void testInjectGivenValueMultipleValuesMissing() {
+    void givenStringWithMultipleSamePlaceholders_whenReplacingPlaceholders_thenAllGetReplaced() {
         String baseString = "Say my name! - You are ${pseudonym}. - Yes, I'm ${pseudonym}.";
         String replacementValue = "Heisenberg";
         String expectedResult = "Say my name! - You are Heisenberg. - Yes, I'm Heisenberg.";
@@ -37,7 +37,7 @@ class DynamicDataInjectionServiceTest {
     }
 
     @Test
-    void testInjectGivenValueNoValuesMissing() {
+    void givenStringWithNoPlaceholders_whenReplacingPlaceholders_thenNoChangesMade() {
         String baseString = "Say my name! - You are Heisenberg.";
         String replacementValue = "Heisenberg";
         String expectedResult = "Say my name! - You are Heisenberg.";
@@ -47,7 +47,7 @@ class DynamicDataInjectionServiceTest {
     }
 
     @Test
-    void testInjectValuesSimple() {
+    void givenOneValue_whenInjectingValues_thenValueGetsInjected() {
         String baseString = "Say my name! - You are ${pseudonym}.";
         Map<String, Object> pseudonym = new HashMap<>();
         pseudonym.put("pseudonym", "Heisenberg");
@@ -58,7 +58,7 @@ class DynamicDataInjectionServiceTest {
     }
 
     @Test
-    void testInjectValuesOneMissing() {
+    void givenOneValue_whenOtherValueMissing_thenInjectionLeavesEmptySpace() {
         String baseString = "Say my name! - You are ${pseudonym}. - I'm ${name}.";
         Map<String, Object> pseudonym = new HashMap<>();
         pseudonym.put("pseudonym", "Heisenberg");
@@ -69,7 +69,7 @@ class DynamicDataInjectionServiceTest {
     }
 
 	@Test
-	void testInjectValuesNestedMap() {
+	void givenNestedMap_whenInjectingValues_injectionWorksCorrectly() {
 		String baseString = "Say my name! - You are ${breakingBad.mainCharacter.pseudonym}.";
 		Map<String, Object> pseudonym = new HashMap<>();
 		pseudonym.put("pseudonym", "Heisenberg");

@@ -40,7 +40,7 @@ class CreateCellServiceTest {
     private String replacement;
 
     @BeforeEach
-    void initUseCase() {
+    void givenTextBlock() {
         replacement = "Catherine Aird";
         fullString = "'If you can't be a good example, then you'll just have to be a horrible warning.' - Catherine Aird";
 
@@ -58,7 +58,7 @@ class CreateCellServiceTest {
     }
 
     @Test
-    void testCreateCellAndInsertGivenString() {
+    void givenTextBlock_whenCreatingCell_thenPlaceholdersGetInjectedWithValues() {
         when(dynamicDataInjectionService.injectGivenValue(any(), any())).thenReturn(replacement);
 
         PdfPCell cell = createCellService.createCellAndInsertGivenString(font, templateTextBlock, replacement, null);
@@ -74,7 +74,7 @@ class CreateCellServiceTest {
     }
 
     @Test
-    void testCreateCellAndInsertGivenStringWithUrl() {
+    void givenTextBlockAndUrl_whenCreatingCell_thenCellIsClickable() {
         when(dynamicDataInjectionService.injectGivenValue(any(), any())).thenReturn(replacement);
 
         String url = "https://www.taltech.ee/";
@@ -92,7 +92,7 @@ class CreateCellServiceTest {
     }
 
     @Test
-    void testCreateCellAndInsertDynamicData() {
+    void givenTextBlockAndDynamicData_whenCreatingCell_thenPlaceholdersGetInjectedWithValues() {
         when(dynamicDataInjectionService.injectValues(any(), any())).thenReturn(replacement);
 
         Map<String, Object> map = new HashMap<>();
@@ -109,7 +109,7 @@ class CreateCellServiceTest {
     }
 
     @Test
-    void testCreateCellAndInsertDynamicDataWithUrl() {
+    void givenTextBlockAndDynamicDataWithUrl_whenCreatingCell_thenClickableCellWithInjectedValuesGetsCreated() {
         when(dynamicDataInjectionService.injectValues(any(), any())).thenReturn(replacement);
 
         Map<String, Object> map = new HashMap<>();

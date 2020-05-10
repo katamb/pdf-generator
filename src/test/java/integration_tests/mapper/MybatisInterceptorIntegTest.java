@@ -54,7 +54,7 @@ public class MybatisInterceptorIntegTest {
         templateTextMapper.insertTextBlock(textBlock);
 
         String fileContent = new String(Files.readAllBytes(sqlPath));
-        assertEquals("INSERT INTO pdf_generator.text_block (text_block_value) VALUES ('Great new text block');\n\n", fileContent);
+        assertEquals("INSERT INTO pdf_generator.text_block (text_block_value) VALUES ('Great new text block') ON CONFLICT DO NOTHING;\n\n", fileContent);
 
         Files.deleteIfExists(sqlPath);
     }
@@ -81,7 +81,7 @@ public class MybatisInterceptorIntegTest {
 
         String fileContent = new String(Files.readAllBytes(sqlPath));
         assertEquals(
-                "UPDATE pdf_generator.template_text tt SET text_block_id = ( SELECT tb.text_block_id FROM pdf_generator.text_block tb WHERE tb.text_block_value = 'New text block'), text_size = 13.0, horizontal_alignment = 1, vertical_alignment = 4 WHERE tt.template_code = 'TEST' AND tt.language_code = 'et' AND tt.text_block_name = 'LOAN_CONTRACT';\n\n",
+                "UPDATE pdf_generator.template_text tt SET text_block_id = ( SELECT tb.text_block_id FROM pdf_generator.text_block tb WHERE tb.text_block_value = 'New text block'), text_size = 13.0, horizontal_alignment = 1, vertical_alignment = 4, padding_top = 0, padding_bottom = 0, padding_left = 0, padding_right = 0 WHERE tt.template_code = 'TEST' AND tt.language_code = 'et' AND tt.text_block_name = 'LOAN_CONTRACT';\n\n",
                 fileContent
         );
 

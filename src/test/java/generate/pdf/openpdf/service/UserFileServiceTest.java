@@ -41,7 +41,7 @@ class UserFileServiceTest {
     private UserFileService userFileService;
 
     @BeforeEach
-    void initUseCase() {
+    void givenUserPrincipalAndThreeUserFiles() {
         AppUser user = new AppUser(TEST_EMAIL, "unit_test",
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
         principal = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

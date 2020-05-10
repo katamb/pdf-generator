@@ -19,8 +19,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CreateLoanPartiesService {
 
-    private static final int PADDING_BOTTOM = 4;
-
     private final CreateCellService createCellService;
 
     private Map<String, TemplateTextBlock> textBlocksWithStyle;
@@ -56,8 +54,6 @@ public class CreateLoanPartiesService {
         PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextBlock, inputDataAsMap, url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setBorderColor(Color.GRAY);
-        cell.setPaddingBottom(PADDING_BOTTOM);
-        cell.setPaddingTop(8);
         cell.setColspan(2);
         table.addCell(cell);
 
@@ -67,8 +63,6 @@ public class CreateLoanPartiesService {
         cell = createCellService.createCellAndInsertDynamicData(font, templateTextBlock, inputDataAsMap, url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setBorderColor(Color.GRAY);
-        cell.setPaddingBottom(PADDING_BOTTOM);
-        cell.setPaddingTop(8);
         cell.setColspan(2);
         table.addCell(cell);
     }
@@ -92,7 +86,6 @@ public class CreateLoanPartiesService {
             PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextBlock, inputDataAsMap, url);
             cell.setBorder(Rectangle.BOTTOM);
             cell.setBorderColor(Color.GRAY);
-            cell.setPaddingBottom(PADDING_BOTTOM);
             table.addCell(cell);
         }
     }

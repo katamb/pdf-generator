@@ -89,7 +89,7 @@ public class GenericConsumerLoanTemplate extends PdfGenerator {
         // Open the document
         document.open();
         // Create document content
-        createSimpleTextService.createSingleCell(document, templateTexts.get("LOAN_CONTRACT"), dynamicData, editingUrl, font);
+        createSimpleTextService.createHeaderCell(document, templateTexts, dynamicData, editingUrl, font);
         createLoanPartiesService.createPartiesData(document, templateTexts, dynamicData, editingUrl, font);
         createLoanConditionsService.createMainConditions(document, templateTexts, loanContractInputDto, dynamicData, editingUrl, font);
         // New page

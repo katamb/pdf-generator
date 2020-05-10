@@ -24,4 +24,6 @@
 
     <include file="pdf_with_form/2020-03-09-pdf-with-form-setup.xml" relativeToChangelogFile="true"/>
 
+    <include file="employment_agreement/2020-05-04-employment-agreement-setup.xml" relativeToChangelogFile="true"/>
+
 </databaseChangeLog>

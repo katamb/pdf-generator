@@ -4,7 +4,6 @@ import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,7 +29,8 @@ class TextBlockServiceTest {
     private TextBlockService textBlockService;
 
     @Test
-    void testGetTextsByTemplateAndLanguage() {
+    void givenHundredTextBlocks_whenAsked_thenAllGetReturned() {
+        // Given
         List<TemplateTextBlock> generatedTextBlocks = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             TemplateTextBlock textBlock = new TemplateTextBlock();
@@ -38,15 +38,17 @@ class TextBlockServiceTest {
             textBlock.setTextBlockName("Name " + i);
             generatedTextBlocks.add(textBlock);
         }
+        // When
         when(templateTextMapper.getTextsByTemplateAndLanguage(any(), any())).thenReturn(generatedTextBlocks);
-
+        // Then
         Map<String, TemplateTextBlock> valueMap =
                 textBlockService.getTextsByTemplateAndLanguage(TemplateCode.PRIVATE_CAR_LOAN_CONTRACT_EE, LanguageCode.et);
         assertEquals(100, valueMap.keySet().size());
     }
 
     @Test
-    void testGetTextsByGroup() {
+    void givenTextBlocksWithDifferentGroups_whenOneGroupQueried_thenOnlyThisGroupGetsReturned() {
+        // Given
         Map<String, TemplateTextBlock> generatedTextBlocks = new HashMap<>();
         for (int i = 0; i < 100; i++) {
             TemplateTextBlock textBlock = new TemplateTextBlock();
@@ -60,8 +62,9 @@ class TextBlockServiceTest {
             }
             generatedTextBlocks.put(textBlock.getTextBlockName(), textBlock);
         }
-
+        // When
         List<TemplateTextBlock> texts = textBlockService.getTextsByGroup(generatedTextBlocks, "Searched group");
+        // Then
         assertEquals(22, texts.size());
         assertEquals(3, texts.get(3).getOrdering());
     }

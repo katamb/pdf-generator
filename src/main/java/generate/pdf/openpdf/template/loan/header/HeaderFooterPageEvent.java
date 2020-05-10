@@ -149,4 +149,5 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
             throw new PdfGenerationException(e.getMessage(), e);
         }
     }
+
 }

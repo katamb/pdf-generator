@@ -1,18 +1,20 @@
-package generate.pdf.openpdf.template.loan.conditions;
+package generate.pdf.openpdf.template.workcontract;
 
+import com.lowagie.text.Cell;
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfSignature;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.service.NumberingService;
 import generate.pdf.openpdf.service.TextBlockService;
 import generate.pdf.openpdf.service.table.CreateCellService;
-import generate.pdf.openpdf.template.loan.dto.LoanContractInputDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,28 +23,25 @@ import static generate.pdf.openpdf.dto.TemplateTextBlock.createNewBlockFromExist
 
 @Service
 @RequiredArgsConstructor
-public class CreateLoanConditionsService {
+public class CreateEmploymentAgreementEntriesService {
 
     private final CreateCellService createCellService;
     private final TextBlockService textBlockService;
     private final NumberingService numberingService;
 
-    private LoanContractInputDto loanContractInputDto;
     private Map<String, TemplateTextBlock> textBlocksWithStyle;
     private Map<String, Object> inputDataAsMap;
     private String url;
     private Font font;
     private LinkedList<Integer> numberingMemory;
 
-    public void createMainConditions(
+    public void createEntries(
             Document document,
             Map<String, TemplateTextBlock> textBlockMap,
-            LoanContractInputDto loanContractInputDto,
             Map<String, Object> inputDataAsMap,
             String url,
             Font font
     ) {
-        this.loanContractInputDto = loanContractInputDto;
         this.textBlocksWithStyle = textBlockMap;
         this.inputDataAsMap = inputDataAsMap;
         this.font = font;
@@ -53,21 +52,32 @@ public class CreateLoanConditionsService {
         table.setTotalWidth(new float[]{ 40, 450 });
         table.setLockedWidth(true);
 
+        createHeaderCell(document);
         createConditionRows(table);
 
         document.add(table);
     }
 
+    public void createHeaderCell(Document document) {
+        PdfPTable table = new PdfPTable(1);
+
+        table.addCell(createCellService.createCellAndInsertDynamicData(font, textBlocksWithStyle.get("EMPLOYMENT_AGREEMENT"), inputDataAsMap, url));
+
+        document.add(table);
+    }
+
     private void createConditionRows(PdfPTable table) {
-        List<TemplateTextBlock> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, "MAIN_CONDITIONS");
-        for (TemplateTextBlock text : textsByGroup) {
-            if (text.getTextBlockName().equals("LOAN_TRANSFER_PARAGRAPH_2")
-                    && loanContractInputDto != null
-                    && BigDecimal.ZERO.compareTo(loanContractInputDto.getLoan().getConclusionFee()) == 0) {
-                continue;
+        List<String> groups = Arrays.asList("GENERAL", "MAIN_CONDITIONS", "END_CONDITIONS");
+        for (String group : groups) {
+            List<TemplateTextBlock> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, group);
+            for (TemplateTextBlock text : textsByGroup) {
+                String number = numberingService.getNumberForTextBlock(text, numberingMemory);
+                createTwoCellRow(table, number, text);
             }
+        }
+        for (TemplateTextBlock text : textBlockService.getTextsByGroup(textBlocksWithStyle, "CONDITION_WITH_INPUT")) {
             String number = numberingService.getNumberForTextBlock(text, numberingMemory);
-            createTwoCellRow(table, number, text);
+            createTwoCellRowWithInput(table, number, text);
         }
     }
 
@@ -79,6 +89,17 @@ public class CreateLoanConditionsService {
 
         cell = createCellService.createCellAndInsertDynamicData(font, textWithStyle, inputDataAsMap, url);
         table.addCell(cell);
+    }
+
+    private void createTwoCellRowWithInput(PdfPTable table, String number, TemplateTextBlock textWithStyle) {
+        PdfPCell cell = createCellService.createEmptyCell();
+        cell.setBorder(Rectangle.BOTTOM);
+        cell.setFixedHeight(15);
+
+        table.addCell(cell);
+        table.addCell(cell);
+
+        createTwoCellRow(table, number, textWithStyle);
     }
 
 }

@@ -29,8 +29,14 @@ public class PdfGeneratorController {
             @PathVariable LanguageCode languageCode,
             @RequestBody String inputData
     ) {
+        long startTime = System.nanoTime();
         PdfGenerator pdfGenerator = printoutGeneratorProvider.getPrintoutGeneratorForGivenPrintoutType(templateCode);
-        return pdfGenerator.generatePrintoutAndReturnFileName(templateCode, languageCode, inputData);
+        String ss = pdfGenerator.generatePrintoutAndReturnFileName(templateCode, languageCode, inputData);
+        long endTime = System.nanoTime();
+
+        long duration = (endTime - startTime);  //divide by 1000000 to get milliseconds.
+        System.out.println(duration / 1000000);
+        return ss;
     }
 
     /**

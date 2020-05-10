@@ -37,7 +37,7 @@ class FileDownloadServiceTest {
     }
 
     @Test
-    void testLoadFileAsResourceFileNotFound() throws IOException {
+    void givenFilename_whenNoFileExists_thenExceptionGetsThrown() throws IOException {
         String randomFilename = "randomname.sql";
         Path filePath = pathToTestFolder.resolve(randomFilename).normalize();
         assertThrows(BadRequestException.class, () -> fileDownloadService.downloadFile(filePath, randomFilename));
@@ -46,7 +46,7 @@ class FileDownloadServiceTest {
     }
 
     @Test
-    void testLoadFileAsResourceFileIsFound() throws IOException {
+    void givenFilename_whenFileExists_thenFileGetsReturned() throws IOException {
         String randomFilename = "randomname.sql";
         Path filePath = pathToTestFolder.resolve(randomFilename).normalize();
         Files.createFile(filePath);

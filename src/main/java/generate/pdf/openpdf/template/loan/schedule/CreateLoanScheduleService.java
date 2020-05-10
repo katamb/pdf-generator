@@ -5,6 +5,7 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
+import generate.pdf.openpdf.dto.StringPair;
 import generate.pdf.openpdf.dto.TemplateTextBlock;
 import generate.pdf.openpdf.service.table.CreateCellService;
 import generate.pdf.openpdf.template.loan.dto.LoanContractInputDto;
@@ -137,13 +138,13 @@ public class CreateLoanScheduleService {
             ScheduleLine scheduleLine,
             boolean withBackground
     ) {
-        List<AbstractMap.SimpleEntry> oneRow = Arrays.asList(
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_NR", Integer.toString(paymentMonthCounter)),
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_DATE", scheduleLine.getPaymentDate()),
-                new AbstractMap.SimpleEntry("SCHEDULE_PRINCIPAL_AMOUNT", scheduleLine.getPrincipal()),
-                new AbstractMap.SimpleEntry("SCHEDULE_INTEREST_AMOUNT", scheduleLine.getInterest()),
-                new AbstractMap.SimpleEntry("SCHEDULE_ADMINISTRATION_FEE", scheduleLine.getAdministrationFee()),
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_SUM", scheduleLine.getPayment())
+        List<StringPair> oneRow = Arrays.asList(
+                new StringPair("SCHEDULE_PAYMENT_NR", Integer.toString(paymentMonthCounter)),
+                new StringPair("SCHEDULE_PAYMENT_DATE", scheduleLine.getPaymentDate()),
+                new StringPair("SCHEDULE_PRINCIPAL_AMOUNT", scheduleLine.getPrincipal()),
+                new StringPair("SCHEDULE_INTEREST_AMOUNT", scheduleLine.getInterest()),
+                new StringPair("SCHEDULE_ADMINISTRATION_FEE", scheduleLine.getAdministrationFee()),
+                new StringPair("SCHEDULE_PAYMENT_SUM", scheduleLine.getPayment())
         );
         createRowReplacingValues(textBlocksWithStyle, oneRow, table, withBackground);
     }
@@ -153,24 +154,24 @@ public class CreateLoanScheduleService {
             Map<String, TemplateTextBlock> textBlocksWithStyle,
             boolean withBackground
     ) {
-        List<AbstractMap.SimpleEntry> oneRow = Arrays.asList(
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_NR", ""),
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_DATE", ""),
-                new AbstractMap.SimpleEntry("SCHEDULE_PRINCIPAL_AMOUNT", ""),
-                new AbstractMap.SimpleEntry("SCHEDULE_INTEREST_AMOUNT", ""),
-                new AbstractMap.SimpleEntry("SCHEDULE_ADMINISTRATION_FEE", ""),
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_SUM", "")
+        List<StringPair> oneRow = Arrays.asList(
+                new StringPair("SCHEDULE_PAYMENT_NR", ""),
+                new StringPair("SCHEDULE_PAYMENT_DATE", ""),
+                new StringPair("SCHEDULE_PRINCIPAL_AMOUNT", ""),
+                new StringPair("SCHEDULE_INTEREST_AMOUNT", ""),
+                new StringPair("SCHEDULE_ADMINISTRATION_FEE", ""),
+                new StringPair("SCHEDULE_PAYMENT_SUM", "")
         );
         createRowReplacingValues(textBlocksWithStyle, oneRow, table, withBackground);
     }
 
     private void createRowReplacingValues(
             Map<String, TemplateTextBlock> textBlocksWithStyle,
-            List<AbstractMap.SimpleEntry> textBlocks,
+            List<StringPair> textBlocks,
             PdfPTable table,
             boolean withBackground
     ) {
-        for (AbstractMap.SimpleEntry<String, String> textBlock : textBlocks) {
+        for (StringPair textBlock : textBlocks) {
             TemplateTextBlock block = textBlocksWithStyle.get(textBlock.getKey());
             PdfPCell cell = createCellService.createCellAndInsertGivenString(font, block, textBlock.getValue(), url);
             cell.setBorder(Rectangle.BOTTOM);

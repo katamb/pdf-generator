@@ -2,8 +2,6 @@ package generate.pdf.openpdf.service;
 
 import generate.pdf.openpdf.config.StartupConfig;
 import generate.pdf.openpdf.dto.FileResponse;
-import generate.pdf.openpdf.exception.BadRequestException;
-import generate.pdf.openpdf.exception.InternalServerException;
 import generate.pdf.openpdf.mapper.UserSqlFileMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +20,6 @@ import java.util.Comparator;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,7 +43,7 @@ class SqlStorageServiceTest {
     private SqlStorageService sqlStorageService;
 
     @BeforeEach
-    void initUseCase() throws IOException{
+    void createDirectories() throws IOException{
         testFolder = UUID.randomUUID().toString();
         pathToTestFolder = Paths.get(testFolder).toAbsolutePath().normalize();
         assumeFalse(Files.exists(pathToTestFolder));
@@ -56,41 +53,46 @@ class SqlStorageServiceTest {
     }
 
     @Test
-    void testTestDirectoryGetsCreated() throws IOException {
+    void givenMockedTestFolder_whenRunningTests_thenFolderGetsCreatedSuccessfully() throws IOException {
         assertTrue(Files.exists(pathToTestFolder));
 
-        cleanup();
+        deleteCreatedDirectoriesAndFiles();
     }
 
     @Test
-    void testCreateSqlFile() throws IOException {
+    void givenUsername_whenCreatingNewSqlFile_thenFileWithCorrectNameGetsCreated() throws IOException {
+        // Given
         String username = "karl.tamberg";
+        // When
         sqlStorageService.createNewSqlForUser(username);
+        // Then
         String expectedFileName = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "-" + username + "-0.sql";
         Path targetLocation = pathToTestFolder.resolve(expectedFileName);
         assertTrue(Files.exists(targetLocation));
 
         verify(userSqlFileMapper, times(1)).insertSqlFileReference(any());
 
-        cleanup();
+        deleteCreatedDirectoriesAndFiles();
     }
 
     @Test
-    void testCreateSqlFileSketchyUsername() throws IOException {
+    void givenUsernameWhichAllowsPathTraversal_whenCreatingNewSqlFile_thenUsernameGetsEscaped() throws IOException {
+        // Given
         String username = "karl/../tambe\\..\\rg";
+        // When
         sqlStorageService.createNewSqlForUser(username);
         String brokenFileName = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "-" + username + "-0.sql";
         Path targetLocation = pathToTestFolder.resolve(brokenFileName);
-
+        // Then
         assertFalse("Usernames need to be escaped to avoid path traversal attacks!", Files.exists(targetLocation));
         verify(userSqlFileMapper, times(1)).insertSqlFileReference(any());
         assertEquals(1, Files.list(pathToTestFolder).count());
 
-        cleanup();
+        deleteCreatedDirectoriesAndFiles();
     }
 
     @Test
-    void testCreateMultipleSqlFilesSameUser() throws IOException {
+    void givenUsername_whenCreatingMultipleFiles_thenAllFilesGetCreated() throws IOException {
         String username = "karl.tamberg";
         sqlStorageService.createNewSqlForUser(username);
         sqlStorageService.createNewSqlForUser(username);
@@ -99,11 +101,11 @@ class SqlStorageServiceTest {
         verify(userSqlFileMapper, times(3)).insertSqlFileReference(any());
         assertEquals(3, Files.list(pathToTestFolder).count());
 
-        cleanup();
+        deleteCreatedDirectoriesAndFiles();
     }
 
     @Test
-    void testLoadFileAsResourceFileIsFound() throws IOException {
+    void givenUsernameAndFile_whenDownloadingTheFile_thenTheFileGetsReturned() throws IOException {
         when(fileDownloadService.downloadFile(any(), any())).thenReturn(new FileResponse());
 
         String username = "karl.tamberg";
@@ -114,10 +116,10 @@ class SqlStorageServiceTest {
         FileResponse response = sqlStorageService.loadFileAsResource(expectedFileName);
         assertNotNull("This file is supposed to be found!", response);
 
-        cleanup();
+        deleteCreatedDirectoriesAndFiles();
     }
 
-    void cleanup() throws IOException {
+    void deleteCreatedDirectoriesAndFiles() throws IOException {
         Files.walk(pathToTestFolder)
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)

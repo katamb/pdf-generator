@@ -1,6 +1,9 @@
 <template>
   <div id="app">
     <ErrorModal />
+
+    <Navigation v-if="this.$router.currentRoute.path !== '/'" />
+
     <router-view />
   </div>
 </template>
@@ -8,11 +11,13 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import ErrorModal from '@/components/ErrorModal.vue';
+import Navigation from '@/components/Navigation.vue';
 import { CLIENT_ID } from './scripts/constants';
 
 @Component({
   components: {
-    ErrorModal
+    ErrorModal,
+    Navigation
   }
 })
 export default class Login extends Vue {

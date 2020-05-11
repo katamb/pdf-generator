@@ -1,7 +1,5 @@
 <template>
   <div>
-    <Navigation />
-
     <h2 class="pt-2">
       Currently editing:
     </h2>
@@ -39,7 +37,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import PdfViewer from '@/components/PdfViewer.vue';
 import Navigation from '@/components/Navigation.vue';
-import EditingToolbar from '@/components/EditingToolbar.vue';
+import EditingToolbar from '@/components/editing/EditingToolbar.vue';
 import { getRequest } from '@/scripts/requests';
 import { isCurrentUserEditor } from '@/scripts/util';
 

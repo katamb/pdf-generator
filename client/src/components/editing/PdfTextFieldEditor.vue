@@ -154,7 +154,7 @@ import { getRequest, putRequest } from '@/scripts/requests';
 import { RERENDER_PDF_EVENT } from '@/scripts/constants';
 import eventBus from '@/scripts/eventBus';
 import Explanations from '@/components/Explanations.vue';
-import AddNewLanguage from '@/components/AddNewLanguage.vue';
+import AddNewLanguage from '@/components/editing/AddNewLanguage.vue';
 import DownloadSql from '@/components/DownloadSql.vue';
 import FormatStrikethrough from '@/assets/format_strikethrough.svg';
 import FormatUnderlined from '@/assets/format_underlined.svg';

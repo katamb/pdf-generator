@@ -22,9 +22,9 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import Explanations from '@/components/Explanations.vue';
-import AddNewLanguage from '@/components/AddNewLanguage.vue';
+import AddNewLanguage from '@/components/editing/AddNewLanguage.vue';
 import DownloadSql from '@/components/DownloadSql.vue';
-import PdfTextFieldEditor from '@/components/PdfTextFieldEditor.vue';
+import PdfTextFieldEditor from '@/components/editing/PdfTextFieldEditor.vue';
 
 @Component({
   components: {

@@ -10,4 +10,8 @@
         <sqlFile path="employment-agreement-setup.sql" relativeToChangelogFile="true" endDelimiter="\nGO"/>
     </changeSet>
 
+    <changeSet id="design-changes-1" author="setup">
+        <sqlFile path="2020-05-11-tamberg.karl_gmail.com-0.sql" relativeToChangelogFile="true" endDelimiter="\nGO"/>
+    </changeSet>
+
 </databaseChangeLog>

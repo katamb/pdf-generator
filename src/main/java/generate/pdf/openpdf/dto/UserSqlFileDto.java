@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class UserSqlFile {
+public class UserSqlFileDto {
 
     private Long id;
     private String username;

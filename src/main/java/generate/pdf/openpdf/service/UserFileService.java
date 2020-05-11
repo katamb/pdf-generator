@@ -2,9 +2,9 @@ package generate.pdf.openpdf.service;
 
 import generate.pdf.openpdf.mapper.UserRoleMapper;
 import generate.pdf.openpdf.security.AppUser;
-import generate.pdf.openpdf.dto.FileResponse;
-import generate.pdf.openpdf.dto.ResponseWithMessage;
-import generate.pdf.openpdf.dto.UserSqlFile;
+import generate.pdf.openpdf.dto.FileResponseDto;
+import generate.pdf.openpdf.dto.ResponseWithMessageDto;
+import generate.pdf.openpdf.dto.UserSqlFileDto;
 import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.exception.UnauthorizedException;
 import generate.pdf.openpdf.mapper.UserSqlFileMapper;
@@ -34,9 +34,9 @@ public class UserFileService {
         return ((AppUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal()).getUsername();
     }
 
-    public ResponseWithMessage getUserEmail(Principal principal) {
+    public ResponseWithMessageDto getUserEmail(Principal principal) {
         if (principal != null) {
-            return new ResponseWithMessage(HttpStatus.OK.value(), getEmailFromPrincipal(principal));
+            return new ResponseWithMessageDto(HttpStatus.OK.value(), getEmailFromPrincipal(principal));
         } else {
             throw new UnauthorizedException("You need to login to access this resource!");
         }
@@ -47,18 +47,18 @@ public class UserFileService {
         return roles.isEmpty() ? Collections.singletonList("ROLE_USER") : roles;
     }
 
-    public UserSqlFile getSelectedSqlFile(Principal principal) {
+    public UserSqlFileDto getSelectedSqlFile(Principal principal) {
         return userSqlFileMapper.getUserFiles(getEmailFromPrincipal(principal))
                 .stream()
-                .filter(UserSqlFile::isSelected)
+                .filter(UserSqlFileDto::isSelected)
                 .findFirst()
                 .orElseThrow(() -> new BadRequestException("SQL file needs to be chosen to edit template! This can be done on the home screen."));
     }
 
-    public List<UserSqlFile> getUserSqlFiles(Principal principal) {
+    public List<UserSqlFileDto> getUserSqlFiles(Principal principal) {
         return userSqlFileMapper.getUserFiles(getEmailFromPrincipal(principal))
                 .stream()
-                .sorted(Comparator.comparing(UserSqlFile::getCreatedAt).reversed())
+                .sorted(Comparator.comparing(UserSqlFileDto::getCreatedAt).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -71,7 +71,7 @@ public class UserFileService {
         sqlStorageService.createNewSqlForUser(getEmailFromPrincipal(principal));
     }
 
-    public FileResponse downloadFile(Principal principal, String fileName) {
+    public FileResponseDto downloadFile(Principal principal, String fileName) {
         validateTheFileExists(fileName, getEmailFromPrincipal(principal));
         return sqlStorageService.loadFileAsResource(fileName);
     }
@@ -84,9 +84,9 @@ public class UserFileService {
                 .orElseThrow(() -> new BadRequestException("This file does not exist!"));
     }
 
-    public FileResponse downloadSelectedFile(Principal principal) {
-        UserSqlFile userSqlFile = getSelectedSqlFile(principal);
-        return downloadFile(principal, userSqlFile.getSqlFileName());
+    public FileResponseDto downloadSelectedFile(Principal principal) {
+        UserSqlFileDto userSqlFileDto = getSelectedSqlFile(principal);
+        return downloadFile(principal, userSqlFileDto.getSqlFileName());
     }
 
 }

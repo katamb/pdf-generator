@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.config;
 
-import generate.pdf.openpdf.dto.UserSqlFile;
+import generate.pdf.openpdf.dto.UserSqlFileDto;
 import generate.pdf.openpdf.exception.InternalServerException;
 import generate.pdf.openpdf.service.UserFileService;
 import org.apache.ibatis.builder.StaticSqlSource;
@@ -102,8 +102,8 @@ public class MybatisInterceptor implements Interceptor {
             String sql = statement.toString().split("\\s+", 3)[2];
             sql = sql.trim().replaceAll("\\s+", " ") + ";\n\n";
             Principal principal = SecurityContextHolder.getContext().getAuthentication();
-            UserSqlFile userSqlFile = userFileService.getSelectedSqlFile(principal);
-            Path pathToFile = Paths.get(startupConfig.getSqlDirectory() + userSqlFile.getSqlFileName());
+            UserSqlFileDto userSqlFileDto = userFileService.getSelectedSqlFile(principal);
+            Path pathToFile = Paths.get(startupConfig.getSqlDirectory() + userSqlFileDto.getSqlFileName());
             Files.write(pathToFile, sql.getBytes(), StandardOpenOption.APPEND);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);

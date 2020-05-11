@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.exception.BadRequestException;
@@ -23,18 +23,18 @@ public class TemplateLanguageCreationService {
             LanguageCode oldLanguageCode,
             LanguageCode newLanguageCode
     ) {
-        List<TemplateTextBlock> templateTextRows = templateTextMapper
-                .getTextsByTemplateAndLanguage(templateCode.name(), oldLanguageCode.name());
+        List<TemplateTextDto> templateTextRows = templateTextMapper
+                .getTextsByTemplateAndLanguage(templateCode, oldLanguageCode);
         validateAddingNewLanguage(templateTextRows, templateCode, oldLanguageCode, newLanguageCode);
 
-        for (TemplateTextBlock textBlock : templateTextRows) {
-            textBlock.setLanguageCode(newLanguageCode.name());
+        for (TemplateTextDto textBlock : templateTextRows) {
+            textBlock.setLanguageCode(newLanguageCode);
         }
         templateTextMapper.batchInsert(templateTextRows);
     }
 
     private void validateAddingNewLanguage(
-            List<TemplateTextBlock> templateTextRows,
+            List<TemplateTextDto> templateTextRows,
             TemplateCode templateCode,
             LanguageCode oldLanguageCode,
             LanguageCode newLanguageCode
@@ -45,8 +45,8 @@ public class TemplateLanguageCreationService {
         if (templateTextRows.isEmpty()) {
             throw new BadRequestException("The language to base the new language on, doesn't exist!");
         }
-        List<TemplateTextBlock> templateTextRowForNew = templateTextMapper
-                .getTextsByTemplateAndLanguage(templateCode.name(), newLanguageCode.name());
+        List<TemplateTextDto> templateTextRowForNew = templateTextMapper
+                .getTextsByTemplateAndLanguage(templateCode, newLanguageCode);
         if (!templateTextRowForNew.isEmpty()) {
             throw new BadRequestException("This language already exists!");
         }

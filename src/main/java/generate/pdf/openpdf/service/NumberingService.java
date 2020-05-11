@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -8,7 +8,7 @@ import java.util.LinkedList;
 @Service
 public class NumberingService {
 
-    public String getNumberForTextBlock(TemplateTextBlock text, LinkedList<Integer> numberingMemory) {
+    public String getNumberForTextBlock(TemplateTextDto text, LinkedList<Integer> numberingMemory) {
         if (!text.isNumbering() || text.getNumberingLevel() == null) {
             return "";
         }

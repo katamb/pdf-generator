@@ -4,7 +4,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.service.NumberingService;
 import generate.pdf.openpdf.service.TextBlockService;
 import generate.pdf.openpdf.service.table.CreateCellService;
@@ -17,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static generate.pdf.openpdf.dto.TemplateTextBlock.createNewBlockFromExistingWithSameStyles;
+import static generate.pdf.openpdf.dto.TemplateTextDto.createNewBlockFromExistingWithSameStyles;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class CreateLoanConditionsService {
     private final NumberingService numberingService;
 
     private LoanContractInputDto loanContractInputDto;
-    private Map<String, TemplateTextBlock> textBlocksWithStyle;
+    private Map<String, TemplateTextDto> textBlocksWithStyle;
     private Map<String, Object> inputDataAsMap;
     private String url;
     private Font font;
@@ -36,7 +36,7 @@ public class CreateLoanConditionsService {
 
     public void createMainConditions(
             Document document,
-            Map<String, TemplateTextBlock> textBlockMap,
+            Map<String, TemplateTextDto> textBlockMap,
             LoanContractInputDto loanContractInputDto,
             Map<String, Object> inputDataAsMap,
             String url,
@@ -59,8 +59,8 @@ public class CreateLoanConditionsService {
     }
 
     private void createConditionRows(PdfPTable table) {
-        List<TemplateTextBlock> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, "MAIN_CONDITIONS");
-        for (TemplateTextBlock text : textsByGroup) {
+        List<TemplateTextDto> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, "MAIN_CONDITIONS");
+        for (TemplateTextDto text : textsByGroup) {
             if (text.getTextBlockName().equals("LOAN_TRANSFER_PARAGRAPH_2")
                     && loanContractInputDto != null
                     && BigDecimal.ZERO.compareTo(loanContractInputDto.getLoan().getConclusionFee()) == 0) {
@@ -71,7 +71,7 @@ public class CreateLoanConditionsService {
         }
     }
 
-    private void createTwoCellRow(PdfPTable table, String number, TemplateTextBlock textWithStyle) {
+    private void createTwoCellRow(PdfPTable table, String number, TemplateTextDto textWithStyle) {
         PdfPCell cell = createCellService.createCellAndInsertDynamicData(font,
                 createNewBlockFromExistingWithSameStyles(textWithStyle, number), inputDataAsMap, null);
         cell.setHorizontalAlignment(0);

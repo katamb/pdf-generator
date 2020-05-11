@@ -131,7 +131,7 @@ export default class ChooseTemplate extends Vue {
 
   mounted(): void {
     this.getTemplates();
-    if (isCurrentUserEditor()) {
+    if (isCurrentUserEditor() || isCurrentUserDeveloper()) {
       this.getFiles();
     }
   }

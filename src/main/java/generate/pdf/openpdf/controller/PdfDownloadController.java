@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.controller;
 
-import generate.pdf.openpdf.dto.FileResponse;
+import generate.pdf.openpdf.dto.FileResponseDto;
 import generate.pdf.openpdf.service.PdfStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +16,7 @@ public class PdfDownloadController {
     private final PdfStorageService pdfStorageService;
 
     @GetMapping(value = "pdf/{fileName}")
-    public FileResponse downloadPdfFile(@PathVariable String fileName) {
+    public FileResponseDto downloadPdfFile(@PathVariable String fileName) {
         return pdfStorageService.loadFileAsResource(fileName);
     }
 

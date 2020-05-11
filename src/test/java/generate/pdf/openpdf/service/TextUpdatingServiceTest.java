@@ -1,7 +1,7 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.dto.ResponseWithMessage;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.ResponseWithMessageDto;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,14 +31,14 @@ class TextUpdatingServiceTest {
     void givenTextBlock_whenBlockHasMultipleUsesAndValueNotChangedAndUpdateTypeNotChosen_thenChangeSuccessfullyCreated() {
         // Given
         Long textBlockId = 4L;
-        TemplateTextBlock textBlock = new TemplateTextBlock();
+        TemplateTextDto textBlock = new TemplateTextDto();
         textBlock.setTextBlockId(textBlockId);
         textBlock.setTextBlockValue("Testvalue!");
         // When
         when(templateTextMapper.findAmountOfTextBlockUsages(textBlockId)).thenReturn(2L);
         when(templateTextMapper.findTextBlockValueById(textBlockId)).thenReturn("Testvalue!");
         // Then
-        ResponseWithMessage response = textUpdatingService.update(textBlock, CONFIRM_UPDATE);
+        ResponseWithMessageDto response = textUpdatingService.update(textBlock, CONFIRM_UPDATE);
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         verify(templateTextMapper, times(1)).updateTemplateToTextTranslation(any());
     }
@@ -47,14 +47,14 @@ class TextUpdatingServiceTest {
     void givenTextBlock_whenBlockHasMultipleUsesAndValueChangedAndUpdateTypeNotChosen_thenReturnMultipleChoice() {
         // Given
         Long textBlockId = 4L;
-        TemplateTextBlock textBlock = new TemplateTextBlock();
+        TemplateTextDto textBlock = new TemplateTextDto();
         textBlock.setTextBlockId(textBlockId);
         textBlock.setTextBlockValue("Testvalue!");
         // When
         when(templateTextMapper.findAmountOfTextBlockUsages(textBlockId)).thenReturn(2L);
         when(templateTextMapper.findTextBlockValueById(textBlockId)).thenReturn("Not a testvalue!");
         // Then
-        ResponseWithMessage response = textUpdatingService.update(textBlock, CONFIRM_UPDATE);
+        ResponseWithMessageDto response = textUpdatingService.update(textBlock, CONFIRM_UPDATE);
         assertEquals(HttpStatus.MULTIPLE_CHOICES.value(), response.getStatusCode());
         verify(templateTextMapper, times(0)).updateTemplateToTextTranslation(any());
     }
@@ -63,14 +63,14 @@ class TextUpdatingServiceTest {
     void givenTextBlock_whenBlockHasMultipleUsesAndValueChangedAndUpdateTypeOnlyCurrent_thenNewBlockAdded() {
         // Given
         Long textBlockId = 4L;
-        TemplateTextBlock textBlock = new TemplateTextBlock();
+        TemplateTextDto textBlock = new TemplateTextDto();
         textBlock.setTextBlockId(textBlockId);
         textBlock.setTextBlockValue("Testvalue!");
         // When
         when(templateTextMapper.findAmountOfTextBlockUsages(textBlockId)).thenReturn(2L);
         when(templateTextMapper.findTextBlockValueById(textBlockId)).thenReturn("Not a testvalue!");
         // Then
-        ResponseWithMessage response = textUpdatingService.update(textBlock, UPDATE_ONLY_CURRENT);
+        ResponseWithMessageDto response = textUpdatingService.update(textBlock, UPDATE_ONLY_CURRENT);
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         verify(templateTextMapper, times(1)).insertTextBlock(any());
         verify(templateTextMapper, times(1)).updateTemplateToTextTranslation(any());
@@ -80,14 +80,14 @@ class TextUpdatingServiceTest {
     void givenTextBlock_whenBlockHasMultipleUsesAndValueChangedAndUpdateTypeAll_thenAllBlocksUpdated() {
         // Given
         Long textBlockId = 4L;
-        TemplateTextBlock textBlock = new TemplateTextBlock();
+        TemplateTextDto textBlock = new TemplateTextDto();
         textBlock.setTextBlockId(textBlockId);
         textBlock.setTextBlockValue("Testvalue!");
         // When
         when(templateTextMapper.findAmountOfTextBlockUsages(textBlockId)).thenReturn(2L);
         when(templateTextMapper.findTextBlockValueById(textBlockId)).thenReturn("Not a testvalue!");
         // Then
-        ResponseWithMessage response = textUpdatingService.update(textBlock, UPDATE_ALL);
+        ResponseWithMessageDto response = textUpdatingService.update(textBlock, UPDATE_ALL);
         assertEquals(HttpStatus.OK.value(), response.getStatusCode());
         verify(templateTextMapper, times(1)).insertTextBlock(any());
         verify(templateTextMapper, times(1)).updateAllTemplatesWithGivenText(any());

@@ -4,7 +4,7 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.service.DynamicDataInjectionService;
 import generate.pdf.openpdf.service.FontStylesCreationService;
 import lombok.RequiredArgsConstructor;
@@ -25,53 +25,53 @@ public class CreateCellService {
 
     public PdfPCell createCellAndInsertGivenString(
             Font font,
-            TemplateTextBlock templateTextBlock,
+            TemplateTextDto templateTextDto,
             String replacement,
             String url
     ) {
-        String finalText = getText(templateTextBlock, replacement);
-        return getPdfPCell(font, templateTextBlock, url, finalText);
+        String finalText = getText(templateTextDto, replacement);
+        return getPdfPCell(font, templateTextDto, url, finalText);
     }
 
     public PdfPCell createCellAndInsertDynamicData(
             Font font,
-            TemplateTextBlock templateTextBlock,
+            TemplateTextDto templateTextDto,
             Map<String, Object> replacementValues,
             String url
     ) {
-        String finalText = getText(templateTextBlock, replacementValues);
-        return getPdfPCell(font, templateTextBlock, url, finalText);
+        String finalText = getText(templateTextDto, replacementValues);
+        return getPdfPCell(font, templateTextDto, url, finalText);
     }
 
-    public PdfPCell createCellMakeNoSubstitutions(Font font, TemplateTextBlock templateTextBlock, String url) {
-        String finalText = templateTextBlock.getTextBlockValue();
-        return getPdfPCell(font, templateTextBlock, url, finalText);
+    public PdfPCell createCellMakeNoSubstitutions(Font font, TemplateTextDto templateTextDto, String url) {
+        String finalText = templateTextDto.getTextBlockValue();
+        return getPdfPCell(font, templateTextDto, url, finalText);
     }
 
-    private PdfPCell getPdfPCell(Font font, TemplateTextBlock templateTextBlock, String url, String finalText) {
-        font.setSize(templateTextBlock.getTextSize());
+    private PdfPCell getPdfPCell(Font font, TemplateTextDto templateTextDto, String url, String finalText) {
+        font.setSize(templateTextDto.getTextSize());
         Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, finalText);
         PdfPCell cell = new PdfPCell(phrase);
         cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPaddingTop(templateTextBlock.getPaddingTop());
-        cell.setPaddingBottom(templateTextBlock.getPaddingBottom());
-        cell.setPaddingLeft(templateTextBlock.getPaddingLeft());
-        cell.setPaddingRight(templateTextBlock.getPaddingRight());
-        cell.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
-        cell.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
+        cell.setPaddingTop(templateTextDto.getPaddingTop());
+        cell.setPaddingBottom(templateTextDto.getPaddingBottom());
+        cell.setPaddingLeft(templateTextDto.getPaddingLeft());
+        cell.setPaddingRight(templateTextDto.getPaddingRight());
+        cell.setVerticalAlignment(templateTextDto.getVerticalAlignment());
+        cell.setHorizontalAlignment(templateTextDto.getHorizontalAlignment());
         if (url != null) {
-            cell.setCellEvent(new LinkInCell(url + templateTextBlock.getTemplateTextId()));
+            cell.setCellEvent(new LinkInCell(url + templateTextDto.getTemplateTextId()));
         }
         return cell;
     }
 
-    private String getText(TemplateTextBlock templateTextBlock, Map<String, Object> inputData) {
-        String text = templateTextBlock.getTextBlockValue();
+    private String getText(TemplateTextDto templateTextDto, Map<String, Object> inputData) {
+        String text = templateTextDto.getTextBlockValue();
         return inputData == null ? text : dynamicDataInjectionService.injectValues(text, inputData);
     }
 
-    private String getText(TemplateTextBlock templateTextBlock, String inputData) {
-        String text = templateTextBlock.getTextBlockValue();
+    private String getText(TemplateTextDto templateTextDto, String inputData) {
+        String text = templateTextDto.getTextBlockValue();
         return inputData == null ? text : dynamicDataInjectionService.injectGivenValue(text, inputData);
     }
 

@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ValueTextCombo {
+public class StringPairDto {
 
+    private String key;
     private String value;
-    private String text;
 
 }

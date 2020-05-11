@@ -3,7 +3,7 @@ package integration_tests.controller;
 import generate.pdf.MainApplication;
 import generate.pdf.openpdf.config.StartupConfig;
 import generate.pdf.openpdf.controller.PdfDownloadController;
-import generate.pdf.openpdf.dto.FileResponse;
+import generate.pdf.openpdf.dto.FileResponseDto;
 import integration_tests.BasePostgreSqlContainer;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,7 @@ public class PdfDownloadControllerIntegTest {
         String filename = "INTEG_TEST.pdf";
         createFile(filename);
 
-        FileResponse file = pdfDownloadController.downloadPdfFile(filename);
+        FileResponseDto file = pdfDownloadController.downloadPdfFile(filename);
 
         assertNotNull(file);
 

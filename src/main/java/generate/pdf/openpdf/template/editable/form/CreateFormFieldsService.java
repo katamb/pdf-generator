@@ -7,7 +7,7 @@ import com.lowagie.text.pdf.PdfFormField;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.service.TextBlockService;
 import generate.pdf.openpdf.service.table.CreateCellService;
 import generate.pdf.openpdf.service.table.RadioCellField;
@@ -31,7 +31,7 @@ public class CreateFormFieldsService {
     private final CreateCellService createCellService;
     private final TextBlockService textBlockService;
 
-    private Map<String, TemplateTextBlock> textBlocksWithStyle;
+    private Map<String, TemplateTextDto> textBlocksWithStyle;
     private Map<String, Object> inputDataAsMap;
     private PdfWriter writer;
     private String url;
@@ -41,7 +41,7 @@ public class CreateFormFieldsService {
     public void createForm(
             PdfWriter writer,
             Document document,
-            Map<String, TemplateTextBlock> textBlocksWithStyle,
+            Map<String, TemplateTextDto> textBlocksWithStyle,
             Map<String, Object> inputDataAsMap,
             String url,
             Font font
@@ -68,7 +68,7 @@ public class CreateFormFieldsService {
     }
 
     private void createIntroduction(PdfPTable table) {
-        TemplateTextBlock text = textBlocksWithStyle.get("PDF_FORM");
+        TemplateTextDto text = textBlocksWithStyle.get("PDF_FORM");
         PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, text, inputDataAsMap, url);
         cell.setColspan(COLUMNS_AMOUNT);
         table.addCell(cell);
@@ -81,14 +81,14 @@ public class CreateFormFieldsService {
     private void createFormGroups(PdfPTable table) {
         List<String> formBlockGroups = Arrays.asList("GENERAL_DATA", "LOCATION_DATA", "OTHER_DATA");
         for (String textBlockGroup : formBlockGroups) {
-            List<TemplateTextBlock> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, textBlockGroup);
+            List<TemplateTextDto> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, textBlockGroup);
             createFormRows(table, textsByGroup);
             createSpacer(table, SPACER_ROW_HEIGHT);
         }
     }
 
-    private void createFormRows(PdfPTable table, List<TemplateTextBlock> textsByGroup) {
-        for (TemplateTextBlock textByGroup : textsByGroup) {
+    private void createFormRows(PdfPTable table, List<TemplateTextDto> textsByGroup) {
+        for (TemplateTextDto textByGroup : textsByGroup) {
             // Create heading rows
             if (textByGroup.getTextBlockName().contains("HEADING")) {
                 PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, textByGroup, inputDataAsMap, url);
@@ -117,9 +117,9 @@ public class CreateFormFieldsService {
         radioGroup.setFieldName("Gender");
         PdfPTable innerTable = new PdfPTable(6);
         innerTable.setTotalWidth(new float[]{90, 20, 90, 20, 90, 20});
-        List<TemplateTextBlock> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, "GENDER_CHOICE");
+        List<TemplateTextDto> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, "GENDER_CHOICE");
 
-        for (TemplateTextBlock textByGroup : textsByGroup) {
+        for (TemplateTextDto textByGroup : textsByGroup) {
             PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, textByGroup, inputDataAsMap, url);
             cell.setBorder(Rectangle.NO_BORDER);
             innerTable.addCell(cell);
@@ -135,7 +135,7 @@ public class CreateFormFieldsService {
         table.addCell(innerTableCell);
     }
 
-    private PdfPCell createTextFieldCell(TemplateTextBlock textByGroup) {
+    private PdfPCell createTextFieldCell(TemplateTextDto textByGroup) {
         PdfPCell cell = new PdfPCell();
         cell.setColspan(COLUMNS_AMOUNT - 1);
         cell.setBorder(Rectangle.BOTTOM);

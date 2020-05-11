@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.exception.BadRequestException;
@@ -40,11 +40,11 @@ class TemplateLanguageCreationServiceTest {
     @Test
     void givenTemplateInTwoLanguages_whenCreatingTemplateThatAlreadyExistsInThatLanguage_thenValidationFails() {
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.et.toString()))
-                .thenReturn(Collections.singletonList(new TemplateTextBlock()));
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE, LanguageCode.et))
+                .thenReturn(Collections.singletonList(new TemplateTextDto()));
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.en.toString()))
-                .thenReturn(Collections.singletonList(new TemplateTextBlock()));
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE, LanguageCode.en))
+                .thenReturn(Collections.singletonList(new TemplateTextDto()));
 
         assertThrows(BadRequestException.class, () -> templateLanguageCreationService.createNewLanguageForTemplate(
                 TemplateCode.EDITABLE_FORM_EE, LanguageCode.et, LanguageCode.et
@@ -57,10 +57,10 @@ class TemplateLanguageCreationServiceTest {
     @Test
     void givenTemplateInEstonian_whenCreatingTemplateInEnglishOffOfEstonianVersion_thenNoExceptionsThrown() {
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.et.toString()))
-                .thenReturn(Collections.singletonList(new TemplateTextBlock()));
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE, LanguageCode.et))
+                .thenReturn(Collections.singletonList(new TemplateTextDto()));
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.en.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE, LanguageCode.en))
                 .thenReturn(Collections.emptyList());
 
         assertDoesNotThrow(() -> templateLanguageCreationService
@@ -70,10 +70,10 @@ class TemplateLanguageCreationServiceTest {
     @Test
     void givenTemplateInEstonian_whenCreatingTemplateInEnglishOffOfEstonianVersion_thenCorrectMethodsGetCalled() {
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.et.toString()))
-                .thenReturn(Collections.singletonList(new TemplateTextBlock()));
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE, LanguageCode.et))
+                .thenReturn(Collections.singletonList(new TemplateTextDto()));
         when(templateTextMapper
-                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.en.toString()))
+                .getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE, LanguageCode.en))
                 .thenReturn(Collections.emptyList());
 
         templateLanguageCreationService.createNewLanguageForTemplate(

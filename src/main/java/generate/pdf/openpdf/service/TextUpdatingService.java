@@ -1,7 +1,7 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.dto.ResponseWithMessage;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.ResponseWithMessageDto;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.enums.UpdateType;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class TextUpdatingService {
      * @param updateType - Holds state (update only current block or all blocks)
      * @return response
      */
-    public ResponseWithMessage update(TemplateTextBlock updatedTextBlock, UpdateType updateType) {
+    public ResponseWithMessageDto update(TemplateTextDto updatedTextBlock, UpdateType updateType) {
         Long textBlockUsagesAmount = templateTextMapper.findAmountOfTextBlockUsages(updatedTextBlock.getTextBlockId());
         String textBlockValue = templateTextMapper.findTextBlockValueById(updatedTextBlock.getTextBlockId());
         boolean isTextBlockValueUpdated = !textBlockValue.equals(updatedTextBlock.getTextBlockValue());
@@ -34,7 +34,7 @@ public class TextUpdatingService {
             return multipleChoices(String.format("This text block is used by %s templates.", textBlockUsagesAmount));
         }
 
-        templateTextMapper.insertTextBlock(updatedTextBlock);
+        templateTextMapper.insertTextBlock(updatedTextBlock.getTextBlockValue());
 
         if (UpdateType.UPDATE_ALL.equals(updateType)) {
             templateTextMapper.updateAllTemplatesWithGivenText(updatedTextBlock);
@@ -45,12 +45,12 @@ public class TextUpdatingService {
         return success("Template updated successfully!");
     }
 
-    private ResponseWithMessage multipleChoices(String reason) {
-        return new ResponseWithMessage(HttpStatus.MULTIPLE_CHOICES.value(), reason);
+    private ResponseWithMessageDto multipleChoices(String reason) {
+        return new ResponseWithMessageDto(HttpStatus.MULTIPLE_CHOICES.value(), reason);
     }
 
-    private ResponseWithMessage success(String reason) {
-        return new ResponseWithMessage(HttpStatus.OK.value(), reason);
+    private ResponseWithMessageDto success(String reason) {
+        return new ResponseWithMessageDto(HttpStatus.OK.value(), reason);
     }
 
 }

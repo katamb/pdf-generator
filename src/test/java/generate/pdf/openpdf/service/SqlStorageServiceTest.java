@@ -1,7 +1,7 @@
 package generate.pdf.openpdf.service;
 
 import generate.pdf.openpdf.config.StartupConfig;
-import generate.pdf.openpdf.dto.FileResponse;
+import generate.pdf.openpdf.dto.FileResponseDto;
 import generate.pdf.openpdf.mapper.UserSqlFileMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -106,14 +106,14 @@ class SqlStorageServiceTest {
 
     @Test
     void givenUsernameAndFile_whenDownloadingTheFile_thenTheFileGetsReturned() throws IOException {
-        when(fileDownloadService.downloadFile(any(), any())).thenReturn(new FileResponse());
+        when(fileDownloadService.downloadFile(any(), any())).thenReturn(new FileResponseDto());
 
         String username = "karl.tamberg";
         sqlStorageService.createNewSqlForUser(username);
         String expectedFileName = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "-" + username + "-0.sql";
         Path targetLocation = pathToTestFolder.resolve(expectedFileName);
         assertTrue(Files.exists(targetLocation));
-        FileResponse response = sqlStorageService.loadFileAsResource(expectedFileName);
+        FileResponseDto response = sqlStorageService.loadFileAsResource(expectedFileName);
         assertNotNull("This file is supposed to be found!", response);
 
         deleteCreatedDirectoriesAndFiles();

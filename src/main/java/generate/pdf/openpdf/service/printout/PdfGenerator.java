@@ -5,7 +5,7 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import generate.pdf.openpdf.config.EnvironmentVariableProvider;
 import generate.pdf.openpdf.config.StartupConfig;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.exception.BadRequestException;
@@ -89,7 +89,7 @@ public abstract class PdfGenerator {
         Map<String, Object> dynamicData = editMode ? null : stringToMap(inputData);
 
         // Get static text with design advice from db
-        Map<String, TemplateTextBlock> templateTexts =
+        Map<String, TemplateTextDto> templateTexts =
                 textBlockService.getTextsByTemplateAndLanguage(templateCode, languageCode);
 
         // Url is only set if in editing mode (which means input-data is missing)
@@ -121,7 +121,7 @@ public abstract class PdfGenerator {
     public abstract void generatePdf(
             Document document,
             Map<String, Object> dynamicData,
-            Map<String, TemplateTextBlock> templateTexts,
+            Map<String, TemplateTextDto> templateTexts,
             String editingUrl,
             String inputData,
             OutputStream outputStream

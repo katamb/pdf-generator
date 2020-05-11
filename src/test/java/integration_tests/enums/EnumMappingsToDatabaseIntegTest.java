@@ -1,8 +1,7 @@
 package integration_tests.enums;
 
 import generate.pdf.MainApplication;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
-import generate.pdf.openpdf.dto.ValueTextCombo;
+import generate.pdf.openpdf.dto.ValueTextComboDto;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.Arrays;
@@ -42,7 +40,7 @@ public class EnumMappingsToDatabaseIntegTest {
         List<LanguageCode> languageEnums = Arrays.asList(LanguageCode.class.getEnumConstants());
         List<LanguageCode> languageEnumsFromDb = templateTextMapper.findAllAvailableLanguages()
                 .stream()
-                .map(ValueTextCombo::getValue)
+                .map(ValueTextComboDto::getValue)
                 .map(LanguageCode::valueOf)
                 .collect(Collectors.toList());
         assertTrue(languageEnums.containsAll(languageEnumsFromDb));

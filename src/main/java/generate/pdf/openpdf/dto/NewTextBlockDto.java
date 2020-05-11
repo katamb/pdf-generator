@@ -13,14 +13,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class NewTextBlockDto {
 
-    private Long textBlockId;
-
     @NotNull
-    @Length(min = 1, max = 150)
     private TemplateCode templateCode;
 
     @NotNull
-    @Length(min = 2, max = 2)
     private LanguageCode languageCode;
 
     @NotNull

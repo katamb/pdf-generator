@@ -3,8 +3,8 @@ package integration_tests.controller;
 import generate.pdf.MainApplication;
 import generate.pdf.openpdf.config.StartupConfig;
 import generate.pdf.openpdf.controller.PdfEditingController;
-import generate.pdf.openpdf.dto.ResponseWithMessage;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.ResponseWithMessageDto;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.enums.UpdateType;
@@ -83,13 +83,13 @@ public class PdfEditingControllerIntegTest {
     public void givenExistingTemplateAndLanguage_whenNewLanguageDoesntExist_thenNewLanguageIsCreated() {
         createFileForInterceptor();
 
-        List<TemplateTextBlock> entries =
-                templateTextMapper.getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.pl.toString());
+        List<TemplateTextDto> entries =
+                templateTextMapper.getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE, LanguageCode.pl);
         assertTrue(entries.isEmpty());
 
         pdfEditingController.createNewLanguageForTemplate(TemplateCode.EDITABLE_FORM_EE, LanguageCode.et, LanguageCode.pl);
 
-        entries = templateTextMapper.getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE.toString(), LanguageCode.pl.toString());
+        entries = templateTextMapper.getTextsByTemplateAndLanguage(TemplateCode.EDITABLE_FORM_EE, LanguageCode.pl);
         assertFalse(entries.isEmpty());
 
         removeInterceptorFile();
@@ -121,9 +121,9 @@ public class PdfEditingControllerIntegTest {
         createFileForInterceptor();
 
         Long textBlockValueId = templateTextMapper.findTextBlockIdByValue("qqxx TEST_BLOCK_1 xxqq");
-        TemplateTextBlock templateTextBlock = templateTextMapper.findTextBlocksById(textBlockValueId).get(0);
-        templateTextBlock.setTextBlockValue("qqyxx TEST_BLOCK_1 xxyqq");
-        ResponseWithMessage response = pdfEditingController.updateTextBlock(UpdateType.CONFIRM_UPDATE, templateTextBlock);
+        TemplateTextDto templateTextDto = templateTextMapper.findTextBlocksById(textBlockValueId).get(0);
+        templateTextDto.setTextBlockValue("qqyxx TEST_BLOCK_1 xxyqq");
+        ResponseWithMessageDto response = pdfEditingController.updateTextBlock(UpdateType.CONFIRM_UPDATE, templateTextDto);
 
         assertEquals((Integer) HttpStatus.MULTIPLE_CHOICES.value(), response.getStatusCode());
 
@@ -144,18 +144,18 @@ public class PdfEditingControllerIntegTest {
         createFileForInterceptor();
 
         Long textBlockValueId = templateTextMapper.findTextBlockIdByValue("qqxx TEST_BLOCK_1 xxqq");
-        TemplateTextBlock templateTextBlock = templateTextMapper.findTextBlocksById(textBlockValueId).get(0);
-        templateTextBlock.setTextBlockValue("qqxx TEST_BLOCK_2 xxqq");
-        templateTextBlock.setPreviousTextBlockValue("qqxx TEST_BLOCK_1 xxqq");
-        ResponseWithMessage response = pdfEditingController.updateTextBlock(UpdateType.UPDATE_ALL, templateTextBlock);
+        TemplateTextDto templateTextDto = templateTextMapper.findTextBlocksById(textBlockValueId).get(0);
+        templateTextDto.setTextBlockValue("qqxx TEST_BLOCK_2 xxqq");
+        templateTextDto.setPreviousTextBlockValue("qqxx TEST_BLOCK_1 xxqq");
+        ResponseWithMessageDto response = pdfEditingController.updateTextBlock(UpdateType.UPDATE_ALL, templateTextDto);
 
         assertEquals((Integer) HttpStatus.OK.value(), response.getStatusCode());
 
         Long textBlock2ValueId = templateTextMapper.findTextBlockIdByValue("qqxx TEST_BLOCK_2 xxqq");
-        List<TemplateTextBlock> templateTextBlock2 = templateTextMapper.findTextBlocksById(textBlock2ValueId);
-        assertEquals(2, templateTextBlock2.size());
-        List<TemplateTextBlock> templateTextBlock1 = templateTextMapper.findTextBlocksById(textBlockValueId);
-        assertEquals(0, templateTextBlock1.size());
+        List<TemplateTextDto> templateTextDto2 = templateTextMapper.findTextBlocksById(textBlock2ValueId);
+        assertEquals(2, templateTextDto2.size());
+        List<TemplateTextDto> templateTextDto1 = templateTextMapper.findTextBlocksById(textBlockValueId);
+        assertEquals(0, templateTextDto1.size());
 
         removeInterceptorFile();
     }
@@ -174,17 +174,17 @@ public class PdfEditingControllerIntegTest {
         createFileForInterceptor();
 
         Long textBlockValueId = templateTextMapper.findTextBlockIdByValue("qqxx TEST_BLOCK_1 xxqq");
-        TemplateTextBlock templateTextBlock = templateTextMapper.findTextBlocksById(textBlockValueId).get(0);
-        templateTextBlock.setTextBlockValue("qqxx TEST_BLOCK_2 xxqq");
-        ResponseWithMessage response = pdfEditingController.updateTextBlock(UpdateType.UPDATE_ONLY_CURRENT, templateTextBlock);
+        TemplateTextDto templateTextDto = templateTextMapper.findTextBlocksById(textBlockValueId).get(0);
+        templateTextDto.setTextBlockValue("qqxx TEST_BLOCK_2 xxqq");
+        ResponseWithMessageDto response = pdfEditingController.updateTextBlock(UpdateType.UPDATE_ONLY_CURRENT, templateTextDto);
 
         assertEquals((Integer) HttpStatus.OK.value(), response.getStatusCode());
 
         Long textBlock2ValueId = templateTextMapper.findTextBlockIdByValue("qqxx TEST_BLOCK_2 xxqq");
-        List<TemplateTextBlock> templateTextBlock2 = templateTextMapper.findTextBlocksById(textBlock2ValueId);
-        assertEquals(1, templateTextBlock2.size());
-        List<TemplateTextBlock> templateTextBlock1 = templateTextMapper.findTextBlocksById(textBlockValueId);
-        assertEquals(1, templateTextBlock1.size());
+        List<TemplateTextDto> templateTextDto2 = templateTextMapper.findTextBlocksById(textBlock2ValueId);
+        assertEquals(1, templateTextDto2.size());
+        List<TemplateTextDto> templateTextDto1 = templateTextMapper.findTextBlocksById(textBlockValueId);
+        assertEquals(1, templateTextDto1.size());
 
         removeInterceptorFile();
     }
@@ -203,18 +203,18 @@ public class PdfEditingControllerIntegTest {
         createFileForInterceptor();
 
         Long textBlockValueId = templateTextMapper.findTextBlockIdByValue("qqxx TEST_BLOCK_1 xxqq");
-        TemplateTextBlock templateTextBlock = templateTextMapper.findTextBlocksById(textBlockValueId).get(0);
-        templateTextBlock.setTextBlockValue("qqxx TEST_BLOCK_3 xxqq");
-        templateTextBlock.setPreviousTextBlockValue("qqxx TEST_BLOCK_1 xxqq");
-        ResponseWithMessage response = pdfEditingController.updateTextBlock(UpdateType.UPDATE_ALL, templateTextBlock);
+        TemplateTextDto templateTextDto = templateTextMapper.findTextBlocksById(textBlockValueId).get(0);
+        templateTextDto.setTextBlockValue("qqxx TEST_BLOCK_3 xxqq");
+        templateTextDto.setPreviousTextBlockValue("qqxx TEST_BLOCK_1 xxqq");
+        ResponseWithMessageDto response = pdfEditingController.updateTextBlock(UpdateType.UPDATE_ALL, templateTextDto);
 
         assertEquals((Integer) HttpStatus.OK.value(), response.getStatusCode());
 
         Long textBlock2ValueId = templateTextMapper.findTextBlockIdByValue("qqxx TEST_BLOCK_3 xxqq");
-        List<TemplateTextBlock> templateTextBlock2 = templateTextMapper.findTextBlocksById(textBlock2ValueId);
-        assertEquals(2, templateTextBlock2.size());
-        List<TemplateTextBlock> templateTextBlock1 = templateTextMapper.findTextBlocksById(textBlockValueId);
-        assertEquals(0, templateTextBlock1.size());
+        List<TemplateTextDto> templateTextDto2 = templateTextMapper.findTextBlocksById(textBlock2ValueId);
+        assertEquals(2, templateTextDto2.size());
+        List<TemplateTextDto> templateTextDto1 = templateTextMapper.findTextBlocksById(textBlockValueId);
+        assertEquals(0, templateTextDto1.size());
 
         removeInterceptorFile();
     }

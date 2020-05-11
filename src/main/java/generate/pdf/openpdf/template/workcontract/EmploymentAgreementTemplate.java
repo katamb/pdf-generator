@@ -7,7 +7,7 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfWriter;
 import generate.pdf.openpdf.config.EnvironmentVariableProvider;
 import generate.pdf.openpdf.config.StartupConfig;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.service.TextBlockService;
 import generate.pdf.openpdf.service.printout.PdfGenerator;
@@ -47,7 +47,7 @@ public class EmploymentAgreementTemplate extends PdfGenerator {
     public void generatePdf(
             Document document,
             Map<String, Object> dynamicData,
-            Map<String, TemplateTextBlock> templateTexts,
+            Map<String, TemplateTextDto> templateTexts,
             String editingUrl,
             String inputData,
             OutputStream outputStream

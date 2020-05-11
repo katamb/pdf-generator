@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
@@ -24,15 +24,15 @@ public class TextBlockService {
     /**
      * Return static text for template in the form of a map for fast and easy access.
      */
-    public Map<String, TemplateTextBlock> getTextsByTemplateAndLanguage(
+    public Map<String, TemplateTextDto> getTextsByTemplateAndLanguage(
             TemplateCode templateCode,
             LanguageCode languageCode
     ) {
-        List<TemplateTextBlock> textBlocksWithStyle = templateTextMapper
-                .getTextsByTemplateAndLanguage(templateCode.name(), languageCode.name());
-        Map<String, TemplateTextBlock> map = new HashMap<>();
-        for (TemplateTextBlock templateTextBlock : textBlocksWithStyle) {
-            map.put(templateTextBlock.getTextBlockName(), templateTextBlock);
+        List<TemplateTextDto> textBlocksWithStyle = templateTextMapper
+                .getTextsByTemplateAndLanguage(templateCode, languageCode);
+        Map<String, TemplateTextDto> map = new HashMap<>();
+        for (TemplateTextDto templateTextDto : textBlocksWithStyle) {
+            map.put(templateTextDto.getTextBlockName(), templateTextDto);
         }
         return map;
     }
@@ -40,11 +40,11 @@ public class TextBlockService {
     /**
      * Return static text for template in the form of a map for fast and easy access.
      */
-    public List<TemplateTextBlock> getTextsByGroup(Map<String, TemplateTextBlock> textBlockMap, String groupName) {
+    public List<TemplateTextDto> getTextsByGroup(Map<String, TemplateTextDto> textBlockMap, String groupName) {
         return textBlockMap.values()
                 .stream()
                 .filter(tb -> tb.getTextGroupCode().equals(groupName))
-                .sorted(Comparator.comparing(TemplateTextBlock::getOrdering))
+                .sorted(Comparator.comparing(TemplateTextDto::getOrdering))
                 .collect(Collectors.toList());
     }
 }

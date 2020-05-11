@@ -1,13 +1,11 @@
 package generate.pdf.openpdf.template.workcontract;
 
-import com.lowagie.text.Cell;
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfSignature;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.service.NumberingService;
 import generate.pdf.openpdf.service.TextBlockService;
 import generate.pdf.openpdf.service.table.CreateCellService;
@@ -19,7 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static generate.pdf.openpdf.dto.TemplateTextBlock.createNewBlockFromExistingWithSameStyles;
+import static generate.pdf.openpdf.dto.TemplateTextDto.createNewBlockFromExistingWithSameStyles;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +27,7 @@ public class CreateEmploymentAgreementEntriesService {
     private final TextBlockService textBlockService;
     private final NumberingService numberingService;
 
-    private Map<String, TemplateTextBlock> textBlocksWithStyle;
+    private Map<String, TemplateTextDto> textBlocksWithStyle;
     private Map<String, Object> inputDataAsMap;
     private String url;
     private Font font;
@@ -37,7 +35,7 @@ public class CreateEmploymentAgreementEntriesService {
 
     public void createEntries(
             Document document,
-            Map<String, TemplateTextBlock> textBlockMap,
+            Map<String, TemplateTextDto> textBlockMap,
             Map<String, Object> inputDataAsMap,
             String url,
             Font font
@@ -69,19 +67,19 @@ public class CreateEmploymentAgreementEntriesService {
     private void createConditionRows(PdfPTable table) {
         List<String> groups = Arrays.asList("GENERAL", "MAIN_CONDITIONS", "END_CONDITIONS");
         for (String group : groups) {
-            List<TemplateTextBlock> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, group);
-            for (TemplateTextBlock text : textsByGroup) {
+            List<TemplateTextDto> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, group);
+            for (TemplateTextDto text : textsByGroup) {
                 String number = numberingService.getNumberForTextBlock(text, numberingMemory);
                 createTwoCellRow(table, number, text);
             }
         }
-        for (TemplateTextBlock text : textBlockService.getTextsByGroup(textBlocksWithStyle, "CONDITION_WITH_INPUT")) {
+        for (TemplateTextDto text : textBlockService.getTextsByGroup(textBlocksWithStyle, "CONDITION_WITH_INPUT")) {
             String number = numberingService.getNumberForTextBlock(text, numberingMemory);
             createTwoCellRowWithInput(table, number, text);
         }
     }
 
-    private void createTwoCellRow(PdfPTable table, String number, TemplateTextBlock textWithStyle) {
+    private void createTwoCellRow(PdfPTable table, String number, TemplateTextDto textWithStyle) {
         PdfPCell cell = createCellService.createCellAndInsertDynamicData(font,
                 createNewBlockFromExistingWithSameStyles(textWithStyle, number), inputDataAsMap, null);
         cell.setHorizontalAlignment(0);
@@ -91,7 +89,7 @@ public class CreateEmploymentAgreementEntriesService {
         table.addCell(cell);
     }
 
-    private void createTwoCellRowWithInput(PdfPTable table, String number, TemplateTextBlock textWithStyle) {
+    private void createTwoCellRowWithInput(PdfPTable table, String number, TemplateTextDto textWithStyle) {
         PdfPCell cell = createCellService.createEmptyCell();
         cell.setBorder(Rectangle.BOTTOM);
         cell.setFixedHeight(15);

@@ -1,7 +1,7 @@
 package generate.pdf.openpdf.service;
 
 import generate.pdf.openpdf.config.StartupConfig;
-import generate.pdf.openpdf.dto.FileResponse;
+import generate.pdf.openpdf.dto.FileResponseDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ public class PdfStorageService {
         this.fileStorageLocation = Paths.get(startupConfig.getPdfDirectory()).toAbsolutePath().normalize();
     }
 
-    public FileResponse loadFileAsResource(String fileName) {
+    public FileResponseDto loadFileAsResource(String fileName) {
         Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
         return fileDownloadService.downloadFile(filePath, fileName);
     }

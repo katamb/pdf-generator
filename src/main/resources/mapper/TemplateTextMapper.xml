@@ -23,7 +23,7 @@
         tt.padding_right
     </sql>
 
-    <select id="getTextsByTemplateAndLanguage" resultType="TemplateTextBlock">
+    <select id="getTextsByTemplateAndLanguage" resultType="TemplateTextDto">
         SELECT <include refid="selectAll"/>
         FROM pdf_generator.template_text tt
              INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tt.text_block_id
@@ -31,7 +31,7 @@
           AND tt.language_code = #{languageCode};
     </select>
 
-    <select id="findTextBlockById" resultType="TemplateTextBlock">
+    <select id="findTextBlockById" resultType="TemplateTextDto">
         SELECT <include refid="selectAll"/>
         FROM pdf_generator.template_text tt
              INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tt.text_block_id
@@ -40,7 +40,7 @@
             AND tt.template_text_id = #{id};
     </select>
 
-    <select id="findTextBlocksById" resultType="TemplateTextBlock">
+    <select id="findTextBlocksById" resultType="TemplateTextDto">
         SELECT <include refid="selectAll"/>
         FROM pdf_generator.template_text tt
         INNER JOIN pdf_generator.text_block tb ON tb.text_block_id = tt.text_block_id
@@ -70,20 +70,20 @@
         FROM pdf_generator.template_code;
     </select>
 
-    <select id="findAllLanguagesForTemplate" resultType="ValueTextCombo">
+    <select id="findAllLanguagesForTemplate" resultType="ValueTextComboDto">
         SELECT DISTINCT lc.language_code, lc.language_name
         FROM pdf_generator.template_text tt
         INNER JOIN pdf_generator.language_code lc ON lc.language_code = tt.language_code
-        WHERE tt.template_code = #{template};
+        WHERE tt.template_code = #{templateCode};
     </select>
 
-    <select id="findLanguageByCode" resultType="ValueTextCombo">
+    <select id="findLanguageByCode" resultType="ValueTextComboDto">
         SELECT lc.language_code, lc.language_name
         FROM pdf_generator.language_code lc
         WHERE lc.language_code = #{languageCode};
     </select>
 
-    <select id="findAllAvailableLanguages" resultType="ValueTextCombo">
+    <select id="findAllAvailableLanguages" resultType="ValueTextComboDto">
         SELECT lc.language_code, lc.language_name
         FROM pdf_generator.language_code lc;
     </select>
@@ -93,17 +93,17 @@
         SET text_block_id = (
                 SELECT tb.text_block_id
                 FROM pdf_generator.text_block tb
-                WHERE tb.text_block_value = #{templateTextBlock.textBlockValue}),
-            text_size = #{templateTextBlock.textSize},
-            horizontal_alignment = #{templateTextBlock.horizontalAlignment},
-            vertical_alignment = #{templateTextBlock.verticalAlignment},
-            padding_top = #{templateTextBlock.paddingTop},
-            padding_bottom = #{templateTextBlock.paddingBottom},
-            padding_left = #{templateTextBlock.paddingLeft},
-            padding_right = #{templateTextBlock.paddingRight}
-        WHERE tt.template_code = #{templateTextBlock.templateCode}
-        AND tt.language_code = #{templateTextBlock.languageCode}
-        AND tt.text_block_name = #{templateTextBlock.textBlockName};
+                WHERE tb.text_block_value = #{templateTextDto.textBlockValue}),
+            text_size = #{templateTextDto.textSize},
+            horizontal_alignment = #{templateTextDto.horizontalAlignment},
+            vertical_alignment = #{templateTextDto.verticalAlignment},
+            padding_top = #{templateTextDto.paddingTop},
+            padding_bottom = #{templateTextDto.paddingBottom},
+            padding_left = #{templateTextDto.paddingLeft},
+            padding_right = #{templateTextDto.paddingRight}
+        WHERE tt.template_code = #{templateTextDto.templateCode}
+        AND tt.language_code = #{templateTextDto.languageCode}
+        AND tt.text_block_name = #{templateTextDto.textBlockName};
     </update>
 
     <update id="updateAllTemplatesWithGivenText">
@@ -111,23 +111,22 @@
         SET text_block_id = (
                 SELECT tb.text_block_id
                 FROM pdf_generator.text_block tb
-                WHERE tb.text_block_value = #{templateTextBlock.textBlockValue}),
-            text_size = #{templateTextBlock.textSize},
-            horizontal_alignment = #{templateTextBlock.horizontalAlignment},
-            vertical_alignment = #{templateTextBlock.verticalAlignment},
-            padding_top = #{templateTextBlock.paddingTop},
-            padding_bottom = #{templateTextBlock.paddingBottom},
-            padding_left = #{templateTextBlock.paddingLeft},
-            padding_right = #{templateTextBlock.paddingRight}
+                WHERE tb.text_block_value = #{templateTextDto.textBlockValue}),
+            text_size = #{templateTextDto.textSize},
+            horizontal_alignment = #{templateTextDto.horizontalAlignment},
+            vertical_alignment = #{templateTextDto.verticalAlignment},
+            padding_top = #{templateTextDto.paddingTop},
+            padding_bottom = #{templateTextDto.paddingBottom},
+            padding_left = #{templateTextDto.paddingLeft},
+            padding_right = #{templateTextDto.paddingRight}
         WHERE tt.text_block_id IN (
             SELECT t_b.text_block_id
             FROM pdf_generator.text_block t_b
-            WHERE t_b.text_block_value = #{templateTextBlock.previousTextBlockValue}
+            WHERE t_b.text_block_value = #{templateTextDto.previousTextBlockValue}
         );
     </update>
 
-    <insert id="insertTextBlock"
-            useGeneratedKeys="true" keyProperty="textBlockId">
+    <insert id="insertTextBlock">
         INSERT INTO
             pdf_generator.text_block (text_block_value)
         VALUES
@@ -154,25 +153,52 @@
                 padding_left,
                 padding_right)
         VALUES
-        <foreach collection="templateTextBlocks" item="templateTextBlock" separator=",">
-            (#{templateTextBlock.templateCode},
-             #{templateTextBlock.languageCode},
-             #{templateTextBlock.textGroupCode},
-             #{templateTextBlock.ordering},
-             #{templateTextBlock.numbering},
-             #{templateTextBlock.numberingLevel},
-             #{templateTextBlock.textBlockName},
+        <foreach collection="templateTextDtos" item="templateTextDto" separator=",">
+            (#{templateTextDto.templateCode},
+             #{templateTextDto.languageCode},
+             #{templateTextDto.textGroupCode},
+             #{templateTextDto.ordering},
+             #{templateTextDto.numbering},
+             #{templateTextDto.numberingLevel},
+             #{templateTextDto.textBlockName},
              (SELECT tb.text_block_id
               FROM pdf_generator.text_block tb
-              WHERE tb.text_block_value = #{templateTextBlock.textBlockValue}),
-             #{templateTextBlock.textSize},
-             #{templateTextBlock.horizontalAlignment},
-             #{templateTextBlock.verticalAlignment},
-             #{templateTextBlock.paddingTop},
-             #{templateTextBlock.paddingBottom},
-             #{templateTextBlock.paddingLeft},
-             #{templateTextBlock.paddingRight})
+              WHERE tb.text_block_value = #{templateTextDto.textBlockValue}),
+             #{templateTextDto.textSize},
+             #{templateTextDto.horizontalAlignment},
+             #{templateTextDto.verticalAlignment},
+             #{templateTextDto.paddingTop},
+             #{templateTextDto.paddingBottom},
+             #{templateTextDto.paddingLeft},
+             #{templateTextDto.paddingRight})
         </foreach>
+        ON CONFLICT DO NOTHING;
+    </insert>
+
+    <insert id="insertTemplateText">
+        INSERT INTO
+            pdf_generator.template_text (
+            template_code,
+            language_code,
+            text_group_code,
+            text_block_name,
+            text_block_id,
+            ordering,
+            numbering,
+            numbering_level
+            )
+        VALUES (
+            #{newTextBlockDto.templateCode},
+            #{newTextBlockDto.languageCode},
+            #{newTextBlockDto.textGroupCode},
+            #{newTextBlockDto.textBlockName},
+            (SELECT tb.text_block_id
+             FROM pdf_generator.text_block tb
+             WHERE tb.text_block_value = #{newTextBlockDto.textBlockValue}),
+            #{newTextBlockDto.ordering},
+            #{newTextBlockDto.numbering},
+            #{newTextBlockDto.numberingLevel}
+            )
         ON CONFLICT DO NOTHING;
     </insert>
 

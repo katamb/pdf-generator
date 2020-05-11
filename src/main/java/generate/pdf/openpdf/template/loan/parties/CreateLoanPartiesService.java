@@ -5,7 +5,7 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.service.table.CreateCellService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,14 +21,14 @@ public class CreateLoanPartiesService {
 
     private final CreateCellService createCellService;
 
-    private Map<String, TemplateTextBlock> textBlocksWithStyle;
+    private Map<String, TemplateTextDto> textBlocksWithStyle;
     private Map<String, Object> inputDataAsMap;
     private String url;
     private Font font;
 
     public void createPartiesData(
             Document document,
-            Map<String, TemplateTextBlock> textBlocksWithStyle,
+            Map<String, TemplateTextDto> textBlocksWithStyle,
             Map<String, Object> inputDataAsMap,
             String url,
             Font font
@@ -50,8 +50,8 @@ public class CreateLoanPartiesService {
     }
 
     private void createFirstRow(PdfPTable table) {
-        TemplateTextBlock templateTextBlock = textBlocksWithStyle.get("LENDER");
-        PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextBlock, inputDataAsMap, url);
+        TemplateTextDto templateTextDto = textBlocksWithStyle.get("LENDER");
+        PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextDto, inputDataAsMap, url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setBorderColor(Color.GRAY);
         cell.setColspan(2);
@@ -59,8 +59,8 @@ public class CreateLoanPartiesService {
 
         table.addCell(createCellService.createEmptyCell());
 
-        templateTextBlock = textBlocksWithStyle.get("BORROWER");
-        cell = createCellService.createCellAndInsertDynamicData(font, templateTextBlock, inputDataAsMap, url);
+        templateTextDto = textBlocksWithStyle.get("BORROWER");
+        cell = createCellService.createCellAndInsertDynamicData(font, templateTextDto, inputDataAsMap, url);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setBorderColor(Color.GRAY);
         cell.setColspan(2);
@@ -82,8 +82,8 @@ public class CreateLoanPartiesService {
                 table.addCell(createCellService.createEmptyCell());
                 continue;
             }
-            TemplateTextBlock templateTextBlock = textBlocksWithStyle.get(cellName);
-            PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextBlock, inputDataAsMap, url);
+            TemplateTextDto templateTextDto = textBlocksWithStyle.get(cellName);
+            PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextDto, inputDataAsMap, url);
             cell.setBorder(Rectangle.BOTTOM);
             cell.setBorderColor(Color.GRAY);
             table.addCell(cell);

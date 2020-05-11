@@ -1,7 +1,7 @@
 package generate.pdf.openpdf.controller;
 
-import generate.pdf.openpdf.dto.FileResponse;
-import generate.pdf.openpdf.dto.UserSqlFile;
+import generate.pdf.openpdf.dto.FileResponseDto;
+import generate.pdf.openpdf.dto.UserSqlFileDto;
 import generate.pdf.openpdf.service.UserFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,40 +27,40 @@ public class UserController {
         return userFileService.findRoles(principal);
     }
 
-    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_DEVELOPER')")
     @GetMapping("is-sql-file-selected")
-    public UserSqlFile getSelectedSqlFile(Principal principal) {
+    public UserSqlFileDto getSelectedSqlFile(Principal principal) {
         return userFileService.getSelectedSqlFile(principal);
     }
 
-    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_DEVELOPER')")
     @GetMapping("sql-files")
-    public List<UserSqlFile> getSqlFiles(Principal principal) {
+    public List<UserSqlFileDto> getSqlFiles(Principal principal) {
         return userFileService.getUserSqlFiles(principal);
     }
 
-    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_DEVELOPER')")
     @GetMapping("download-sql/{fileName}")
-    public FileResponse getSqlFile(
+    public FileResponseDto getSqlFile(
             Principal principal,
             @PathVariable String fileName
     ) {
         return userFileService.downloadFile(principal, fileName);
     }
 
-    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_DEVELOPER')")
     @GetMapping("download-sql/selected")
-    public FileResponse downloadSelectedSqlFile(Principal principal) {
+    public FileResponseDto downloadSelectedSqlFile(Principal principal) {
         return userFileService.downloadSelectedFile(principal);
     }
 
-    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_DEVELOPER')")
     @PutMapping("select-sql/{id}")
     public void selectSqlFile(Principal principal, @PathVariable Long id) {
         userFileService.selectSqlFile(principal, id);
     }
 
-    @PreAuthorize("hasRole('ROLE_EDITOR')")
+    @PreAuthorize("hasAnyRole('ROLE_EDITOR', 'ROLE_DEVELOPER')")
     @PostMapping("add-sql")
     public void addSqlFile(Principal principal) {
         userFileService.addSqlFile(principal);

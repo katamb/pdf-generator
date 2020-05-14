@@ -11,7 +11,7 @@
         usf.created_at
     </sql>
 
-    <select id="getUserFiles" resultType="UserSqlFile">
+    <select id="getUserFiles" resultType="UserSqlFileDto">
         SELECT <include refid="selectAll"/>
         FROM pdf_generator.user_sql_file usf
         WHERE usf.username = #{username};

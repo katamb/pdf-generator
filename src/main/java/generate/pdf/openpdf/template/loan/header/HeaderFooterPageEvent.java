@@ -13,7 +13,7 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.exception.PdfGenerationException;
 import generate.pdf.openpdf.service.table.CreateCellService;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
     private static final int HEADER_FOOTER_WIDTH = 530;
 
     private CreateCellService createCellService;
-    private Map<String, TemplateTextBlock> templateTextBlockMap;
+    private Map<String, TemplateTextDto> templateTextBlockMap;
     private Map<String, Object> inputDataAsMap;
     private String url;
     private Font font;
@@ -42,7 +42,7 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
 
     public HeaderFooterPageEvent(
             CreateCellService createCellService,
-            Map<String, TemplateTextBlock> templateTextBlockMap,
+            Map<String, TemplateTextDto> templateTextBlockMap,
             Map<String, Object> inputDataAsMap,
             String url,
             Font font
@@ -97,7 +97,7 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
             header.addCell(logo);
 
             // add text
-            TemplateTextBlock textBlock = templateTextBlockMap.get("HEADER_TEXT_1");
+            TemplateTextDto textBlock = templateTextBlockMap.get("HEADER_TEXT_1");
             PdfPCell textCell = createCellService.createCellAndInsertDynamicData(font, textBlock, inputDataAsMap, url);
             textCell.setBorder(Rectangle.BOTTOM);
             textCell.setBorderColor(Color.GRAY);
@@ -119,7 +119,7 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
             footer.setLockedWidth(true);
 
             // add text
-            TemplateTextBlock text = templateTextBlockMap.get("FOOTER_TEXT_1");
+            TemplateTextDto text = templateTextBlockMap.get("FOOTER_TEXT_1");
             PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, text, inputDataAsMap, url);
             cell.setFixedHeight(HEADER_FOOTER_HEIGHT);
             cell.setBorder(Rectangle.TOP);
@@ -149,4 +149,5 @@ public class HeaderFooterPageEvent extends PdfPageEventHelper {
             throw new PdfGenerationException(e.getMessage(), e);
         }
     }
+
 }

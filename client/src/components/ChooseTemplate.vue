@@ -18,7 +18,7 @@
       ></b-form-select>
     </b-form-group>
 
-    <div v-if="isRoleEditor">
+    <div v-if="isCurrentUserEditor() || isCurrentUserDeveloper()">
       <b-row class="">
         <b-col class="">
           <label class="pt-2">
@@ -73,7 +73,17 @@
         variant="success"
         @click="navigateToEditPage"
       >
-        {{ getNavigationButtonText() }}
+        {{ isCurrentUserEditor() ? 'Proceed to editing template' : 'Proceed to view template' }}
+      </b-button>
+
+      <b-button
+        v-if="isCurrentUserDeveloper()"
+        :disabled="!isCreatingNewTemplateAllowed()"
+        class="ml-3 mt-3"
+        variant="secondary"
+        @click="addTemplate"
+      >
+        Add new template
       </b-button>
     </div>
   </div>
@@ -85,7 +95,8 @@ import { getRequest, postRequest, putRequest } from '@/scripts/requests';
 import Info from '@/assets/info.svg';
 import {
   isCurrentUserEditor,
-  isEmptyString,
+  isCurrentUserDeveloper,
+  hasNoContent,
   getDateForTable,
   getButtonText,
   getButtonStyle
@@ -97,6 +108,8 @@ import downloadFile from '@/scripts/downloading';
     Info
   },
   methods: {
+    isCurrentUserEditor,
+    isCurrentUserDeveloper,
     downloadFile,
     getDateForTable,
     getButtonText,
@@ -104,8 +117,6 @@ import downloadFile from '@/scripts/downloading';
   }
 })
 export default class ChooseTemplate extends Vue {
-  isRoleEditor = false;
-
   selectedTemplate = '';
 
   selectedLanguage = '';
@@ -119,9 +130,8 @@ export default class ChooseTemplate extends Vue {
   sqlFileOptions: Array<any> = [];
 
   mounted(): void {
-    this.isRoleEditor = isCurrentUserEditor();
     this.getTemplates();
-    if (this.isRoleEditor) {
+    if (isCurrentUserEditor() || isCurrentUserDeveloper()) {
       this.getFiles();
     }
   }
@@ -155,29 +165,38 @@ export default class ChooseTemplate extends Vue {
   }
 
   isLanguageSelectionAllowed(): boolean {
-    return !isEmptyString(this.selectedTemplate);
+    return !hasNoContent(this.selectedTemplate);
   }
 
   isNavigationAllowed(): boolean {
-    if (this.isRoleEditor) {
+    if (isCurrentUserEditor()) {
       return (
-        !isEmptyString(this.selectedTemplate) &&
-        !isEmptyString(this.selectedLanguage) &&
-        !isEmptyString(this.sqlFileOptions) &&
+        !hasNoContent(this.selectedTemplate) &&
+        !hasNoContent(this.selectedLanguage) &&
+        !hasNoContent(this.sqlFileOptions) &&
         this.sqlFileOptions.filter((el: any) => el.selected).length === 1
       );
     }
-    return !isEmptyString(this.selectedTemplate) && !isEmptyString(this.selectedLanguage);
+    return !hasNoContent(this.selectedTemplate) && !hasNoContent(this.selectedLanguage);
   }
 
-  getNavigationButtonText(): string {
-    return this.isRoleEditor ? 'Proceed to editing template' : 'Proceed to view template';
+  isCreatingNewTemplateAllowed(): boolean {
+    return (
+      isCurrentUserDeveloper() &&
+      !hasNoContent(this.sqlFileOptions) &&
+      this.sqlFileOptions.filter((el: any) => el.selected).length === 1
+    );
   }
 
   navigateToEditPage(): void {
     this.$router.push({
       path: `edit-pdf/${this.selectedTemplate}/${this.selectedLanguage}/-`
     });
+  }
+
+  addTemplate(): void {
+    const routeTo = '/new-template';
+    this.$router.push({ path: routeTo });
   }
 
   select(id: number) {

@@ -52,6 +52,10 @@ CREATE TABLE IF NOT EXISTS template_text (
     text_size                           NUMERIC(3, 1) NOT NULL DEFAULT 12.0,
     horizontal_alignment                SMALLINT NOT NULL DEFAULT 0,
     vertical_alignment                  SMALLINT NOT NULL DEFAULT 4,
+    padding_top                         SMALLINT NOT NULL DEFAULT 0,
+    padding_bottom                      SMALLINT NOT NULL DEFAULT 0,
+    padding_left                        SMALLINT NOT NULL DEFAULT 0,
+    padding_right                       SMALLINT NOT NULL DEFAULT 0,
     CONSTRAINT pk_template_text_id PRIMARY KEY (template_text_id),
     CONSTRAINT ak_text_block_unique_in_language_and_template UNIQUE (template_code,language_code,text_block_name),
     CONSTRAINT chk_ordering_positive_value CHECK (ordering>=0),
@@ -59,6 +63,10 @@ CREATE TABLE IF NOT EXISTS template_text (
     CONSTRAINT chk_size_positive_value CHECK (text_size>0),
     CONSTRAINT chk_horizontal_alignment_allowed_value CHECK (horizontal_alignment IN (-1, 0, 1, 2, 3)),
     CONSTRAINT chk_vertical_alignment_allowed_value CHECK (vertical_alignment IN (4, 5, 6, 7, 8)),
+    CONSTRAINT chk_padding_top_positive_value CHECK (padding_top>=0),
+    CONSTRAINT chk_padding_bottom_positive_value CHECK (padding_bottom>=0),
+    CONSTRAINT chk_padding_left_positive_value CHECK (padding_left>=0),
+    CONSTRAINT chk_padding_right_positive_value CHECK (padding_right>=0),
     CONSTRAINT fk_template_code FOREIGN KEY (template_code)
         REFERENCES template_code (template_code) ON DELETE No Action ON UPDATE No Action,
     CONSTRAINT fk_language_code FOREIGN KEY (language_code)
@@ -97,3 +105,11 @@ COMMENT ON COLUMN template_text.vertical_alignment
 IS 'According to values defined in OpenPdf library Element interface.
 4 (DEFAULT) is for top alignment. 5 is for center alignment. 6 is for bottom alignment.
 7 is for baseline alignment. 8 is for justified alignment.';
+COMMENT ON COLUMN template_text.padding_top
+IS 'Cell padding on top.';
+COMMENT ON COLUMN template_text.padding_bottom
+IS 'Cell padding on bottom.';
+COMMENT ON COLUMN template_text.padding_left
+IS 'Cell padding on left.';
+COMMENT ON COLUMN template_text.padding_right
+IS 'Cell padding on right.';

@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.dto.FileResponse;
+import generate.pdf.openpdf.dto.FileResponseDto;
 import generate.pdf.openpdf.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +17,11 @@ public class FileDownloadService {
 
     private static final Logger logger = LoggerFactory.getLogger(FileDownloadService.class);
 
-    public FileResponse downloadFile(Path filePath, String fileName) {
+    public FileResponseDto downloadFile(Path filePath, String fileName) {
         try {
             byte[] fileAsByteArray = Files.readAllBytes(filePath);
 
-            FileResponse fileResponse = new FileResponse();
+            FileResponseDto fileResponse = new FileResponseDto();
             fileResponse.setFileName(fileName);
             fileResponse.setFile(fileAsByteArray);
             return fileResponse;

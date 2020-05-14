@@ -1,8 +1,8 @@
 package generate.pdf.openpdf.service;
 
 import generate.pdf.openpdf.config.StartupConfig;
-import generate.pdf.openpdf.dto.FileResponse;
-import generate.pdf.openpdf.dto.UserSqlFile;
+import generate.pdf.openpdf.dto.FileResponseDto;
+import generate.pdf.openpdf.dto.UserSqlFileDto;
 import generate.pdf.openpdf.exception.InternalServerException;
 import generate.pdf.openpdf.mapper.UserSqlFileMapper;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class SqlStorageService {
         this.fileStorageLocation = Paths.get(startupConfig.getSqlDirectory()).toAbsolutePath().normalize();
     }
 
-    public UserSqlFile createNewSqlForUser(String username) {
+    public UserSqlFileDto createNewSqlForUser(String username) {
         int uniqueNum = 0;
         String escapedUsername = username.replaceAll("[^a-zA-Z0-9._-]", "_");
         String fileName = createFileName(escapedUsername, uniqueNum);
@@ -53,12 +53,12 @@ public class SqlStorageService {
         try {
             Files.createFile(targetLocation);
 
-            UserSqlFile userSqlFile = new UserSqlFile();
-            userSqlFile.setUsername(username);
-            userSqlFile.setSqlFileName(fileName);
-            userSqlFileMapper.insertSqlFileReference(userSqlFile);
+            UserSqlFileDto userSqlFileDto = new UserSqlFileDto();
+            userSqlFileDto.setUsername(username);
+            userSqlFileDto.setSqlFileName(fileName);
+            userSqlFileMapper.insertSqlFileReference(userSqlFileDto);
 
-            return userSqlFile;
+            return userSqlFileDto;
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new InternalServerException("Could not store file " + fileName + ". Please try again!");
@@ -76,7 +76,7 @@ public class SqlStorageService {
         return filenameBuilder.toString();
     }
 
-    public FileResponse loadFileAsResource(String fileName) {
+    public FileResponseDto loadFileAsResource(String fileName) {
         Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
         return fileDownloadService.downloadFile(filePath, fileName);
     }

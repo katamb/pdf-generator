@@ -3,7 +3,7 @@ package integration_tests.controller;
 import generate.pdf.MainApplication;
 import generate.pdf.openpdf.config.StartupConfig;
 import generate.pdf.openpdf.controller.UserController;
-import generate.pdf.openpdf.dto.UserSqlFile;
+import generate.pdf.openpdf.dto.UserSqlFileDto;
 import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.mapper.UserSqlFileMapper;
 import integration_tests.BasePostgreSqlContainer;
@@ -107,7 +107,7 @@ public class UserControllerIntegTest {
         Path secondFile = Paths.get(startupConfig.getSqlDirectory()).toAbsolutePath()
                 .normalize().resolve(expectedSecondFileName);
 
-        List<UserSqlFile> sqlFiles = userSqlFileMapper.getUserFiles(TEST_USERNAME);
+        List<UserSqlFileDto> sqlFiles = userSqlFileMapper.getUserFiles(TEST_USERNAME);
         userController.selectSqlFile(getUserPrincipal(), sqlFiles.get(0).getId());
         Long firstSelectedFileId = userController.getSelectedSqlFile(getUserPrincipal()).getId();
         userController.selectSqlFile(getUserPrincipal(), sqlFiles.get(1).getId());
@@ -139,7 +139,7 @@ public class UserControllerIntegTest {
                 + "-INTEG_TEST-0.sql";
         Path firstFile = Paths.get(startupConfig.getSqlDirectory()).toAbsolutePath()
                 .normalize().resolve(expectedFirstFileName);
-        List<UserSqlFile> sqlFiles = userSqlFileMapper.getUserFiles(TEST_USERNAME);
+        List<UserSqlFileDto> sqlFiles = userSqlFileMapper.getUserFiles(TEST_USERNAME);
         userController.selectSqlFile(getUserPrincipal(), sqlFiles.get(0).getId());
 
         assertNotNull("File should be returned!",

@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div class="text-left">
-      Click the button below to download the SQL file chosen earlier.
+    <div class="text-center">
+      Click the button below to download the SQL file chosen earlier. This file contains the changes
+      made through UI.
     </div>
     <div class="text-center pt-3">
       <b-button @click="downloadFile(null)" variant="success">

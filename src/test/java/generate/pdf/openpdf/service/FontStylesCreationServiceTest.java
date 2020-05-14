@@ -24,7 +24,7 @@ class FontStylesCreationServiceTest {
     }
 
     @Test
-    void testCreatePhraseWithInlineStylesWontMutateFont() {
+    void givenFont_whenCreatingStyles_thenFontWontGetMutated() {
         font.setStyle(Font.NORMAL);
         fontStylesCreationService.createPhraseWithInlineStyles(font, "<b>Hello!");
 
@@ -32,7 +32,7 @@ class FontStylesCreationServiceTest {
     }
 
     @Test
-    void testCreatePhraseWithInlineStylesCreateBoldString() {
+    void givenFontAndPhrase_whenCreatingBoldStyle_thenStyleGetsApplied() {
         font.setStyle(Font.NORMAL);
         Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, "<b>Hello</b>!");
 
@@ -42,7 +42,7 @@ class FontStylesCreationServiceTest {
     }
 
     @Test
-    void testCreatePhraseWithInlineStylesCreateItalicString() {
+    void givenFontAndPhrase_whenCreatingItalicStyle_thenStyleGetsApplied() {
         font.setStyle(Font.NORMAL);
         Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, "<i>Hello</i>!");
 
@@ -52,7 +52,7 @@ class FontStylesCreationServiceTest {
     }
 
     @Test
-    void testCreatePhraseWithInlineStylesCreateUnderlineString() {
+    void givenFontAndPhrase_whenCreatingUnderlinedStyle_thenStyleGetsApplied() {
         font.setStyle(Font.NORMAL);
         Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, "<u>Hello</u>!");
 
@@ -62,7 +62,7 @@ class FontStylesCreationServiceTest {
     }
 
 	@Test
-	void testCreatePhraseWithInlineStylesCreateStrikethruString() {
+	void givenFontAndPhrase_whenCreatingStrikedThroughStyle_thenStyleGetsApplied() {
 		font.setStyle(Font.NORMAL);
 		Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, "<s>Hello</s>!");
 
@@ -72,7 +72,7 @@ class FontStylesCreationServiceTest {
 	}
 
     @Test
-    void testCreatePhraseWithInlineStylesCreateUnderlineBoldString() {
+    void givenFontAndPhrase_whenCreatingBoldUnderlinedStyle_thenStyleGetsApplied() {
         font.setStyle(Font.NORMAL);
         Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, "<u><b>Hello</u>!");
 
@@ -83,7 +83,7 @@ class FontStylesCreationServiceTest {
     }
 
 	@Test
-	void testCreatePhraseWithInlineStylesSameStyleTwiceSecondTimeIsIgnoredStart() {
+	void givenFontAndPhrase_whenCreatingDoubleBoldStyle_thenStyleGetsAppliedOnce() {
 		font.setStyle(Font.NORMAL);
 		Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, "<b><b>Hello</b>!");
 
@@ -94,7 +94,7 @@ class FontStylesCreationServiceTest {
 	}
 
 	@Test
-	void testCreatePhraseWithInlineStylesSameStyleTwiceSecondTimeIsIgnoredEnd() {
+	void givenFontAndPhrase_whenCreatingBoldStyleWithDoubledEndTag_thenUnnecessaryTagGetsIgnored() {
 		font.setStyle(Font.NORMAL);
 		Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, "<b>Hello</b></b>!");
 
@@ -105,7 +105,7 @@ class FontStylesCreationServiceTest {
 	}
 
 	@Test
-	void testCreatePhraseWithInlineStylesCreateAllStylesAtOnce() {
+	void givenFontAndPhrase_whenCreatingPhraseWithAllStyles_thenAllStylesGetApplied() {
 		font.setStyle(Font.NORMAL);
 		Phrase phrase = fontStylesCreationService.createPhraseWithInlineStyles(font, "<u><b><s><i>Hello</u>!");
 

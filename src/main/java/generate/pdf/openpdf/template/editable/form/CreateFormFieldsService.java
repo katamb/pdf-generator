@@ -7,7 +7,7 @@ import com.lowagie.text.pdf.PdfFormField;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.service.TextBlockService;
 import generate.pdf.openpdf.service.table.CreateCellService;
 import generate.pdf.openpdf.service.table.RadioCellField;
@@ -26,11 +26,12 @@ public class CreateFormFieldsService {
 
     private static final int SPACER_ROW_HEIGHT = 8;
     private static final int EMPTY_ROW_HEIGHT = 5;
+    private static final int COLUMNS_AMOUNT = 3;
 
     private final CreateCellService createCellService;
     private final TextBlockService textBlockService;
 
-    private Map<String, TemplateTextBlock> textBlocksWithStyle;
+    private Map<String, TemplateTextDto> textBlocksWithStyle;
     private Map<String, Object> inputDataAsMap;
     private PdfWriter writer;
     private String url;
@@ -40,7 +41,7 @@ public class CreateFormFieldsService {
     public void createForm(
             PdfWriter writer,
             Document document,
-            Map<String, TemplateTextBlock> textBlocksWithStyle,
+            Map<String, TemplateTextDto> textBlocksWithStyle,
             Map<String, Object> inputDataAsMap,
             String url,
             Font font
@@ -52,46 +53,46 @@ public class CreateFormFieldsService {
         this.writer = writer;
         this.pdfFormFields = new ArrayList<>();
 
-        List<String> blocks = Arrays.asList("GENERAL_DATA", "LOCATION_DATA", "OTHER_DATA");
-        PdfPTable table = new PdfPTable(3);
+        PdfPTable table = new PdfPTable(COLUMNS_AMOUNT);
         table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
 
         createIntroduction(table);
-        createFormGroups(table, blocks);
+        createFormGroups(table);
 
         document.add(table);
 
-        // For radio button, this @addAnnotation method needs to be called after @document.add
+        // For radio button, this @writer.addAnnotation() method needs to be called after @document.add()
         for (PdfFormField formField : pdfFormFields) {
             writer.addAnnotation(formField);
         }
     }
 
     private void createIntroduction(PdfPTable table) {
-        TemplateTextBlock text = textBlocksWithStyle.get("PDF_FORM");
+        TemplateTextDto text = textBlocksWithStyle.get("PDF_FORM");
         PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, text, inputDataAsMap, url);
-        cell.setColspan(3);
+        cell.setColspan(COLUMNS_AMOUNT);
         table.addCell(cell);
         text = textBlocksWithStyle.get("INTRODUCTION");
         cell = createCellService.createCellAndInsertDynamicData(font, text, inputDataAsMap, url);
-        cell.setColspan(3);
-        cell.setPaddingTop(10);
-        cell.setPaddingTop(10);
+        cell.setColspan(COLUMNS_AMOUNT);
         table.addCell(cell);
     }
 
-    private void createFormGroups(PdfPTable table, List<String> textBlockGroups) {
-        for (String textBlockGroup : textBlockGroups) {
-            List<TemplateTextBlock> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, textBlockGroup);
+    private void createFormGroups(PdfPTable table) {
+        List<String> formBlockGroups = Arrays.asList("GENERAL_DATA", "LOCATION_DATA", "OTHER_DATA");
+        for (String textBlockGroup : formBlockGroups) {
+            List<TemplateTextDto> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, textBlockGroup);
             createFormRows(table, textsByGroup);
             createSpacer(table, SPACER_ROW_HEIGHT);
         }
     }
-    private void createFormRows(PdfPTable table, List<TemplateTextBlock> textsByGroup) {
-        for (TemplateTextBlock textByGroup : textsByGroup) {
+
+    private void createFormRows(PdfPTable table, List<TemplateTextDto> textsByGroup) {
+        for (TemplateTextDto textByGroup : textsByGroup) {
+            // Create heading rows
             if (textByGroup.getTextBlockName().contains("HEADING")) {
                 PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, textByGroup, inputDataAsMap, url);
-                cell.setColspan(3);
+                cell.setColspan(COLUMNS_AMOUNT);
                 table.addCell(cell);
                 continue;
             }
@@ -115,10 +116,10 @@ public class CreateFormFieldsService {
         pdfFormFields.add(radioGroup);
         radioGroup.setFieldName("Gender");
         PdfPTable innerTable = new PdfPTable(6);
-        innerTable.setTotalWidth(new float[]{ 90, 20, 90, 20, 90, 20 });
-        List<TemplateTextBlock> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, "GENDER_CHOICE");
+        innerTable.setTotalWidth(new float[]{90, 20, 90, 20, 90, 20});
+        List<TemplateTextDto> textsByGroup = textBlockService.getTextsByGroup(textBlocksWithStyle, "GENDER_CHOICE");
 
-        for (TemplateTextBlock textByGroup : textsByGroup) {
+        for (TemplateTextDto textByGroup : textsByGroup) {
             PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, textByGroup, inputDataAsMap, url);
             cell.setBorder(Rectangle.NO_BORDER);
             innerTable.addCell(cell);
@@ -134,9 +135,9 @@ public class CreateFormFieldsService {
         table.addCell(innerTableCell);
     }
 
-    private PdfPCell createTextFieldCell(TemplateTextBlock textByGroup) {
+    private PdfPCell createTextFieldCell(TemplateTextDto textByGroup) {
         PdfPCell cell = new PdfPCell();
-        cell.setColspan(2);
+        cell.setColspan(COLUMNS_AMOUNT - 1);
         cell.setBorder(Rectangle.BOTTOM);
         String fieldName = textByGroup.getTextBlockValue().toLowerCase().replace(":", "");
         cell.setCellEvent(new TextInputCellField(fieldName, textByGroup.getTextSize(), false));
@@ -144,10 +145,9 @@ public class CreateFormFieldsService {
     }
 
     private void createSpacer(PdfPTable table, int height) {
-        PdfPCell cell = new PdfPCell();
+        PdfPCell cell = createCellService.createEmptyCell();
         cell.setMinimumHeight(height);
-        cell.setColspan(3);
-        cell.setBorder(Rectangle.NO_BORDER);
+        cell.setColspan(COLUMNS_AMOUNT);
         table.addCell(cell);
     }
 

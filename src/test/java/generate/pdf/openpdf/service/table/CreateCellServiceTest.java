@@ -5,7 +5,7 @@ import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.PdfPCell;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.service.DynamicDataInjectionService;
 import generate.pdf.openpdf.service.FontStylesCreationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,22 +34,22 @@ class CreateCellServiceTest {
     @InjectMocks
     private CreateCellService createCellService;
 
-    private TemplateTextBlock templateTextBlock;
+    private TemplateTextDto templateTextDto;
     private Font font;
     private String fullString;
     private String replacement;
 
     @BeforeEach
-    void initUseCase() {
+    void givenTextBlock() {
         replacement = "Catherine Aird";
         fullString = "'If you can't be a good example, then you'll just have to be a horrible warning.' - Catherine Aird";
 
-        templateTextBlock = new TemplateTextBlock();
-        templateTextBlock.setHorizontalAlignment(1);
-        templateTextBlock.setVerticalAlignment(5);
-        templateTextBlock.setTextSize(12.0f);
-        templateTextBlock.setTemplateTextId(TEMPLATE_TEXT_ID);
-        templateTextBlock.setTextBlockValue("'If you can't be a good example, then you'll just have to be a horrible warning.' - ${author}");
+        templateTextDto = new TemplateTextDto();
+        templateTextDto.setHorizontalAlignment(1);
+        templateTextDto.setVerticalAlignment(5);
+        templateTextDto.setTextSize(12.0f);
+        templateTextDto.setTemplateTextId(TEMPLATE_TEXT_ID);
+        templateTextDto.setTextBlockValue("'If you can't be a good example, then you'll just have to be a horrible warning.' - ${author}");
 
         font = new Font(Font.HELVETICA);
 
@@ -58,10 +58,10 @@ class CreateCellServiceTest {
     }
 
     @Test
-    void testCreateCellAndInsertGivenString() {
+    void givenTextBlock_whenCreatingCell_thenPlaceholdersGetInjectedWithValues() {
         when(dynamicDataInjectionService.injectGivenValue(any(), any())).thenReturn(replacement);
 
-        PdfPCell cell = createCellService.createCellAndInsertGivenString(font, templateTextBlock, replacement, null);
+        PdfPCell cell = createCellService.createCellAndInsertGivenString(font, templateTextDto, replacement, null);
 
         assertEquals(0, cell.getBorder());
         assertEquals(1, cell.getHorizontalAlignment());
@@ -74,11 +74,11 @@ class CreateCellServiceTest {
     }
 
     @Test
-    void testCreateCellAndInsertGivenStringWithUrl() {
+    void givenTextBlockAndUrl_whenCreatingCell_thenCellIsClickable() {
         when(dynamicDataInjectionService.injectGivenValue(any(), any())).thenReturn(replacement);
 
         String url = "https://www.taltech.ee/";
-        PdfPCell cell = createCellService.createCellAndInsertGivenString(font, templateTextBlock, replacement, url);
+        PdfPCell cell = createCellService.createCellAndInsertGivenString(font, templateTextDto, replacement, url);
 
         assertEquals(0, cell.getBorder());
         assertEquals(1, cell.getHorizontalAlignment());
@@ -92,11 +92,11 @@ class CreateCellServiceTest {
     }
 
     @Test
-    void testCreateCellAndInsertDynamicData() {
+    void givenTextBlockAndDynamicData_whenCreatingCell_thenPlaceholdersGetInjectedWithValues() {
         when(dynamicDataInjectionService.injectValues(any(), any())).thenReturn(replacement);
 
         Map<String, Object> map = new HashMap<>();
-        PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextBlock, map, null);
+        PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextDto, map, null);
 
         assertEquals(0, cell.getBorder());
         assertEquals(1, cell.getHorizontalAlignment());
@@ -109,12 +109,12 @@ class CreateCellServiceTest {
     }
 
     @Test
-    void testCreateCellAndInsertDynamicDataWithUrl() {
+    void givenTextBlockAndDynamicDataWithUrl_whenCreatingCell_thenClickableCellWithInjectedValuesGetsCreated() {
         when(dynamicDataInjectionService.injectValues(any(), any())).thenReturn(replacement);
 
         Map<String, Object> map = new HashMap<>();
         String url = "https://www.taltech.ee/";
-        PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextBlock, map, url);
+        PdfPCell cell = createCellService.createCellAndInsertDynamicData(font, templateTextDto, map, url);
 
         assertEquals(0, cell.getBorder());
         assertEquals(1, cell.getHorizontalAlignment());

@@ -7,7 +7,7 @@ import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfWriter;
 import generate.pdf.openpdf.config.EnvironmentVariableProvider;
 import generate.pdf.openpdf.config.StartupConfig;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.service.TextBlockService;
 import generate.pdf.openpdf.service.printout.PdfGenerator;
 import generate.pdf.openpdf.service.table.CreateCellService;
@@ -71,7 +71,7 @@ public class GenericConsumerLoanTemplate extends PdfGenerator {
     public void generatePdf(
             Document document,
             Map<String, Object> dynamicData,
-            Map<String, TemplateTextBlock> templateTexts,
+            Map<String, TemplateTextDto> templateTexts,
             String editingUrl,
             String inputData,
             OutputStream outputStream
@@ -84,12 +84,12 @@ public class GenericConsumerLoanTemplate extends PdfGenerator {
 
         // Create a writer that listens to the document
         PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-        // Add header and footer
+        // Add header and footer to every page
         writer.setPageEvent(new HeaderFooterPageEvent(createCellService, templateTexts, dynamicData, editingUrl, font));
         // Open the document
         document.open();
         // Create document content
-        createSimpleTextService.createSingleCell(document, templateTexts.get("LOAN_CONTRACT"), dynamicData, editingUrl, font);
+        createSimpleTextService.createHeaderCell(document, templateTexts, dynamicData, editingUrl, font);
         createLoanPartiesService.createPartiesData(document, templateTexts, dynamicData, editingUrl, font);
         createLoanConditionsService.createMainConditions(document, templateTexts, loanContractInputDto, dynamicData, editingUrl, font);
         // New page

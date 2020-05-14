@@ -1,7 +1,10 @@
 package generate.pdf.openpdf.mapper;
 
-import generate.pdf.openpdf.dto.ValueTextCombo;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.NewTextBlockDto;
+import generate.pdf.openpdf.dto.TemplateTextDto;
+import generate.pdf.openpdf.dto.ValueTextComboDto;
+import generate.pdf.openpdf.enums.LanguageCode;
+import generate.pdf.openpdf.enums.TemplateCode;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,18 +17,18 @@ public interface TemplateTextMapper {
      * SELECTS *
      * * * * * */
 
-    List<TemplateTextBlock> getTextsByTemplateAndLanguage(
-            @Param("templateCode") String templateCode,
-            @Param("languageCode") String languageCode
+    List<TemplateTextDto> getTextsByTemplateAndLanguage(
+            @Param("templateCode") TemplateCode templateCode,
+            @Param("languageCode") LanguageCode languageCode
     );
 
-    TemplateTextBlock findTextBlockById(
-            @Param("templateCode") String templateCode,
-            @Param("languageCode") String languageCode,
+    TemplateTextDto findTextBlockById(
+            @Param("templateCode") TemplateCode templateCode,
+            @Param("languageCode") LanguageCode languageCode,
             @Param("id") Long id
     );
 
-    List<TemplateTextBlock> findTextBlocksById(@Param("id") Long id);
+    List<TemplateTextDto> findTextBlocksById(@Param("id") Long id);
 
     String findTextBlockValueById(@Param("id") Long id);
 
@@ -35,26 +38,28 @@ public interface TemplateTextMapper {
 
     List<String> findAllAvailableTemplates();
 
-    List<ValueTextCombo> findAllLanguagesForTemplate(@Param("template") String template);
+    List<ValueTextComboDto> findAllLanguagesForTemplate(@Param("templateCode") TemplateCode templateCode);
 
-    ValueTextCombo findLanguageByCode(@Param("languageCode") String languageCode);
+    ValueTextComboDto findLanguageByCode(@Param("languageCode") LanguageCode languageCode);
 
-    List<ValueTextCombo> findAllAvailableLanguages();
+    List<ValueTextComboDto> findAllAvailableLanguages();
 
     /* * * * * *
      * UPDATES * - For all updates avoid using auto-generated id's
      * * * * * */
 
-    Long updateTemplateToTextTranslation(@Param("templateTextBlock") TemplateTextBlock templateTextBlock);
+    Long updateTemplateToTextTranslation(@Param("templateTextDto") TemplateTextDto templateTextDto);
 
-    Long updateAllTemplatesWithGivenText(@Param("templateTextBlock") TemplateTextBlock templateTextBlock);
+    Long updateAllTemplatesWithGivenText(@Param("templateTextDto") TemplateTextDto templateTextDto);
 
     /* * * * * *
      * INSERTS * - For all inserts avoid using auto-generated id's
      * * * * * */
 
-    void insertTextBlock(TemplateTextBlock templateTextBlock);
+    void insertTextBlock(String textBlockValue);
 
-    void batchInsert(@Param("templateTextBlocks") List<TemplateTextBlock> templateTextBlocks);
+    void batchInsert(@Param("templateTextDtos") List<TemplateTextDto> templateTextDtos);
+
+    void insertTemplateText(@Param("newTextBlockDto") NewTextBlockDto newTextBlockDto);
 
 }

@@ -7,9 +7,9 @@
     </settings>
 
     <typeAliases>
-        <typeAlias alias="TemplateTextBlock" type="generate.pdf.openpdf.dto.TemplateTextBlock"/>
-        <typeAlias alias="UserSqlFile" type="generate.pdf.openpdf.dto.UserSqlFile"/>
-        <typeAlias alias="ValueTextCombo" type="generate.pdf.openpdf.dto.ValueTextCombo"/>
+        <typeAlias alias="TemplateTextDto" type="generate.pdf.openpdf.dto.TemplateTextDto"/>
+        <typeAlias alias="UserSqlFileDto" type="generate.pdf.openpdf.dto.UserSqlFileDto"/>
+        <typeAlias alias="ValueTextComboDto" type="generate.pdf.openpdf.dto.ValueTextComboDto"/>
     </typeAliases>
 
     <mappers>

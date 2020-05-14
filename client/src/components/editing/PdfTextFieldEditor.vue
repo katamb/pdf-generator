@@ -29,56 +29,62 @@
     </div>
 
     <div v-if="json !== null && json !== undefined" class="mt-3">
-      <b-button-group class="m-1" size="sm">
-        <b-button
-          @click="updateVerticalAlignment(verticalAlignTop)"
-          v-bind:class="{ 'active-button': isActive(verticalAlignTop) }"
-        >
-          <VerticalAlignTop />
-        </b-button>
-        <b-button
-          @click="updateVerticalAlignment(verticalAlignCenter)"
-          v-bind:class="{ 'active-button': isActive(verticalAlignCenter) }"
-        >
-          <VerticalAlignCenter />
-        </b-button>
-        <b-button
-          @click="updateVerticalAlignment(verticalAlignBottom)"
-          v-bind:class="{ 'active-button': isActive(verticalAlignBottom) }"
-        >
-          <VerticalAlignBottom />
-        </b-button>
-      </b-button-group>
-      <b-button-group class="m-1" size="sm">
-        <b-button
-          @click="updateHorizontalAlignment(horizontalAlignLeft)"
-          v-bind:class="{
-            'active-button': isActive(horizontalAlignLeft) || isActive(horizontalAlignDefault)
-          }"
-        >
-          <FormatAlignLeft />
-        </b-button>
-        <b-button
-          @click="updateHorizontalAlignment(horizontalAlignCenter)"
-          v-bind:class="{ 'active-button': isActive(horizontalAlignCenter) }"
-        >
-          <FormatAlignCenter />
-        </b-button>
-        <b-button
-          @click="updateHorizontalAlignment(horizontalAlignRight)"
-          v-bind:class="{ 'active-button': isActive(horizontalAlignRight) }"
-        >
-          <FormatAlignRight />
-        </b-button>
-        <b-button
-          @click="updateHorizontalAlignment(horizontalAlignJustified)"
-          v-bind:class="{ 'active-button': isActive(horizontalAlignJustified) }"
-        >
-          <FormatAlignJustify />
-        </b-button>
-      </b-button-group>
+      <label class="mb-0">Alignment controls</label>
+      <b-row>
+        <b-col>
+          <b-button-group class="m-1" size="sm">
+            <b-button
+              @click="updateVerticalAlignment(verticalAlignTop)"
+              v-bind:class="{ 'active-button': isActive(verticalAlignTop) }"
+            >
+              <VerticalAlignTop />
+            </b-button>
+            <b-button
+              @click="updateVerticalAlignment(verticalAlignCenter)"
+              v-bind:class="{ 'active-button': isActive(verticalAlignCenter) }"
+            >
+              <VerticalAlignCenter />
+            </b-button>
+            <b-button
+              @click="updateVerticalAlignment(verticalAlignBottom)"
+              v-bind:class="{ 'active-button': isActive(verticalAlignBottom) }"
+            >
+              <VerticalAlignBottom />
+            </b-button>
+          </b-button-group>
+          <b-button-group class="m-1" size="sm">
+            <b-button
+              @click="updateHorizontalAlignment(horizontalAlignLeft)"
+              v-bind:class="{
+                'active-button': isActive(horizontalAlignLeft) || isActive(horizontalAlignDefault)
+              }"
+            >
+              <FormatAlignLeft />
+            </b-button>
+            <b-button
+              @click="updateHorizontalAlignment(horizontalAlignCenter)"
+              v-bind:class="{ 'active-button': isActive(horizontalAlignCenter) }"
+            >
+              <FormatAlignCenter />
+            </b-button>
+            <b-button
+              @click="updateHorizontalAlignment(horizontalAlignRight)"
+              v-bind:class="{ 'active-button': isActive(horizontalAlignRight) }"
+            >
+              <FormatAlignRight />
+            </b-button>
+            <b-button
+              @click="updateHorizontalAlignment(horizontalAlignJustified)"
+              v-bind:class="{ 'active-button': isActive(horizontalAlignJustified) }"
+            >
+              <FormatAlignJustify />
+            </b-button>
+          </b-button-group>
+        </b-col>
+      </b-row>
 
-      <b-row class="">
+      <label class="mb-0 mt-3">Text size and style controls</label>
+      <b-row>
         <b-col>
           <b-input-group class="mt-1 mb-2 ml-auto limited-width" prepend="Text size">
             <b-form-input type="number" v-model="json.textSize"> </b-form-input>
@@ -99,6 +105,30 @@
               <FormatStrikethrough />
             </b-button>
           </b-button-group>
+        </b-col>
+      </b-row>
+
+      <label class="mb-0 mt-2">Text padding controls</label>
+      <b-row>
+        <b-col>
+          <b-input-group class="mx-0 px-0 mb-2 limited-width" prepend="Top">
+            <b-form-input type="number" v-model="json.paddingTop"> </b-form-input>
+          </b-input-group>
+        </b-col>
+        <b-col>
+          <b-input-group class="mx-0 px-0 mb-2 limited-width" prepend="Bottom">
+            <b-form-input type="number" v-model="json.paddingBottom"> </b-form-input>
+          </b-input-group>
+        </b-col>
+        <b-col>
+          <b-input-group class="mx-0 px-0 mb-2 limited-width" prepend="Left">
+            <b-form-input type="number" v-model="json.paddingLeft"> </b-form-input>
+          </b-input-group>
+        </b-col>
+        <b-col>
+          <b-input-group class="mx-0 px-0 mb-2 limited-width" prepend="Right">
+            <b-form-input type="number" v-model="json.paddingRight"> </b-form-input>
+          </b-input-group>
         </b-col>
       </b-row>
 
@@ -124,7 +154,7 @@ import { getRequest, putRequest } from '@/scripts/requests';
 import { RERENDER_PDF_EVENT } from '@/scripts/constants';
 import eventBus from '@/scripts/eventBus';
 import Explanations from '@/components/Explanations.vue';
-import AddNewLanguage from '@/components/AddNewLanguage.vue';
+import AddNewLanguage from '@/components/editing/AddNewLanguage.vue';
 import DownloadSql from '@/components/DownloadSql.vue';
 import FormatStrikethrough from '@/assets/format_strikethrough.svg';
 import FormatUnderlined from '@/assets/format_underlined.svg';
@@ -184,9 +214,9 @@ export default class PdfTextFieldEditor extends Vue {
 
   showModal = false;
 
-  private errorMessage = '';
+  errorMessage = '';
 
-  private json: any = null;
+  json: any = null;
 
   private selectionStart: any = null;
 
@@ -284,6 +314,6 @@ export default class PdfTextFieldEditor extends Vue {
 }
 
 .limited-width {
-  max-width: 175px;
+  max-width: 170px;
 }
 </style>

@@ -41,7 +41,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { getRequest, postRequest } from '@/scripts/requests';
-import { isEmptyString } from '@/scripts/util';
+import { hasNoContent } from '@/scripts/util';
 import eventBus from '@/scripts/eventBus';
 import { RERENDER_PDF_EVENT } from '@/scripts/constants';
 
@@ -64,7 +64,7 @@ export default class AddNewLanguage extends Vue {
   }
 
   isLanguageSelected(): boolean {
-    return !isEmptyString(this.selectedLanguage);
+    return !hasNoContent(this.selectedLanguage);
   }
 
   private getLanguages(): void {

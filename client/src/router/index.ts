@@ -6,6 +6,7 @@ import EditPdf from '@/views/EditPdf.vue';
 import Login from '@/views/Login.vue';
 import { AUTHORIZATION } from '@/scripts/constants';
 import { removeCredentialsFromLocalStorage } from '@/scripts/util';
+import NewTemplate from '@/views/NewTemplate.vue';
 
 Vue.use(VueRouter);
 
@@ -19,6 +20,11 @@ const routes = [
     path: '/home',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/new-template',
+    name: 'NewTemplate',
+    component: NewTemplate
   },
   {
     path: '/edit-pdf/:template/:language/:id',

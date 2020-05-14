@@ -2,7 +2,9 @@ package integration_tests.mapper;
 
 import generate.pdf.MainApplication;
 import generate.pdf.openpdf.config.StartupConfig;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
+import generate.pdf.openpdf.enums.LanguageCode;
+import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
 import integration_tests.BasePostgreSqlContainer;
 import org.junit.ClassRule;
@@ -49,18 +51,17 @@ public class MybatisInterceptorIntegTest {
         Files.deleteIfExists(sqlPath);
         Files.createFile(sqlPath);
         setEditorContextForIntegTests();
-        TemplateTextBlock textBlock = new TemplateTextBlock();
+        TemplateTextDto textBlock = new TemplateTextDto();
         textBlock.setTextBlockValue("Great new text block");
-        templateTextMapper.insertTextBlock(textBlock);
+        templateTextMapper.insertTextBlock(textBlock.getTextBlockValue());
 
         String fileContent = new String(Files.readAllBytes(sqlPath));
-        assertEquals("INSERT INTO pdf_generator.text_block (text_block_value) VALUES ('Great new text block');\n\n", fileContent);
+        assertEquals("INSERT INTO pdf_generator.text_block (text_block_value) VALUES ('Great new text block') ON CONFLICT DO NOTHING;\n\n", fileContent);
 
         Files.deleteIfExists(sqlPath);
     }
 
     @Test
-    @Sql("classpath:sql/mapper/mybatisInterceptorTestData.sql")
     @Sql(scripts = "classpath:sql/mapper/mybatisInterceptorTestData.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "classpath:sql/mapper/removeMybatisInterceptorTestData.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void givenSecurityContextAndFileAndTextBlock_whenUpdatingTextBlock_thenChangesGetSavedToFile() throws IOException {
@@ -68,20 +69,20 @@ public class MybatisInterceptorIntegTest {
         Files.deleteIfExists(sqlPath);
         Files.createFile(sqlPath);
         setEditorContextForIntegTests();
-        TemplateTextBlock textBlock = new TemplateTextBlock();
+        TemplateTextDto textBlock = new TemplateTextDto();
         textBlock.setTextBlockValue("New text block");
         textBlock.setHorizontalAlignment(1);
         textBlock.setVerticalAlignment(4);
-        textBlock.setLanguageCode("et");
-        textBlock.setTemplateCode("TEST");
-        textBlock.setTextBlockName("LOAN_CONTRACT");
+        textBlock.setLanguageCode(LanguageCode.et);
+        textBlock.setTemplateCode(TemplateCode.PRIVATE_SMALL_LOAN_CONTRACT_EE);
+        textBlock.setTextBlockName("LOAN_CONTRACT_TEST");
         textBlock.setTextSize(13);
 
         templateTextMapper.updateTemplateToTextTranslation(textBlock);
 
         String fileContent = new String(Files.readAllBytes(sqlPath));
         assertEquals(
-                "UPDATE pdf_generator.template_text tt SET text_block_id = ( SELECT tb.text_block_id FROM pdf_generator.text_block tb WHERE tb.text_block_value = 'New text block'), text_size = 13.0, horizontal_alignment = 1, vertical_alignment = 4 WHERE tt.template_code = 'TEST' AND tt.language_code = 'et' AND tt.text_block_name = 'LOAN_CONTRACT';\n\n",
+                "UPDATE pdf_generator.template_text tt SET text_block_id = ( SELECT tb.text_block_id FROM pdf_generator.text_block tb WHERE tb.text_block_value = 'New text block'), text_size = 13.0, horizontal_alignment = 1, vertical_alignment = 4, padding_top = 0, padding_bottom = 0, padding_left = 0, padding_right = 0 WHERE tt.template_code = 'PRIVATE_SMALL_LOAN_CONTRACT_EE' AND tt.language_code = 'et' AND tt.text_block_name = 'LOAN_CONTRACT_TEST';\n\n",
                 fileContent
         );
 
@@ -89,7 +90,6 @@ public class MybatisInterceptorIntegTest {
     }
 
     @Test
-    @Sql("classpath:sql/mapper/mybatisInterceptorTestData.sql")
     @Sql(scripts = "classpath:sql/mapper/mybatisInterceptorTestData.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "classpath:sql/mapper/removeMybatisInterceptorTestData.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void givenSecurityContextAndFileAndTextBlock_whenSelectingTextBlock_thenChangesDontGetSavedToFile() throws IOException {
@@ -98,7 +98,7 @@ public class MybatisInterceptorIntegTest {
         Files.createFile(sqlPath);
         setEditorContextForIntegTests();
 
-        templateTextMapper.getTextsByTemplateAndLanguage("TEST", "et");
+        templateTextMapper.getTextsByTemplateAndLanguage(TemplateCode.PRIVATE_SMALL_LOAN_CONTRACT_EE, LanguageCode.et);
 
         String fileContent = new String(Files.readAllBytes(sqlPath));
         assertEquals("", fileContent);

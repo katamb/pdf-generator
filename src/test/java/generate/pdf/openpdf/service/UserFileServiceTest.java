@@ -1,8 +1,8 @@
 package generate.pdf.openpdf.service;
 
 import generate.pdf.openpdf.security.AppUser;
-import generate.pdf.openpdf.dto.ResponseWithMessage;
-import generate.pdf.openpdf.dto.UserSqlFile;
+import generate.pdf.openpdf.dto.ResponseWithMessageDto;
+import generate.pdf.openpdf.dto.UserSqlFileDto;
 import generate.pdf.openpdf.exception.BadRequestException;
 import generate.pdf.openpdf.exception.UnauthorizedException;
 import generate.pdf.openpdf.mapper.UserSqlFileMapper;
@@ -30,9 +30,9 @@ class UserFileServiceTest {
     private static final String TEST_EMAIL = "katamb@taltech.ee";
 
     private UsernamePasswordAuthenticationToken principal;
-    private UserSqlFile file1;
-    private UserSqlFile file2;
-    private UserSqlFile file3;
+    private UserSqlFileDto file1;
+    private UserSqlFileDto file2;
+    private UserSqlFileDto file3;
     @Mock
     private UserSqlFileMapper userSqlFileMapper;
     @Mock
@@ -41,24 +41,24 @@ class UserFileServiceTest {
     private UserFileService userFileService;
 
     @BeforeEach
-    void initUseCase() {
+    void givenUserPrincipalAndThreeUserFiles() {
         AppUser user = new AppUser(TEST_EMAIL, "unit_test",
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
         principal = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
-        file1 = new UserSqlFile();
+        file1 = new UserSqlFileDto();
         file1.setUsername(TEST_EMAIL);
         file1.setSqlFileName("test_file_1.sql");
         file1.setSelected(false);
         file1.setCreatedAt(LocalDateTime.now());
 
-        file2 = new UserSqlFile();
+        file2 = new UserSqlFileDto();
         file2.setUsername(TEST_EMAIL);
         file2.setSqlFileName("test_file_2.sql");
         file2.setSelected(true);
         file2.setCreatedAt(LocalDateTime.now().plusDays(1));
 
-        file3 = new UserSqlFile();
+        file3 = new UserSqlFileDto();
         file3.setUsername(TEST_EMAIL);
         file3.setSqlFileName("test_file_3.sql");
         file3.setSelected(false);
@@ -67,7 +67,7 @@ class UserFileServiceTest {
 
     @Test
     void testGetUserEmail() {
-        ResponseWithMessage response = userFileService.getUserEmail(principal);
+        ResponseWithMessageDto response = userFileService.getUserEmail(principal);
         assertEquals(TEST_EMAIL, response.getMessage());
     }
 
@@ -78,16 +78,16 @@ class UserFileServiceTest {
 
     @Test
     void testGetSelectedSqlFile() {
-        List<UserSqlFile> files = Arrays.asList(file1, file2, file3);
+        List<UserSqlFileDto> files = Arrays.asList(file1, file2, file3);
         when(userSqlFileMapper.getUserFiles(TEST_EMAIL)).thenReturn(files);
 
-        UserSqlFile file = userFileService.getSelectedSqlFile(principal);
+        UserSqlFileDto file = userFileService.getSelectedSqlFile(principal);
         assertEquals(file2, file);
     }
 
     @Test
     void testGetSelectedSqlFileNoneSelected() {
-        List<UserSqlFile> files = Arrays.asList(file1, file3);
+        List<UserSqlFileDto> files = Arrays.asList(file1, file3);
         when(userSqlFileMapper.getUserFiles(TEST_EMAIL)).thenReturn(files);
 
         assertThrows(BadRequestException.class, () -> userFileService.getSelectedSqlFile(principal));
@@ -95,7 +95,7 @@ class UserFileServiceTest {
 
     @Test
     void testGetSqlFilesInCorrectOrder() {
-        List<UserSqlFile> files = Arrays.asList(file1, file2, file3);
+        List<UserSqlFileDto> files = Arrays.asList(file1, file2, file3);
         when(userSqlFileMapper.getUserFiles(TEST_EMAIL)).thenReturn(files);
 
         assertEquals(Arrays.asList(file3, file2, file1), userFileService.getUserSqlFiles(principal));
@@ -103,7 +103,7 @@ class UserFileServiceTest {
 
     @Test
     void testUserCanOnlyDownloadOwnFiles() {
-        List<UserSqlFile> files = Arrays.asList(file1, file2, file3);
+        List<UserSqlFileDto> files = Arrays.asList(file1, file2, file3);
         when(userSqlFileMapper.getUserFiles(TEST_EMAIL)).thenReturn(files);
 
         assertThrows(BadRequestException.class, () -> userFileService.downloadFile(principal, "some_other_file.sql"));

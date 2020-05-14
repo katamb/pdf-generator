@@ -6,7 +6,7 @@ plugins {
 
 group = 'document-generator'
 version = 'app-0.1'
-sourceCompatibility = '13'
+sourceCompatibility = '14'
 
 configurations {
 	developmentOnly

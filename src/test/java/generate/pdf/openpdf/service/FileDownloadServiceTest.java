@@ -1,6 +1,6 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.dto.FileResponse;
+import generate.pdf.openpdf.dto.FileResponseDto;
 import generate.pdf.openpdf.exception.BadRequestException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class FileDownloadServiceTest {
     }
 
     @Test
-    void testLoadFileAsResourceFileNotFound() throws IOException {
+    void givenFilename_whenNoFileExists_thenExceptionGetsThrown() throws IOException {
         String randomFilename = "randomname.sql";
         Path filePath = pathToTestFolder.resolve(randomFilename).normalize();
         assertThrows(BadRequestException.class, () -> fileDownloadService.downloadFile(filePath, randomFilename));
@@ -46,11 +46,11 @@ class FileDownloadServiceTest {
     }
 
     @Test
-    void testLoadFileAsResourceFileIsFound() throws IOException {
+    void givenFilename_whenFileExists_thenFileGetsReturned() throws IOException {
         String randomFilename = "randomname.sql";
         Path filePath = pathToTestFolder.resolve(randomFilename).normalize();
         Files.createFile(filePath);
-        FileResponse response = fileDownloadService.downloadFile(filePath, randomFilename);
+        FileResponseDto response = fileDownloadService.downloadFile(filePath, randomFilename);
         assertNotNull("This file is supposed to be found!", response);
 
         cleanup();

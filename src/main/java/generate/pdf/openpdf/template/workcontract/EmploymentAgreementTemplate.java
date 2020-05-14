@@ -1,4 +1,4 @@
-package generate.pdf.openpdf.template.editable;
+package generate.pdf.openpdf.template.workcontract;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lowagie.text.Document;
@@ -11,7 +11,6 @@ import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.service.TextBlockService;
 import generate.pdf.openpdf.service.printout.PdfGenerator;
-import generate.pdf.openpdf.template.editable.form.CreateFormFieldsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,32 +20,29 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static generate.pdf.openpdf.enums.TemplateCode.EDITABLE_FORM_EE;
+import static generate.pdf.openpdf.enums.TemplateCode.EMPLOYMENT_CONTRACT_EN;
 
 @Service
-public class EditableFormTemplate extends PdfGenerator {
+public class EmploymentAgreementTemplate extends PdfGenerator {
 
-    private static final Logger logger = LoggerFactory.getLogger(EditableFormTemplate.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmploymentAgreementTemplate.class);
     private static final List<TemplateCode> SUPPORTED_PRINTOUTS = Arrays.asList(
-            EDITABLE_FORM_EE
+            EMPLOYMENT_CONTRACT_EN
     );
 
-    private final CreateFormFieldsService createFormFieldsService;
+    private final CreateEmploymentAgreementEntriesService createEmploymentAgreementEntriesService;
 
-    public EditableFormTemplate(
+    public EmploymentAgreementTemplate(
             ObjectMapper objectMapper,
             StartupConfig startupConfig,
             TextBlockService textBlockService,
-            CreateFormFieldsService createFormFieldsService,
+            CreateEmploymentAgreementEntriesService createEmploymentAgreementEntriesService,
             EnvironmentVariableProvider environmentVariableProvider
     ) {
         super(startupConfig, objectMapper, textBlockService, environmentVariableProvider);
-        this.createFormFieldsService = createFormFieldsService;
+        this.createEmploymentAgreementEntriesService = createEmploymentAgreementEntriesService;
     }
 
-    /**
-     * Created with help from: https://itextpdf.com/en/resources/examples/itext-5-legacy/create-fields-table
-     */
     @Override
     public void generatePdf(
             Document document,
@@ -61,11 +57,11 @@ public class EditableFormTemplate extends PdfGenerator {
         document.setMargins(36, 36, 60, 48);
 
         // Create a writer that listens to the document
-        PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+        PdfWriter.getInstance(document, outputStream);
         // Open the document
         document.open();
         // Create document content
-        createFormFieldsService.createForm(writer, document, templateTexts, dynamicData, editingUrl, font);
+        createEmploymentAgreementEntriesService.createEntries(document, templateTexts, dynamicData, editingUrl, font);
     }
 
     @Override

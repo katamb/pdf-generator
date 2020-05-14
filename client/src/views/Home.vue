@@ -1,7 +1,5 @@
 <template>
   <div>
-    <Navigation />
-
     <b-container>
       <b-row class="justify-content-center">
         <b-col class="mt-3">

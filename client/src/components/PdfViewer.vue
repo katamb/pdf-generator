@@ -4,7 +4,7 @@
       <b-embed type="iframe" aspect="4by3" :src="pdf"> </b-embed>
     </div>
     <div v-if="pdf === null">
-      <p>Loading or unable to display file!</p>
+      <p>Unable to display file!</p>
     </div>
   </div>
 </template>

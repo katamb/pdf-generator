@@ -1,10 +1,9 @@
 package generate.pdf.openpdf.service;
 
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.mapper.TemplateTextMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,26 +29,29 @@ class TextBlockServiceTest {
     private TextBlockService textBlockService;
 
     @Test
-    void testGetTextsByTemplateAndLanguage() {
-        List<TemplateTextBlock> generatedTextBlocks = new ArrayList<>();
+    void givenHundredTextBlocks_whenAsked_thenAllGetReturned() {
+        // Given
+        List<TemplateTextDto> generatedTextBlocks = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
-            TemplateTextBlock textBlock = new TemplateTextBlock();
+            TemplateTextDto textBlock = new TemplateTextDto();
             textBlock.setTextBlockValue(UUID.randomUUID().toString());
             textBlock.setTextBlockName("Name " + i);
             generatedTextBlocks.add(textBlock);
         }
+        // When
         when(templateTextMapper.getTextsByTemplateAndLanguage(any(), any())).thenReturn(generatedTextBlocks);
-
-        Map<String, TemplateTextBlock> valueMap =
+        // Then
+        Map<String, TemplateTextDto> valueMap =
                 textBlockService.getTextsByTemplateAndLanguage(TemplateCode.PRIVATE_CAR_LOAN_CONTRACT_EE, LanguageCode.et);
         assertEquals(100, valueMap.keySet().size());
     }
 
     @Test
-    void testGetTextsByGroup() {
-        Map<String, TemplateTextBlock> generatedTextBlocks = new HashMap<>();
+    void givenTextBlocksWithDifferentGroups_whenOneGroupQueried_thenOnlyThisGroupGetsReturned() {
+        // Given
+        Map<String, TemplateTextDto> generatedTextBlocks = new HashMap<>();
         for (int i = 0; i < 100; i++) {
-            TemplateTextBlock textBlock = new TemplateTextBlock();
+            TemplateTextDto textBlock = new TemplateTextDto();
             textBlock.setTextBlockValue(UUID.randomUUID().toString());
             textBlock.setTextBlockName("Name " + i);
             if (i >= 20 && i < 42) {
@@ -60,8 +62,9 @@ class TextBlockServiceTest {
             }
             generatedTextBlocks.put(textBlock.getTextBlockName(), textBlock);
         }
-
-        List<TemplateTextBlock> texts = textBlockService.getTextsByGroup(generatedTextBlocks, "Searched group");
+        // When
+        List<TemplateTextDto> texts = textBlockService.getTextsByGroup(generatedTextBlocks, "Searched group");
+        // Then
         assertEquals(22, texts.size());
         assertEquals(3, texts.get(3).getOrdering());
     }

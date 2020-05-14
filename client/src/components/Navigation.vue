@@ -38,9 +38,7 @@ export default class Navigation extends Vue {
 
   routeHome(): void {
     const routeTo = '/home';
-    if (this.$route.path !== routeTo) {
-      this.$router.push({ path: routeTo });
-    }
+    this.$router.push({ path: routeTo });
   }
 
   logout(): void {

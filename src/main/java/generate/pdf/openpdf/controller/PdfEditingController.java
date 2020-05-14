@@ -1,8 +1,9 @@
 package generate.pdf.openpdf.controller;
 
-import generate.pdf.openpdf.dto.ValueTextCombo;
-import generate.pdf.openpdf.dto.ResponseWithMessage;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.NewTextBlockDto;
+import generate.pdf.openpdf.dto.TemplateTextDto;
+import generate.pdf.openpdf.dto.ValueTextComboDto;
+import generate.pdf.openpdf.dto.ResponseWithMessageDto;
 import generate.pdf.openpdf.enums.LanguageCode;
 import generate.pdf.openpdf.enums.TemplateCode;
 import generate.pdf.openpdf.enums.UpdateType;
@@ -20,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,35 +39,40 @@ public class PdfEditingController {
         return templateTextMapper.findAllAvailableTemplates();
     }
 
+    @GetMapping("all-enum-templates")
+    public List<String> getAllEnumTemplates() {
+        return Arrays.stream(TemplateCode.values()).map(TemplateCode::name).collect(Collectors.toList());
+    }
+
     @GetMapping("all-languages")
-    public List<ValueTextCombo> getAllLanguages() {
+    public List<ValueTextComboDto> getAllLanguages() {
         return templateTextMapper.findAllAvailableLanguages();
     }
 
     @GetMapping("template-languages/{templateCode}")
-    public List<ValueTextCombo> getTemplateLanguages(@PathVariable TemplateCode templateCode) {
-        return templateTextMapper.findAllLanguagesForTemplate(templateCode.name());
+    public List<ValueTextComboDto> getTemplateLanguages(@PathVariable TemplateCode templateCode) {
+        return templateTextMapper.findAllLanguagesForTemplate(templateCode);
     }
 
     @GetMapping("languages-by-code/{languageCode}")
-    public ValueTextCombo getLanguageName(@PathVariable LanguageCode languageCode) {
-        return templateTextMapper.findLanguageByCode(languageCode.name());
+    public ValueTextComboDto getLanguageName(@PathVariable LanguageCode languageCode) {
+        return templateTextMapper.findLanguageByCode(languageCode);
     }
 
     @GetMapping("text-by-id/{templateCode}/{languageCode}/{id}")
-    public TemplateTextBlock findTextById(
+    public TemplateTextDto findTextById(
             @PathVariable TemplateCode templateCode,
             @PathVariable LanguageCode languageCode,
             @PathVariable Long id
     ) {
-        return templateTextMapper.findTextBlockById(templateCode.name(), languageCode.name(), id);
+        return templateTextMapper.findTextBlockById(templateCode, languageCode, id);
     }
 
     @PreAuthorize("hasRole('ROLE_EDITOR')")
     @PutMapping("update-text/{updateType}")
-    public ResponseWithMessage updateTextBlock(
+    public ResponseWithMessageDto updateTextBlock(
             @PathVariable UpdateType updateType,
-            @RequestBody @Valid TemplateTextBlock updatedTextBlock
+            @RequestBody @Valid TemplateTextDto updatedTextBlock
     ) {
         return textUpdatingService.update(updatedTextBlock, updateType);
     }
@@ -77,6 +85,13 @@ public class PdfEditingController {
             @PathVariable LanguageCode newLanguageCode
     ) {
         templateLanguageCreationService.createNewLanguageForTemplate(templateCode, oldLanguageCode, newLanguageCode);
+    }
+
+    @PreAuthorize("hasRole('ROLE_DEVELOPER')")
+    @PostMapping("add-new-text-block")
+    public void addNewTextBlock(@RequestBody @Valid NewTextBlockDto newTextBlockDto) {
+        templateTextMapper.insertTextBlock(newTextBlockDto.getTextBlockValue());
+        templateTextMapper.insertTemplateText(newTextBlockDto);
     }
 
 }

@@ -5,7 +5,8 @@ import com.lowagie.text.Font;
 import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
-import generate.pdf.openpdf.dto.TemplateTextBlock;
+import generate.pdf.openpdf.dto.StringPairDto;
+import generate.pdf.openpdf.dto.TemplateTextDto;
 import generate.pdf.openpdf.service.table.CreateCellService;
 import generate.pdf.openpdf.template.loan.dto.LoanContractInputDto;
 import generate.pdf.openpdf.template.loan.dto.ScheduleLine;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.awt.Color;
-import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -30,13 +30,13 @@ public class CreateLoanScheduleService {
 
     private Color backgroundColor;
     private int paymentMonthCounter;
-    private Map<String, TemplateTextBlock> textBlocksWithStyle;
+    private Map<String, TemplateTextDto> textBlocksWithStyle;
     private String url;
     private Font font;
 
     public void createSchedule(
             Document document,
-            Map<String, TemplateTextBlock> textBlocksWithStyle,
+            Map<String, TemplateTextDto> textBlocksWithStyle,
             LoanContractInputDto loanContractInputDto,
             String url,
             Font font
@@ -95,7 +95,7 @@ public class CreateLoanScheduleService {
 
     private PdfPTable createScheduleTableWithHeader(String year) {
         PdfPTable innerTable = new PdfPTable(6);
-        TemplateTextBlock textBlock = textBlocksWithStyle.get("SCHEDULE_YEARS");
+        TemplateTextDto textBlock = textBlocksWithStyle.get("SCHEDULE_YEARS");
         PdfPCell cell = getPdfPCell(year, textBlock);
         cell.setBorder(Rectangle.BOTTOM);
         cell.setColspan(6);
@@ -103,7 +103,7 @@ public class CreateLoanScheduleService {
         return innerTable;
     }
 
-    private PdfPCell getPdfPCell(String year, TemplateTextBlock textBlock) {
+    private PdfPCell getPdfPCell(String year, TemplateTextDto textBlock) {
         if (year == null) {
             return createCellService.createCellMakeNoSubstitutions(font, textBlock, url);
         } else {
@@ -133,45 +133,45 @@ public class CreateLoanScheduleService {
     private void createScheduleLine(
             int paymentMonthCounter,
             PdfPTable table,
-            Map<String, TemplateTextBlock> textBlocksWithStyle,
+            Map<String, TemplateTextDto> textBlocksWithStyle,
             ScheduleLine scheduleLine,
             boolean withBackground
     ) {
-        List<AbstractMap.SimpleEntry> oneRow = Arrays.asList(
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_NR", Integer.toString(paymentMonthCounter)),
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_DATE", scheduleLine.getPaymentDate()),
-                new AbstractMap.SimpleEntry("SCHEDULE_PRINCIPAL_AMOUNT", scheduleLine.getPrincipal()),
-                new AbstractMap.SimpleEntry("SCHEDULE_INTEREST_AMOUNT", scheduleLine.getInterest()),
-                new AbstractMap.SimpleEntry("SCHEDULE_ADMINISTRATION_FEE", scheduleLine.getAdministrationFee()),
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_SUM", scheduleLine.getPayment())
+        List<StringPairDto> oneRow = Arrays.asList(
+                new StringPairDto("SCHEDULE_PAYMENT_NR", Integer.toString(paymentMonthCounter)),
+                new StringPairDto("SCHEDULE_PAYMENT_DATE", scheduleLine.getPaymentDate()),
+                new StringPairDto("SCHEDULE_PRINCIPAL_AMOUNT", scheduleLine.getPrincipal()),
+                new StringPairDto("SCHEDULE_INTEREST_AMOUNT", scheduleLine.getInterest()),
+                new StringPairDto("SCHEDULE_ADMINISTRATION_FEE", scheduleLine.getAdministrationFee()),
+                new StringPairDto("SCHEDULE_PAYMENT_SUM", scheduleLine.getPayment())
         );
         createRowReplacingValues(textBlocksWithStyle, oneRow, table, withBackground);
     }
 
     private void createEmptyScheduleLine(
             PdfPTable table,
-            Map<String, TemplateTextBlock> textBlocksWithStyle,
+            Map<String, TemplateTextDto> textBlocksWithStyle,
             boolean withBackground
     ) {
-        List<AbstractMap.SimpleEntry> oneRow = Arrays.asList(
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_NR", ""),
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_DATE", ""),
-                new AbstractMap.SimpleEntry("SCHEDULE_PRINCIPAL_AMOUNT", ""),
-                new AbstractMap.SimpleEntry("SCHEDULE_INTEREST_AMOUNT", ""),
-                new AbstractMap.SimpleEntry("SCHEDULE_ADMINISTRATION_FEE", ""),
-                new AbstractMap.SimpleEntry("SCHEDULE_PAYMENT_SUM", "")
+        List<StringPairDto> oneRow = Arrays.asList(
+                new StringPairDto("SCHEDULE_PAYMENT_NR", ""),
+                new StringPairDto("SCHEDULE_PAYMENT_DATE", ""),
+                new StringPairDto("SCHEDULE_PRINCIPAL_AMOUNT", ""),
+                new StringPairDto("SCHEDULE_INTEREST_AMOUNT", ""),
+                new StringPairDto("SCHEDULE_ADMINISTRATION_FEE", ""),
+                new StringPairDto("SCHEDULE_PAYMENT_SUM", "")
         );
         createRowReplacingValues(textBlocksWithStyle, oneRow, table, withBackground);
     }
 
     private void createRowReplacingValues(
-            Map<String, TemplateTextBlock> textBlocksWithStyle,
-            List<AbstractMap.SimpleEntry> textBlocks,
+            Map<String, TemplateTextDto> textBlocksWithStyle,
+            List<StringPairDto> textBlocks,
             PdfPTable table,
             boolean withBackground
     ) {
-        for (AbstractMap.SimpleEntry<String, String> textBlock : textBlocks) {
-            TemplateTextBlock block = textBlocksWithStyle.get(textBlock.getKey());
+        for (StringPairDto textBlock : textBlocks) {
+            TemplateTextDto block = textBlocksWithStyle.get(textBlock.getKey());
             PdfPCell cell = createCellService.createCellAndInsertGivenString(font, block, textBlock.getValue(), url);
             cell.setBorder(Rectangle.BOTTOM);
             cell.setMinimumHeight(DEFAULT_MIN_HEIGHT);
@@ -184,7 +184,7 @@ public class CreateLoanScheduleService {
 
     private void createRowNotReplacingValues(List<String> input, PdfPTable table) {
         for (String textBlock : input) {
-            TemplateTextBlock block = textBlocksWithStyle.get(textBlock);
+            TemplateTextDto block = textBlocksWithStyle.get(textBlock);
             PdfPCell cell = createCellService.createCellMakeNoSubstitutions(font, block, url);
             cell.setBorder(Rectangle.BOTTOM);
             cell.setMinimumHeight(DEFAULT_MIN_HEIGHT);

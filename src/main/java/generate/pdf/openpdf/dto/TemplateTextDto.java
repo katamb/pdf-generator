@@ -1,5 +1,7 @@
 package generate.pdf.openpdf.dto;
 
+import generate.pdf.openpdf.enums.LanguageCode;
+import generate.pdf.openpdf.enums.TemplateCode;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,18 +15,16 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-public class TemplateTextBlock {
+public class TemplateTextDto {
 
     @NotNull
     private Long templateTextId;
 
     @NotNull
-    @Length(min = 1, max = 150)
-    private String templateCode;
+    private TemplateCode templateCode;
 
     @NotNull
-    @Length(min = 2, max = 2)
-    private String languageCode;
+    private LanguageCode languageCode;
 
     @NotNull
     @Length(min = 0, max = 255)
@@ -81,6 +81,22 @@ public class TemplateTextBlock {
     @Max(8)
     private int verticalAlignment;
 
+    @NotNull
+    @Min(0)
+    private int paddingTop;
+
+    @NotNull
+    @Min(0)
+    private int paddingBottom;
+
+    @NotNull
+    @Min(0)
+    private int paddingLeft;
+
+    @NotNull
+    @Min(0)
+    private int paddingRight;
+
     public void setTextBlockValue(String textBlockValue) {
         this.textBlockValue = textBlockValue;
         this.previousTextBlockValue = textBlockValue;
@@ -95,15 +111,19 @@ public class TemplateTextBlock {
         this.previousTextBlockValue = this.textBlockValue;
     }
 
-    public static TemplateTextBlock createNewBlockFromExistingWithSameStyles(
-            TemplateTextBlock templateTextBlock,
+    public static TemplateTextDto createNewBlockFromExistingWithSameStyles(
+            TemplateTextDto templateTextDto,
             String text
     ) {
-        TemplateTextBlock blockWithStyle = new TemplateTextBlock();
-        blockWithStyle.setTextSize(templateTextBlock.getTextSize());
-        blockWithStyle.setHorizontalAlignment(templateTextBlock.getHorizontalAlignment());
-        blockWithStyle.setVerticalAlignment(templateTextBlock.getVerticalAlignment());
+        TemplateTextDto blockWithStyle = new TemplateTextDto();
+        blockWithStyle.setTextSize(templateTextDto.getTextSize());
+        blockWithStyle.setHorizontalAlignment(templateTextDto.getHorizontalAlignment());
+        blockWithStyle.setVerticalAlignment(templateTextDto.getVerticalAlignment());
         blockWithStyle.setTextBlockValue(text);
+        blockWithStyle.setPaddingTop(templateTextDto.getPaddingTop());
+        blockWithStyle.setPaddingBottom(templateTextDto.getPaddingBottom());
+        blockWithStyle.setPaddingLeft(templateTextDto.getPaddingLeft());
+        blockWithStyle.setPaddingRight(templateTextDto.getPaddingRight());
         return blockWithStyle;
     }
 

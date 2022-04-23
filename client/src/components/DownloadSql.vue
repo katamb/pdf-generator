@@ -5,9 +5,7 @@
       made through UI.
     </div>
     <div class="text-center pt-3">
-      <b-button @click="downloadFile(null)" variant="success">
-        Download SQL
-      </b-button>
+      <b-button @click="downloadFile(null)" variant="success"> Download SQL </b-button>
     </div>
   </div>
 </template>

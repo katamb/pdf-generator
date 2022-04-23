@@ -23,9 +23,7 @@
     </b-alert>
 
     <div v-if="json === null || json === undefined" class="mt-3">
-      <p>
-        Click on a text block in the preview window to edit that text!
-      </p>
+      <p>Click on a text block in the preview window to edit that text!</p>
     </div>
 
     <div v-if="json !== null && json !== undefined" class="mt-3">

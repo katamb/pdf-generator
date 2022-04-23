@@ -1,8 +1,6 @@
 <template>
   <div>
-    <h2 class="pt-2">
-      Currently editing:
-    </h2>
+    <h2 class="pt-2">Currently editing:</h2>
     <h4 class="pb-3">
       <b-badge variant="info">{{ $route.params.template }}</b-badge>
       template in
@@ -14,9 +12,7 @@
         <h4 class="text-danger">{{ errorMessage }}</h4>
       </div>
       <div class="text-center">
-        <b-button class="m-3" variant="success" @click="goHome">
-          Go to home page
-        </b-button>
+        <b-button class="m-3" variant="success" @click="goHome"> Go to home page </b-button>
       </div>
     </b-modal>
 
